@@ -42,31 +42,33 @@ export default function AdmissionForm({
         const currentDateTime = ServerTime.getServerTimeString();
 
         const obs = [
-            {
-                concept: concepts.ADMISSION,
-                value: concepts.ADMISSION,
-                obsDatetime: currentDateTime,
-            },
-            {
+          {
+            concept: concepts.ADMISSION,
+            value: concepts.ADMISSION,
+            obsDatetime: currentDateTime,
+            groupMembers: [
+              {
                 concept: concepts.WARD,
                 value: values.wardName,
                 obsDatetime: currentDateTime,
-            },
-            {
+              },
+              {
                 concept: concepts.BED_NUMBER,
                 value: values.bedNumber,
                 obsDatetime: currentDateTime,
-            },
-            {
+              },
+              {
                 concept: concepts.REASON_FOR_ADMISSION,
                 value: values.reasonForAdmission,
                 obsDatetime: currentDateTime,
-            },
-            {
+              },
+              {
                 concept: concepts.SPECIALITY_DEPARTMENT,
                 value: values.specialtyInvolved,
                 obsDatetime: currentDateTime,
-            },
+              },
+            ],
+          },
         ];
         const payload = {
             encounterType: encounters.DISPOSITION,

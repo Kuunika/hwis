@@ -431,7 +431,7 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
-                    console.log({ values });
+                
 
                     setPatientValues({
                       ...values,

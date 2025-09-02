@@ -34,8 +34,20 @@ const form = {
   abnormalitiesPresent: {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
+      children: [
+          {
+              concept: concepts.IMAGE_PART_NAME,
+              label: "Abdomen and Pelvis Abnormalities Image",
+              image: true,
+              parentConcept: concepts.ABDOMINAL_DISTENTION,
+          },
+      ],
   },
-
+    image:{
+        name: concepts.IMAGE_PART_NAME,
+        label: "Palpation image",
+        image: true,
+    },
   shiftingDullness: {
     name: concepts.SHIFTING_DULLNESS,
     label: "Shifting Dullness",
@@ -44,6 +56,10 @@ const form = {
     name: concepts.FLUID_THRILL,
     label: "Fluid Thrill",
   },
+    tenderness: {
+        name: concepts.TENDERNESS,
+        label: "Tenderness",
+    },
   bowelSounds: {
     name: concepts.BOWEL_SOUNDS,
     label: "Bowel Sounds",
@@ -55,6 +71,7 @@ const form = {
   general: {
     name: concepts.GENERAL,
     label: "General",
+      multiple: true
   },
   prostate: {
     name: concepts.PROSTATE,
@@ -63,10 +80,17 @@ const form = {
   mass: {
     name: concepts.MASS,
     label: "Mass",
+      children: [
+          {
+              concept: concepts.DESCRIPTION,
+              label: "Mass Description",
+          },
+      ],
   },
   massDescription: {
     name: concepts.DESCRIPTION,
     label: "Mass Description",
+      child: true
   },
   sphincterTone: {
     name: concepts.SPHINCTER_TONE,
@@ -80,6 +104,81 @@ const form = {
     name: concepts.CIRCUMCISION_STATUS,
     label: "Is the patient circumcised?",
   },
+    laceration: {
+        name: concepts.LACERATION,
+        label: "Are there any ulcerations/lacerations, bite marks of any kind present ",
+        children: [
+            {
+                concept: concepts.LACERATION_NOTES,
+                label: "Laceration Notes",
+            },
+        ],
+    },
+    lacerationNotes: {
+        name: concepts.LACERATION_NOTES,
+        label: "Notes",
+        child: true
+    },
+    hematomas: {
+        name: concepts.HEMATOMAS,
+        label: "Are there any signs of  oedema, hematomas, discolourations",
+        children: [
+            {
+                concept: concepts.HEMATOMAS_NOTES,
+                label: "Hematomas Notes",
+            },
+        ],
+    },
+    hematomasNotes: {
+        name: concepts.HEMATOMAS_NOTES,
+        label: "Notes",
+        child: true
+    },
+    inflammation: {
+        name: concepts.INFLAMMATION,
+        label: "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
+        children: [
+            {
+                concept: concepts.INFLAMMATION_NOTES,
+                label: "Inflammation Notes",
+            },
+        ],
+    },
+    inflammationNotes: {
+        name: concepts.INFLAMMATION_NOTES,
+        label: "Notes",
+        child: true
+    },
+    urethraMeatus: {
+        name: concepts.URETHRAL_MEATUS,
+        label: "Are there any signs discharge from the urethra meatus",
+        children: [
+            {
+                concept: concepts.URETHRAL_NOTES,
+                label: "Urethral Notes",
+            },
+        ],
+    },
+    descriptionUrethral: {
+        name: concepts.URETHRAL_NOTES,
+        label: "Urethral Notes",
+        child: true
+    },
+    scrotum: {
+        name: concepts.SCROTUM,
+        label: "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
+        children: [
+            {
+                concept: concepts.SCROTUM_NOTES,
+                label: "Scrotum Notes",
+            },
+        ],
+    },
+    scrotumNotes: {
+        name: concepts.SCROTUM_NOTES,
+        label: "Scrotum Notes",
+        child: true
+    },
   unusualAppearance: {
     name: concepts.UNUSUAL_SIZE_APPEARANCE_OF_CLITORIS,
     label: "Is the clitoris of unusual size/appearance",
@@ -92,11 +191,7 @@ const form = {
     name: concepts.VAGINA,
     label: "Does the vagina have visible bleeding, discharge, lacerations)",
   },
-  scrotum: {
-    name: concepts.SCROTUM,
-    label:
-      "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
-  },
+
   periymen: {
     name: concepts.PERIHYMEN,
     label: "PERIHYMEN",
@@ -145,10 +240,6 @@ const form = {
     name: concepts.URETHRAL_NOTES,
     label: "Urethral Notes",
   },
-  scrotumNotes: {
-    name: concepts.SCROTUM_NOTES,
-    label: "Scrotum Notes",
-  },
   otherDigitalGeneral: {
     name: concepts.OTHER_RECTAL_GENERAL,
     label: "Other",
@@ -161,53 +252,16 @@ const form = {
     name: concepts.SPHINCTER_OTHER,
     label: "Sphincter Description",
   },
-  tenderness: {
-    name: concepts.TENDERNESS,
-    label: "Tenderness",
-  },
-  laceration: {
-    name: concepts.LACERATION,
-    label:
-      "Are there any ulcerations/lacerations, bite marks of any kind present ",
-  },
-  lacerationNotes: {
-    name: concepts.LACERATION_NOTES,
-    label: "Notes",
-  },
-  hematomas: {
-    name: concepts.HEMATOMAS,
-    label: "Are there any signs of  oedema, hematomas, discolourations",
-  },
-  hematomasNotes: {
-    name: concepts.HEMATOMAS_NOTES,
-    label: "Notes",
-  },
-  inflammation: {
-    name: concepts.INFLAMMATION,
-    label:
-      "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
-  },
-  inflammationNotes: {
-    name: concepts.INFLAMMATION_NOTES,
-    label: "Notes",
-  },
 
-  urethraMeatus: {
-    name: concepts.URETHRAL_MEATUS,
-    label: "Are there any signs discharge from the urethra meatus",
-  },
-  descriptionUrethral: {
-    name: concepts.URETHRAL_NOTES,
-    label: "Urethral Notes",
-  },
+
   perihymen: {
     name: concepts.PERIHYMEN,
     label: "Does the perihymen have abrasions, lacerations scarring",
   },
-  perihymenNotes: {
-    name: concepts.PERIHYMEN_NOTES,
-    label: "Notes",
-  },
+  // perihymenNotes: {
+  //   name: concepts.PERIHYMEN_NOTES,
+  //   label: "Notes",
+  // },
   examination: {
     name: concepts.GENETELIA_EXAMINATION_REQUIRED,
     label: "Does the condition necessitate genitalia examination?",
@@ -217,6 +271,8 @@ const form = {
     label: "Does the condition necessitate digital rectal examination?",
   },
 };
+export const abdomenAndPelvisFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;
@@ -295,7 +351,7 @@ const schema = Yup.object().shape({
     form.inflammationNotes.label
   ),
   [form.perihymen.name]: Yup.string().label(form.perihymen.label),
-  [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
+  // [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
   [form.examination.name]: Yup.string().label(form.examination.label),
 });
 

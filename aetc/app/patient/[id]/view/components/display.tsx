@@ -340,8 +340,6 @@ export const DisplayRelationship = ({
       data: mappedPatient,
     });
 
-    console.log({ values });
-
     refetch();
     setRelationshipDialog(false);
     setEditing(true);

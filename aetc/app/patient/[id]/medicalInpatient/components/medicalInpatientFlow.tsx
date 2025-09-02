@@ -124,6 +124,7 @@ export const MedicalInPatientFlow = () => {
   const handleAllergy = (values: any) => {
     setObs((obs) => [...obs, ...values]);
     setActiveStep(5);
+
   };
 
   const handleIntoxication = (values: any) => {
