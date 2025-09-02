@@ -28,31 +28,56 @@ const initialValues = getInitialValues(form);
 export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [showOther, setShowOther] = useState(false);
   const { medicationOptions } = useFetchMedications();
-    const { ServerTime } = useServerTime();
-  
+  const { ServerTime } = useServerTime();
+
 
   const handleSubmit = (values: any) => {
-    const formValues = { ...values }
     const obsDatetime = ServerTime.getServerTimeString();
-    const drugObs = mapSearchComboOptionsToConcepts(formValues[form.drug.name], form.drug.name, obsDatetime);
 
+    const selectedMedications = values[form.drug.name] || [];
+
+    // Create individual observations for each selected medication
+    const medicationObservations = selectedMedications.map((medication: any) => {
+      if (medication.id === concepts.OTHER) {
+        return {
+          concept: concepts.OTHER_MEDICATION,
+          value_text: values[form.other.name] || "Other medication specified",
+          obsDatetime,
+        };
+      }
+
+      // Regular medications → store drug name in value_text
+      return {
+        concept: form.drug.name,
+        value_text: medication.label,   // 👈 this ensures "Amiodarone" is stored
+        obsDatetime,
+      };
+    });
+
+    // Create the parent medication observation group
     const obs = [
       {
         concept: form.drug.name,
-        value: form.drug.name,
-        groupMembers: drugObs,
-        obsDatetime: obsDatetime,
+        value_text: "Medication",
+        groupMembers: medicationObservations,
+        obsDatetime,
       },
-      {
-        concept: form.other.name,
-        value: formValues[form.other.name],
-        obsDatetime
-      }
-    ]
-    onSubmit(obs)
+    ];
 
+    // Handle "Other" if typed in
+    const hasOtherSelected = selectedMedications.some((med: any) => med.id === concepts.OTHER);
+    if (hasOtherSelected && values[form.other.name]) {
+      obs.push({
+        concept: concepts.OTHER_MEDICATION,
+        value_text: values[form.other.name],
+        obsDatetime,
+        groupMembers: undefined
+      });
+    }
 
+    onSubmit(obs);
   };
+
   return (
     <FormikInit
       validationSchema={schema}

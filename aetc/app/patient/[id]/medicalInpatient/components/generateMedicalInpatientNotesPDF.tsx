@@ -231,8 +231,18 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
-                        inpatientInfo.medication = obs.value || obs.value_text || "";
-                    } else if (conceptName === "HIV program") {
+                        // If the observation has children (drug names), extract them
+                        if (obs.children && obs.children.length > 0) {
+                            inpatientInfo.medication = obs.children
+                                .map((child: any) => child.value_text || child.value || "")
+                                .filter(Boolean) // remove any empty strings
+                                .join(", ");     // combine if multiple drugs
+                        } else {
+                            // fallback for parent obs value
+                            inpatientInfo.medication = obs.value_text || obs.value || "";
+                        }
+                    }
+                    else if (conceptName === "HIV program") {
                         inpatientInfo.hivProgram = obs.value || obs.value_text || "";
                     } else if (conceptName === "Other") {
                         inpatientInfo.other = obs.value || obs.value_text || "";
@@ -548,7 +558,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.allergicReaction}
                                             </p>
                                         )}
-                                        {medicalInpatientInfo.intoxication && (
+                                        {medicalInpatientInfo.intoxication.length > 0 && (
                                             <p>
                                                 <strong>Intoxication: </strong>
                                                 {medicalInpatientInfo.intoxication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
@@ -578,7 +588,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.generalReview.length > 0 && (
                                                             <>
-                                                                <strong>General Impression: </strong>
+                                                                <strong>General(Constitutional): </strong>
                                                                 {/* {medicalInpatientInfo.generalReview} */}
                                                                 {medicalInpatientInfo.generalReview.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -612,7 +622,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.cardiac.length > 0 && (
                                                             <>
-                                                                <strong>Cardiac: </strong>
+                                                                <strong>Cardiovascular: </strong>
                                                                 {/* {medicalInpatientInfo.cardiac} */}
                                                                 {medicalInpatientInfo.cardiac.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -663,7 +673,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.neurologic.length > 0 && (
                                                             <>
-                                                                <strong>Neurologic: </strong>
+                                                                <strong>Neurological: </strong>
                                                                 {/* {medicalInpatientInfo.neurologic} */}
                                                                 {medicalInpatientInfo.neurologic.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -683,7 +693,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.integumentary.length > 0 && (
                                                             <>
-                                                                <strong>Integumentary: </strong>
+                                                                <strong>Integumentary(Skin): </strong>
                                                                 {/* {medicalInpatientInfo.integumentary} */}
                                                                 {medicalInpatientInfo.integumentary.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
