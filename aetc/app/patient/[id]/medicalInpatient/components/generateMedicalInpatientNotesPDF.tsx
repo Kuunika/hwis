@@ -36,6 +36,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             presentingHistory: "",
             medication: [] as string[],        // 👈 was string
             hivProgram: "",
+            onARV: "",
+            healthCenter: "",
             other: "",
             surgicalHistory: "",
             socialHistory: "",
@@ -138,6 +140,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     presentingHistory: "",
                     medication: [] as string[],
                     hivProgram: "",
+                    healthCenter: "",
+                    onARV: "",
                     other: "",
                     surgicalHistory: "",
                     socialHistory: "",
@@ -241,6 +245,10 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     }
                     else if (conceptName === "HIV program") {
                         inpatientInfo.hivProgram = obs.value || obs.value_text || "";
+                    } else if (conceptName === "On arv") {
+                        inpatientInfo.onARV = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Health center") {
+                        inpatientInfo.healthCenter = obs.value || obs.value_text || "";
                     } else if (conceptName === "Other") {
                         inpatientInfo.other = obs.value || obs.value_text || "";
                     } else if (conceptName === "Surgical History") {
@@ -511,6 +519,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                             {(medicalInpatientInfo.medication ||
                                 medicalInpatientInfo.hivProgram ||
+                                medicalInpatientInfo.onARV ||
+                                medicalInpatientInfo.healthCenter ||
                                 medicalInpatientInfo.other ||
                                 medicalInpatientInfo.surgicalHistory ||
                                 medicalInpatientInfo.socialHistory ||
@@ -529,6 +539,18 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                             <p>
                                                 <strong>HIV Status: </strong>
                                                 {medicalInpatientInfo.hivProgram}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.onARV && (
+                                            <p>
+                                                <strong>On ARV: </strong>
+                                                {medicalInpatientInfo.onARV}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.healthCenter && (
+                                            <p>
+                                                <strong>Referral Medical Facility: </strong>
+                                                {medicalInpatientInfo.healthCenter}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.other && (
