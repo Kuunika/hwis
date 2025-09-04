@@ -43,27 +43,42 @@ export const AllergyHistory = ({
         const formValues = { ...values };
         const obsDatetime = ServerTime.getServerTimeString();
 
-        const allergiesObs = mapSearchComboOptionsToConcepts(
-            formValues[form.allergy.name],
-            form.allergy.name,
-            obsDatetime
-        );
+        const selectedAllergies = formValues[form.allergy.name] || [];
 
-        delete formValues[form.allergy.name];
+        // Create child observations for each allergy
+        const allergyObservations = selectedAllergies.map((allergy: any) => {
+            if (allergy.id === concepts.OTHER) {
+                return {
+                    concept: concepts.ALLERGY_DETAILS,
+                    value: formValues[form.allergyDetails.name] || "Other allergy specified",
+                    obsDatetime,
+                };
+            }
 
+            return {
+                concept: form.allergy.name,
+                value: allergy.label,   // 👈 store actual allergy name here
+                obsDatetime,
+            };
+        });
+
+        // Parent allergy observation (group)
         const obsFormatted = [
             {
                 concept: form.allergy.name,
-                value: form.allergy.name,
-                groupMembers: allergiesObs,
-                obsDatetime: obsDatetime,
+                value: "Allergic reaction",
+                groupMembers: allergyObservations,
+                obsDatetime,
             },
         ];
 
+        // Process any additional free-text fields (e.g., "Other details")
+        delete formValues[form.allergy.name];
         const obs = getObservations(formValues, obsDatetime);
 
         onSubmit([...obs, ...obsFormatted]);
     };
+
 
     return (
         <FormikInit

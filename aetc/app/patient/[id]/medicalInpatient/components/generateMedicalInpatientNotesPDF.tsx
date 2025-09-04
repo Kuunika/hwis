@@ -253,7 +253,14 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Family History") {
                         inpatientInfo.familyHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Allergic reaction") {
-                        inpatientInfo.allergicReaction = obs.value || obs.value_text || "";
+                        if (obs.children && obs.children.length > 0) {
+                            inpatientInfo.allergicReaction = obs.children
+                                .map((child: any) => child.value_text || child.value || "")
+                                .filter(Boolean)
+                                .join(", ");
+                        } else {
+                            inpatientInfo.allergicReaction = obs.value_text || obs.value || "";
+                        }
                     } else if (conceptName === "Intoxication") {
                         const intoxicationValues = obs.children
                             ?.filter(

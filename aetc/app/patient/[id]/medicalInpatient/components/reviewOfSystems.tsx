@@ -19,10 +19,12 @@ const reviewOfSystemsOptions = {
     { value: concepts.NIGHT_SWEATS, label: "Night sweats" },
     { value: concepts.FATIGUE, label: "Fatigue" },
     { value: concepts.WEIGHT_LOSS, label: "Weight loss" },
+    { value: concepts.OTHER, label: "Other" },
+
   ],
   HEENT: [
     { value: concepts.HEADACHE, label: "Headache" },
-
+    { value: concepts.VISION_CHANGES, label: "Vision changes" },
     { value: concepts.EYE_PAIN, label: "Eye pain" },
     { value: concepts.LOSS_OF_HEARING, label: "Loss Of Hearing" },
     { value: concepts.TINNITUS, label: "Tinnitus" },
@@ -30,6 +32,7 @@ const reviewOfSystemsOptions = {
     { value: concepts.RHINORRHEA, label: "Rhinorrhea" },
     { value: concepts.EPISTAXIS, label: "Epistaxis" },
     { value: concepts.SINUS_PAIN, label: "Sinus pain" },
+    { value: concepts.NASAL_STUFFINESS, label: "Nasal Stuffiness" },
 
     { value: concepts.ORAL_LESIONS, label: "Oral lesions" },
     { value: concepts.SORE_THROAT, label: "Sore Throat" },
@@ -83,11 +86,16 @@ const reviewOfSystemsOptions = {
     { value: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: "Abnormal Vaginal Discharge" },
     { value: concepts.DYSMENORRHEA, label: "Dysmenorrhea" },
     { value: concepts.PELVIC_PAIN, label: "Pelvic pain" },
+    { value: concepts.INCREASE_URINARY_FREQUENCY, label: "Increased Urinary frequency" },
+    { value: concepts.REDUCED_URINARY_FREQUENCY, label: "Reduced urinary frequency" },
+
   ],
   musculoskeletal: [
     { value: concepts.JOINT_PAIN, label: "Joint Pain" },
     { value: concepts.SWELLING_JOINT, label: "Joint Swelling" },
     { value: concepts.PAIN_BACK, label: "Back Pain" },
+    { value: concepts.STIFFNESS, label: "Stiffness" },
+
   ],
   neurological: [
     { value: concepts.DIZZINESS, label: "Dizziness" },
@@ -105,10 +113,14 @@ const reviewOfSystemsOptions = {
     { value: concepts.HALLUCINATIONS, label: "Hallucinations" },
     { value: concepts.MANIA, label: "Mania" },
     { value: concepts.SUICIDAL_THOUGHTS, label: "Suicidal thoughts" },
+    { value: concepts.MOOD_CHANGES, label: "Mood Changes" },
+
   ],
   integumentary: [
     { value: concepts.SKIN_RASH, label: "Skin Rash" },
     { value: concepts.ITCHING, label: "Itching" },
+    { value: concepts.CHANGES_IN_MOLES, label: "Changes in moles" },
+
 
 
 
