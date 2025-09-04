@@ -34,14 +34,14 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
         const [medicalInpatientInfo, setMedicalInpatientInfo] = useState({
             presentingComplaint: [] as Array<{ complaint: string, duration: string }>,
             presentingHistory: "",
-            medication: "",
+            medication: [] as string[],        // 👈 was string
             hivProgram: "",
             other: "",
             surgicalHistory: "",
             socialHistory: "",
             familyHistory: "",
             // drugGiven: "",
-            allergicReaction: "",
+            allergicReaction: [] as string[],  // 👈 was string
             intoxication: [] as string[],
             general: "",
             systolicBloodpressure: "",
@@ -136,14 +136,14 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 const inpatientInfo = {
                     presentingComplaint: [] as Array<{ complaint: string, duration: string }>,
                     presentingHistory: "",
-                    medication: "",
+                    medication: [] as string[],
                     hivProgram: "",
                     other: "",
                     surgicalHistory: "",
                     socialHistory: "",
                     familyHistory: "",
                     // drugGiven: "",
-                    allergicReaction: "",
+                    allergicReaction: [] as string[],
                     intoxication: [] as string[],
                     general: "",
                     systolicBloodpressure: "",
@@ -231,15 +231,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
-                        // If the observation has children (drug names), extract them
                         if (obs.children && obs.children.length > 0) {
                             inpatientInfo.medication = obs.children
                                 .map((child: any) => child.value_text || child.value || "")
-                                .filter(Boolean) // remove any empty strings
-                                .join(", ");     // combine if multiple drugs
+                                .filter(Boolean);
                         } else {
-                            // fallback for parent obs value
-                            inpatientInfo.medication = obs.value_text || obs.value || "";
+                            inpatientInfo.medication = [(obs.value_text || obs.value || "")].filter(Boolean);
                         }
                     }
                     else if (conceptName === "HIV program") {
@@ -256,10 +253,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         if (obs.children && obs.children.length > 0) {
                             inpatientInfo.allergicReaction = obs.children
                                 .map((child: any) => child.value_text || child.value || "")
-                                .filter(Boolean)
-                                .join(", ");
+                                .filter(Boolean);
                         } else {
-                            inpatientInfo.allergicReaction = obs.value_text || obs.value || "";
+                            inpatientInfo.allergicReaction = [(obs.value_text || obs.value || "")].filter(Boolean);
                         }
                     } else if (conceptName === "Intoxication") {
                         const intoxicationValues = obs.children
@@ -523,10 +519,10 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.intoxication) && (
                                     <>
                                         <h2>Medical History</h2>
-                                        {medicalInpatientInfo.medication && (
+                                        {medicalInpatientInfo.medication.length > 0 && (
                                             <p>
                                                 <strong>Drug: </strong>
-                                                {medicalInpatientInfo.medication}
+                                                {medicalInpatientInfo.medication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.hivProgram && (
@@ -559,10 +555,10 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.familyHistory}
                                             </p>
                                         )}
-                                        {medicalInpatientInfo.allergicReaction && (
+                                        {medicalInpatientInfo.allergicReaction.length > 0 && (
                                             <p>
                                                 <strong>Allergy: </strong>
-                                                {medicalInpatientInfo.allergicReaction}
+                                                {medicalInpatientInfo.allergicReaction.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.intoxication.length > 0 && (
