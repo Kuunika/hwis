@@ -311,7 +311,7 @@ const DispositionActions = ({
         <MenuItem
           onClick={() => navigateTo(`/patient/${patient.id}/medicalInpatient`)}
         >
-          Medical Inpatient
+          Medical Inpatient Admission Sheet
         </MenuItem>
         <MenuItem
           onClick={() => navigateTo(`/patient/${patient.id}/surgicalNotes`)}
@@ -453,8 +453,7 @@ const CardAction = ({
             handleClose();
           }}
         >
-          Medical Inpatient
-        </MenuItem>
+          Medical Inpatient Admission Sheet</MenuItem>
         <MenuItem
           onClick={() => {
             navigateTo(`/patient/${id}/surgicalNotes`);

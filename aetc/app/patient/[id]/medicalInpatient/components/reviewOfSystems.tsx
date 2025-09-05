@@ -19,14 +19,23 @@ const reviewOfSystemsOptions = {
     { value: concepts.NIGHT_SWEATS, label: "Night sweats" },
     { value: concepts.FATIGUE, label: "Fatigue" },
     { value: concepts.WEIGHT_LOSS, label: "Weight loss" },
+    { value: concepts.OTHER, label: "Other" },
+
   ],
-  ent: [
+  HEENT: [
+    { value: concepts.HEADACHE, label: "Headache" },
+    { value: concepts.VISION_CHANGES, label: "Vision changes" },
     { value: concepts.EYE_PAIN, label: "Eye pain" },
-    { value: concepts.RHINORRHEA, label: "Rhinorrhea" },
+    { value: concepts.LOSS_OF_HEARING, label: "Loss Of Hearing" },
     { value: concepts.TINNITUS, label: "Tinnitus" },
+    { value: concepts.OTORRHOEA, label: "Otorrhoea" },
+    { value: concepts.RHINORRHEA, label: "Rhinorrhea" },
     { value: concepts.EPISTAXIS, label: "Epistaxis" },
     { value: concepts.SINUS_PAIN, label: "Sinus pain" },
+    { value: concepts.NASAL_STUFFINESS, label: "Nasal Stuffiness" },
+
     { value: concepts.ORAL_LESIONS, label: "Oral lesions" },
+    { value: concepts.SORE_THROAT, label: "Sore Throat" },
     { value: concepts.DYSPHAGIA, label: "Dysphagia" },
     { value: concepts.ODYNOPHAGIA, label: "Odynophagia" },
   ],
@@ -37,7 +46,10 @@ const reviewOfSystemsOptions = {
     { value: concepts.POLYURIA, label: "Polyuria" },
     { value: concepts.POLYDIPSIA, label: "Polydipsia" },
   ],
-  cardiac: [
+  cardiovascular: [
+    { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness Of Breath" },
+    { value: concepts.DYSPNOEA_ON_EXERTION, label: "Dyspnoea on exertion" },
+    { value: concepts.DYSPNOEA_AT_REST, label: "Dyspnoea at rest" },
     { value: concepts.BLEEDING_TENDENCIES, label: "Bleeding tendencies" },
     { value: concepts.CHEST_PAIN, label: "Chest pain" },
     { value: concepts.HEART_PALPITATIONS, label: "Palpitations" },
@@ -49,8 +61,7 @@ const reviewOfSystemsOptions = {
   ],
   respiratory: [
     { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness Of Breath" },
-    { value: concepts.DYSPNOEA_ON_EXERTION, label: "Dyspnoea on exertion" },
-    { value: concepts.DYSPNOEA_AT_REST, label: "Dyspnoea at rest" },
+
     { value: concepts.COUGH, label: "Cough" },
     { value: concepts.HAEMOPTYSIS, label: "Haemoptysis" },
     { value: concepts.WHEEZING, label: "Wheezing" },
@@ -75,13 +86,19 @@ const reviewOfSystemsOptions = {
     { value: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: "Abnormal Vaginal Discharge" },
     { value: concepts.DYSMENORRHEA, label: "Dysmenorrhea" },
     { value: concepts.PELVIC_PAIN, label: "Pelvic pain" },
+    { value: concepts.INCREASE_URINARY_FREQUENCY, label: "Increased Urinary frequency" },
+    { value: concepts.REDUCED_URINARY_FREQUENCY, label: "Reduced urinary frequency" },
+
   ],
   musculoskeletal: [
     { value: concepts.JOINT_PAIN, label: "Joint Pain" },
     { value: concepts.SWELLING_JOINT, label: "Joint Swelling" },
     { value: concepts.PAIN_BACK, label: "Back Pain" },
+    { value: concepts.STIFFNESS, label: "Stiffness" },
+
   ],
-  neurologic: [
+  neurological: [
+    { value: concepts.DIZZINESS, label: "Dizziness" },
     { value: concepts.HEADACHE, label: "Headache" },
     { value: concepts.CHANGE_IN_SMELL, label: "Change in smell" },
     { value: concepts.CHANGE_IN_TASTE, label: "Change in taste" },
@@ -96,6 +113,17 @@ const reviewOfSystemsOptions = {
     { value: concepts.HALLUCINATIONS, label: "Hallucinations" },
     { value: concepts.MANIA, label: "Mania" },
     { value: concepts.SUICIDAL_THOUGHTS, label: "Suicidal thoughts" },
+    { value: concepts.MOOD_CHANGES, label: "Mood Changes" },
+
+  ],
+  integumentary: [
+    { value: concepts.SKIN_RASH, label: "Skin Rash" },
+    { value: concepts.ITCHING, label: "Itching" },
+    { value: concepts.CHANGES_IN_MOLES, label: "Changes in moles" },
+
+
+
+
   ],
 };
 
@@ -103,15 +131,16 @@ const reviewOfSystemsOptions = {
 // Map category names to their corresponding concept IDs
 const categoryConceptMap = {
   general: concepts.REVIEW_OF_SYSTEMS_GENERAL,
-  ent: concepts.REVIEW_OF_SYSTEMS_ENT,
+  HEENT: concepts.REVIEW_OF_SYSTEMS_ENT,
   endocrine: concepts.REVIEW_OF_SYSTEMS__ENDOCRINE,
-  cardiac: concepts.REVIEW_OF_SYSTEMS_CARDIAC,
+  cardiovascular: concepts.REVIEW_OF_SYSTEMS_CARDIAC,
   respiratory: concepts.SEVERE_RESPIRATORY,
   gastrointestinal: concepts.REVIEW_OF_SYSTEMS_GASTROINTESTINAL,
   genitourinary: concepts.REVIEW_OF_SYSTEMS_GENITOURINARY,
   musculoskeletal: concepts.REVIEW_OF_SYSTEMS_MUSCULOSKELETAL,
-  neurologic: concepts.REVIEW_OF_SYSTEMS_NEUROLOGIC,
-  psychiatric: concepts.REVIEW_OF_SYSTEMS_PSYCHIATRIC
+  neurological: concepts.REVIEW_OF_SYSTEMS_NEUROLOGIC,
+  psychiatric: concepts.REVIEW_OF_SYSTEMS_PSYCHIATRIC,
+  integumentary: concepts.SKIN_INFECTION,
 };
 
 // Create a validation schema
@@ -191,30 +220,32 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
     }
 
     console.log("Final obs structure:", obs);
+    onSubmit(obs);
+
 
     // Only submit if we have observations
-    if (obs.length === 0) {
-      console.warn("No systems selected, moving to next step anyway");
-      onSubmit(values);
-      return;
-    }
+    // if (obs.length === 0) {
+    //   console.warn("No systems selected, moving to next step anyway");
+    //   onSubmit(values);
+    //   return;
+    // }
 
-    // Create and submit the encounter
-    const payload = {
-      encounterType: encounters.MEDICAL_IN_PATIENT,
-      patient: params.id,
-      encounterDatetime: currentDateTime,
-      visit: activeVisit.uuid,
-      obs,
-    };
+    // // Create and submit the encounter
+    // const payload = {
+    //   encounterType: encounters.MEDICAL_IN_PATIENT,
+    //   patient: params.id,
+    //   encounterDatetime: currentDateTime,
+    //   visit: activeVisit.uuid,
+    //   obs,
+    // };
 
-    try {
-      console.log("Submitting payload:", payload);
-      await submitEncounter(payload);
-      onSubmit(values);
-    } catch (error) {
-      console.error("Error submitting Review of Systems:", error);
-    }
+    // try {
+    //   console.log("Submitting payload:", payload);
+    //   await submitEncounter(payload);
+    //   onSubmit(values);
+    // } catch (error) {
+    //   console.error("Error submitting Review of Systems:", error);
+    // }
   };
 
   return (
@@ -223,13 +254,14 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
         general: [],
         // ent: [],
         endocrine: [],
-        cardiac: [],
+        cardiovascular: [],
         respiratory: [],
         gastrointestinal: [],
         genitourinary: [],
         musculoskeletal: [],
-        neurologic: [],
+        neurological: [],
         psychiatric: [],
+        integumentary: [],
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
