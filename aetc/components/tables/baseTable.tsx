@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridRowsProp, GridColDef, useGridApiContext, useGridSelector, gridPageSelector, gridPageCountSelector } from "@mui/x-data-grid";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
@@ -9,6 +9,7 @@ import {
   Box,
   FormControlLabel,
   InputAdornment,
+  Pagination,
   Switch,
   TextField,
 } from "@mui/material";
@@ -141,6 +142,51 @@ const Table: React.FC<IProp> = ({
   );
 };
 
+type CustomFooterProps = {
+  paginationModel: { page: number; pageSize: number };
+  setPaginationModel: (model: { page: number; pageSize: number }) => void;
+  rowCount: number;
+};
+
+function CustomFooter({
+  paginationModel,
+  setPaginationModel,
+  rowCount,
+}: CustomFooterProps) {
+  const apiRef = useGridApiContext();
+  const page = useGridSelector(apiRef, gridPageSelector);
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  const pageSize = paginationModel?.pageSize;
+  const start = page * pageSize + 1;
+  const end = Math.min(rowCount, (page + 1) * pageSize);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "8px",
+      }}
+    >
+      <div>
+        {rowCount === 0
+          ? "No records"
+          : `Showing ${start}–${end} of ${rowCount} records`}
+      </div>
+      <Pagination
+        color="primary"
+        count={pageCount}
+        page={page + 1}
+        onChange={(_, value) =>
+          setPaginationModel({ ...paginationModel, page: value - 1 })
+        }
+      />
+    </div>
+  );
+}
+
 interface ServerPaginationTableProp {
   columns: any;
   rows: Array<any>;
@@ -154,6 +200,8 @@ interface ServerPaginationTableProp {
   onSwitchChange?: (values: any) => void;
   onRowClick?: (row: any) => void;
 }
+
+
 
 export const ServerPaginationTable = ({
   columns,
@@ -179,7 +227,7 @@ export const ServerPaginationTable = ({
       <DataGrid
         sx={{ my: "1ch", borderStyle: "none" }}
         onCellClick={(cell) => {
-          if (onRowClick && cell.field != "action") onRowClick(cell);
+          if (onRowClick && cell.field !== "action") onRowClick(cell);
         }}
         loading={loading}
         rows={rows}
@@ -189,6 +237,15 @@ export const ServerPaginationTable = ({
         paginationMode="server"
         onPaginationModelChange={setPaginationModel}
         autoHeight
+        slots={{
+          footer: () => (
+            <CustomFooter
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              rowCount={rowCount}
+            />
+          ),
+        }}
       />
     </>
   );

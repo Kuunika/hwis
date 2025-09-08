@@ -29,6 +29,7 @@ export const ClientsWaitingForTestResults = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("investigations");
 
   const [inputText, setInputText] = useState("");
@@ -197,6 +198,7 @@ export const ClientsWaitingForTestResults = () => {
         page: paginationModel.page,
         per_page: paginationModel.pageSize,
         total_pages: totalPages,
+        totalEntries
       }}
       searchText={inputText}
       setSearchString={setInputText}

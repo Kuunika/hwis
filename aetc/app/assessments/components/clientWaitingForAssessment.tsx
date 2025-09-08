@@ -45,6 +45,7 @@ export const ClientWaitingForAssessment = () => {
     loading,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("assessment");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -227,8 +228,9 @@ export const ClientWaitingForAssessment = () => {
                 page: paginationModel.page,
                 per_page: paginationModel.pageSize,
                 total_pages: totalPages,
+                totalEntries,
               }
-            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries:0 }
         }
         searchText={inputText}
         setSearchString={setInputText}

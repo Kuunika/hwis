@@ -34,6 +34,7 @@ export const InitialRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("screening");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -160,6 +161,7 @@ export const InitialRegistrationList = () => {
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
+          totalEntries
         }}
         searchText={inputText}
         setSearchString={setInputText}
