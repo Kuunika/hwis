@@ -575,6 +575,11 @@ export const concepts = {
   STAB_PUNCTURE: "Stab Puncture",
   BURNS: "Burns",
   SCAR: "Scar",
+  FLAT: "Flat",
+  DISTENDED:"Distended",
+  ASYMMETRICAL: "Asymmetrical",
+  SURGICAL_SCAR: "Surgical Scar",
+  STRETCH_MARKS:"Stretch Marks",
   HEPATOMEGALY: "Hepatomegaly",
   HEPATOMEGALY_DESCRIPTION: "Hepatomegaly Description",
   SPLENOMEGALY: "Splenomegaly",
@@ -1501,6 +1506,14 @@ export const concepts = {
   RIGHT_PUPIL_SIZE: "Right pupil size",
   LEFT_PUPIL_REACTION: "Left pupil reaction",
   RIGHT_PUPIL_REACTION: "Right pupil reaction",
+  DISCOLORATION:"Discoloration",
+  DILATED_VEINS:"Dilated veins",
+  HERNIA:"Hernia",
+  STOMA:"Stoma",
+  VISIBLE_PULSATION: "Visible pulsation",
+  ROUNDED:"Rounded",
+  PROTUBERANT:"Protuberant",
+  SCAPHOID:"Scaphoid",
 };
 
 export const conceptNames = {
