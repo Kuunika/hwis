@@ -268,10 +268,7 @@ export default function TriageWorkFlow() {
           },
           {
             concept: concepts.CARE_AREA,
-            value:
-              triageResult === "green" || triageResult === "yellow"
-                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
-                : "",
+            value: formData?.serviceArea?.[concepts.CARE_AREA] || "",
             obsDatetime: dateTime,
           },
           {
@@ -383,6 +380,7 @@ export default function TriageWorkFlow() {
   };
 
   const handleServiceArea = (values: any) => {
+
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
 
