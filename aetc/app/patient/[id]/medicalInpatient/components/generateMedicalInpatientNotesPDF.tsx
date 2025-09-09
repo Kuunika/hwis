@@ -259,11 +259,15 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.familyHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Allergic reaction") {
                         if (obs.children && obs.children.length > 0) {
-                            inpatientInfo.allergicReaction = obs.children
+                            const newAllergies = obs.children
                                 .map((child: any) => child.value_text || child.value || "")
                                 .filter(Boolean);
+                            inpatientInfo.allergicReaction.push(...newAllergies);
                         } else {
-                            inpatientInfo.allergicReaction = [(obs.value_text || obs.value || "")].filter(Boolean);
+                            const directValue = obs.value_text || obs.value || "";
+                            if (directValue) {
+                                inpatientInfo.allergicReaction.push(directValue);
+                            }
                         }
                     } else if (conceptName === "Intoxication") {
                         const intoxicationValues = obs.children
@@ -363,13 +367,26 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     else if (conceptName === "Review of systems, general") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
-                                const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
-                                if (childName) {
-                                    inpatientInfo.generalReview.push(childName);
+                                // Extract the value instead of the name
+                                const childValue = child.value;
+                                if (childValue) {
+                                    inpatientInfo.generalReview.push(childValue);
                                 }
                             });
                         }
-                    } else if (conceptName === "Review of systems ENT") {
+                    }
+                    // else if (conceptName === "Review of systems, general") {
+                    //     if (obs.children && obs.children.length > 0) {
+                    //         obs.children.forEach(child => {
+                    //             const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
+                    //             if (childName) {
+                    //                 inpatientInfo.generalReview.push(childName);
+                    //             }
+                    //         });
+                    //     }
+                    // }
+
+                    else if (conceptName === "Review of systems ENT") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;

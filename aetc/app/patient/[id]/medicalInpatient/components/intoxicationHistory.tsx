@@ -81,30 +81,63 @@ export const IntoxicationHistory = ({
     const { ServerTime } = useServerTime();
     const [formValues, setFormValues] = useState<any>({});
 
+    // const handleSubmit = (values: any) => {
+    //     const formValues = { ...values };
+    //     const obsDatetime = ServerTime.getServerTimeString();
+
+    //     const intoxicationObs = mapSearchComboOptionsToConcepts(
+    //         formValues[form.intoxication.name],
+    //         form.intoxication.name,
+    //         obsDatetime
+    //     );
+
+    //     delete formValues[form.intoxication.name];
+
+    //     const obsFormatted = [
+    //         {
+    //             concept: form.intoxication.name,
+    //             value: form.intoxication.name,
+    //             groupMembers: intoxicationObs,
+    //             obsDatetime: obsDatetime,
+    //         },
+    //     ];
+
+    //     const obs = getObservations(formValues, obsDatetime);
+
+    //     onSubmit([...obs, ...obsFormatted]);
+    // };
     const handleSubmit = (values: any) => {
         const formValues = { ...values };
         const obsDatetime = ServerTime.getServerTimeString();
 
-        const intoxicationObs = mapSearchComboOptionsToConcepts(
-            formValues[form.intoxication.name],
-            form.intoxication.name,
-            obsDatetime
-        );
+        const selectedIntoxications = formValues[form.intoxication.name] || [];
 
-        delete formValues[form.intoxication.name];
+        const intoxicationObs = selectedIntoxications.map((intoxication: any) => {
+            if (intoxication.id === concepts.OTHER) {
+                return {
+                    concept: concepts.INTOXICATION,
+                    value: formValues[form.intoxicationDescription.name] || "Other intoxication specified",
+                    obsDatetime,
+                };
+            }
 
-        const obsFormatted = [
+            return {
+                concept: concepts.INTOXICATION,
+                value: intoxication.label, // human-readable intoxication name
+                obsDatetime,
+            };
+        });
+
+        const obs = [
             {
                 concept: form.intoxication.name,
-                value: form.intoxication.name,
+                value: "Intoxication",
                 groupMembers: intoxicationObs,
-                obsDatetime: obsDatetime,
+                obsDatetime,
             },
         ];
 
-        const obs = getObservations(formValues, obsDatetime);
-
-        onSubmit([...obs, ...obsFormatted]);
+        onSubmit(obs);
     };
 
     return (
