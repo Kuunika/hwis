@@ -15,7 +15,7 @@ type Prop = {
   onPrevious: () => void;
 };
 
-const lastMealFormConfig = {
+export const lastMealFormConfig = {
     lastMeal: {
       name: "dateOfMeal",
       label: "When did the patient eat last?"
@@ -25,7 +25,7 @@ const lastMealFormConfig = {
       label: "What did the patient eat?",
     }
   }
-  
+
   const schema = yup.object().shape({
       [lastMealFormConfig.lastMeal.name] : yup
         .string()

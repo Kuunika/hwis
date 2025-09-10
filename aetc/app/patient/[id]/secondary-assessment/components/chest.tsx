@@ -33,6 +33,7 @@ import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import ComponentSlider from "@/components/slider/slider";
+import {number} from "yup";
 
 const form = {
   respiratoryRate: {
@@ -42,10 +43,18 @@ const form = {
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
+    children:[
+      {
+        multiple: true,
+        concept: concepts.ABNORMALITIES,
+        label: "Abnormalities",
+      }
+    ]
   },
   chestWallAbnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Chest Wall Abnormalities",
+      child: true,
   },
   otherSpecify: {
     name: concepts.OTHER,
@@ -54,43 +63,104 @@ const form = {
   localizedChestAbnormality: {
     name: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
     label: "Localised Chest Wall Abnormality",
+      children: [
+          {
+              concept: concepts.IMAGE_PART_NAME,
+              label: "Localised Chest wall Abnormality Image",
+              image: true,
+              parentConcept: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
+          },
+      ],
   },
   chestExpansion: {
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
+      children: [
+          {
+              concept: concepts.IMAGE_PART_NAME,
+              label: "Chest Expansion Image",
+              image: true,
+              parentConcept: concepts.CHEST_EXPANSION,
+          },
+      ],
   },
   tactileFremitus: {
     name: concepts.TACTILE_FREMITUS,
     label: "Tactile Fremitus",
+      children: [
+          {
+              concept: concepts.IMAGE_PART_NAME,
+              label: "Tactile Fremitus Image",
+              image: true,
+              parentConcept: concepts.TACTILE_FREMITUS,
+          },
+      ],
   },
+    percussion: {
+        name: concepts.PERCUSSION,
+        label: "Percussion",
+        children: [
+            {
+                concept: concepts.IMAGE_PART_NAME,
+                label: "Percussion Image",
+                image: true,
+                parentConcept: concepts.PERCUSSION,
+            },
+        ],
+    },
+    image:{
+        name: concepts.IMAGE_PART_NAME,
+        label: "Image",
+        image: true,
+    },
   apexBeat: {
     name: concepts.APEX_BEAT,
     label: "Apex Beat",
+      children:[
+          {
+              concept: concepts.POSITIONING,
+              label: "Position",
+          }
+      ]
   },
   position: {
     name: concepts.POSITIONING,
     label: "Position",
+      child: true
   },
   thrill: {
     name: concepts.TRILL,
     label: "Thrill",
+      children:[
+          {
+              concept: concepts.DESCRIPTION,
+              label: "Thrill Description",
+              type: "string"
+          }
+      ]
   },
   thrillDescription: {
     name: concepts.DESCRIPTION,
     label: "Thrill Description",
+      child: true
   },
   heaves: {
     name: concepts.HEAVES,
     label: "Heaves",
+      children:[
+          {
+              concept: concepts.HEAVES_DESCRIPTION,
+              label: "Heaves Description",
+              type: "string"
+          }
+      ]
   },
   heavesDescription: {
     name: concepts.HEAVES_DESCRIPTION,
     label: "Heaves Description",
+      child: true,
   },
-  percussion: {
-    name: concepts.PERCUSSION,
-    label: "Percussion",
-  },
+
   // breathingSounds: {
   //   name: concepts.BREATHING_SOUNDS,
   //   label: "Breath sounds",
@@ -102,18 +172,34 @@ const form = {
   heartSounds: {
     name: concepts.HEART_SOUNDS,
     label: "Heart Sounds",
+      children:[
+          {
+              concept: concepts.ABNORMALITIES,
+              label: "Abnormality Description",
+              type: "string"
+          }
+      ]
   },
   abnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Description of Abnormality",
+      child :true
   },
   location: {
     name: concepts.LOCATION,
     label: "Location of murmur",
+      children:[
+          {
+              concept: concepts.TYPE_OF_MURMUR,
+              label: "Type of murmur",
+              type: "string"
+          }
+      ]
   },
   type: {
     name: concepts.TYPE_OF_MURMUR,
     label: "Type of murmur",
+      child:true
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
@@ -136,6 +222,8 @@ const form = {
     label: "specify",
   },
 };
+export const chestFormConfig: any = form;
+
 
 type Prop = {
   onSubmit: () => void;

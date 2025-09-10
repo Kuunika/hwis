@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
-import { FormikInit, WrapperBox, FormFieldContainer, FormFieldContainerLayout, CheckboxesGroup } from "@/components";
+import { FormikInit, WrapperBox, FormFieldContainer, FormFieldContainerLayout, CheckboxesGroup, TextInputField } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
 import { getDateTime } from "@/helpers/dateTime";
@@ -9,7 +9,7 @@ import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { useServerTime } from "@/contexts/serverTimeContext";
-
+import { useFormikContext } from "formik";
 
 // Define the checklist options for each system
 const reviewOfSystemsOptions = {
@@ -19,14 +19,21 @@ const reviewOfSystemsOptions = {
     { value: concepts.NIGHT_SWEATS, label: "Night sweats" },
     { value: concepts.FATIGUE, label: "Fatigue" },
     { value: concepts.WEIGHT_LOSS, label: "Weight loss" },
+    { value: concepts.OTHER, label: "Other" },
   ],
-  ent: [
+  HEENT: [
+    { value: concepts.HEADACHE, label: "Headache" },
+    { value: concepts.VISION_CHANGES, label: "Vision changes" },
     { value: concepts.EYE_PAIN, label: "Eye pain" },
-    { value: concepts.RHINORRHEA, label: "Rhinorrhea" },
+    { value: concepts.LOSS_OF_HEARING, label: "Loss Of Hearing" },
     { value: concepts.TINNITUS, label: "Tinnitus" },
+    { value: concepts.OTORRHOEA, label: "Otorrhoea" },
+    { value: concepts.RHINORRHEA, label: "Rhinorrhea" },
     { value: concepts.EPISTAXIS, label: "Epistaxis" },
     { value: concepts.SINUS_PAIN, label: "Sinus pain" },
+    { value: concepts.NASAL_STUFFINESS, label: "Nasal Stuffiness" },
     { value: concepts.ORAL_LESIONS, label: "Oral lesions" },
+    { value: concepts.SORE_THROAT, label: "Sore Throat" },
     { value: concepts.DYSPHAGIA, label: "Dysphagia" },
     { value: concepts.ODYNOPHAGIA, label: "Odynophagia" },
   ],
@@ -37,7 +44,10 @@ const reviewOfSystemsOptions = {
     { value: concepts.POLYURIA, label: "Polyuria" },
     { value: concepts.POLYDIPSIA, label: "Polydipsia" },
   ],
-  cardiac: [
+  cardiovascular: [
+    { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness Of Breath" },
+    { value: concepts.DYSPNOEA_ON_EXERTION, label: "Dyspnoea on exertion" },
+    { value: concepts.DYSPNOEA_AT_REST, label: "Dyspnoea at rest" },
     { value: concepts.BLEEDING_TENDENCIES, label: "Bleeding tendencies" },
     { value: concepts.CHEST_PAIN, label: "Chest pain" },
     { value: concepts.HEART_PALPITATIONS, label: "Palpitations" },
@@ -49,8 +59,6 @@ const reviewOfSystemsOptions = {
   ],
   respiratory: [
     { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness Of Breath" },
-    { value: concepts.DYSPNOEA_ON_EXERTION, label: "Dyspnoea on exertion" },
-    { value: concepts.DYSPNOEA_AT_REST, label: "Dyspnoea at rest" },
     { value: concepts.COUGH, label: "Cough" },
     { value: concepts.HAEMOPTYSIS, label: "Haemoptysis" },
     { value: concepts.WHEEZING, label: "Wheezing" },
@@ -75,13 +83,17 @@ const reviewOfSystemsOptions = {
     { value: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: "Abnormal Vaginal Discharge" },
     { value: concepts.DYSMENORRHEA, label: "Dysmenorrhea" },
     { value: concepts.PELVIC_PAIN, label: "Pelvic pain" },
+    { value: concepts.INCREASE_URINARY_FREQUENCY, label: "Increased Urinary frequency" },
+    { value: concepts.REDUCED_URINARY_FREQUENCY, label: "Reduced urinary frequency" },
   ],
   musculoskeletal: [
     { value: concepts.JOINT_PAIN, label: "Joint Pain" },
     { value: concepts.SWELLING_JOINT, label: "Joint Swelling" },
     { value: concepts.PAIN_BACK, label: "Back Pain" },
+    { value: concepts.STIFFNESS, label: "Stiffness" },
   ],
-  neurologic: [
+  neurological: [
+    { value: concepts.DIZZINESS, label: "Dizziness" },
     { value: concepts.HEADACHE, label: "Headache" },
     { value: concepts.CHANGE_IN_SMELL, label: "Change in smell" },
     { value: concepts.CHANGE_IN_TASTE, label: "Change in taste" },
@@ -96,26 +108,77 @@ const reviewOfSystemsOptions = {
     { value: concepts.HALLUCINATIONS, label: "Hallucinations" },
     { value: concepts.MANIA, label: "Mania" },
     { value: concepts.SUICIDAL_THOUGHTS, label: "Suicidal thoughts" },
+    { value: concepts.MOOD_CHANGES, label: "Mood Changes" },
+  ],
+  integumentary: [
+    { value: concepts.SKIN_RASH, label: "Skin Rash" },
+    { value: concepts.ITCHING, label: "Itching" },
+    { value: concepts.CHANGES_IN_MOLES, label: "Changes in moles" },
   ],
 };
-
 
 // Map category names to their corresponding concept IDs
 const categoryConceptMap = {
   general: concepts.REVIEW_OF_SYSTEMS_GENERAL,
-  ent: concepts.REVIEW_OF_SYSTEMS_ENT,
+  HEENT: concepts.REVIEW_OF_SYSTEMS_ENT,
   endocrine: concepts.REVIEW_OF_SYSTEMS__ENDOCRINE,
-  cardiac: concepts.REVIEW_OF_SYSTEMS_CARDIAC,
+  cardiovascular: concepts.REVIEW_OF_SYSTEMS_CARDIAC,
   respiratory: concepts.SEVERE_RESPIRATORY,
   gastrointestinal: concepts.REVIEW_OF_SYSTEMS_GASTROINTESTINAL,
   genitourinary: concepts.REVIEW_OF_SYSTEMS_GENITOURINARY,
   musculoskeletal: concepts.REVIEW_OF_SYSTEMS_MUSCULOSKELETAL,
-  neurologic: concepts.REVIEW_OF_SYSTEMS_NEUROLOGIC,
-  psychiatric: concepts.REVIEW_OF_SYSTEMS_PSYCHIATRIC
+  neurological: concepts.REVIEW_OF_SYSTEMS_NEUROLOGIC,
+  psychiatric: concepts.REVIEW_OF_SYSTEMS_PSYCHIATRIC,
+  integumentary: concepts.SKIN_INFECTION,
+};
+
+// Component to handle the "Other" text field visibility
+const GeneralSystemSection = () => {
+  const { values } = useFormikContext<any>();
+
+  // Check if "Other" is selected in the general category
+  const generalValues = values.general || [];
+  const isOtherSelected = generalValues.some((item: any) =>
+    item.key === concepts.OTHER && item.value === true
+  );
+
+  return (
+    <div style={{ marginBottom: "2ch" }}>
+      <h5 style={{ textTransform: "capitalize" }}>General (Constitutional)</h5>
+      <CheckboxesGroup
+        name="general"
+        allowFilter={false}
+        options={reviewOfSystemsOptions.general.map((item) => ({
+          key: item.value,
+          value: item.value,
+          label: item.label,
+        }))}
+      />
+
+      {/* Show text field when "Other" is selected */}
+      {isOtherSelected && (
+        <div style={{ marginTop: "1ch", marginLeft: "2ch" }}>
+          <TextInputField
+            id=""
+            name="generalOtherText"
+            label="Please specify other symptom"
+            placeholder="Enter other symptom..."
+            size="small"
+          />
+        </div>
+      )}
+    </div>
+  );
 };
 
 // Create a validation schema
-const validationSchema = Yup.object({});
+const validationSchema = Yup.object({
+  generalOtherText: Yup.string().when('general', {
+    is: (general: any[]) => general?.some((item: any) => item.key === concepts.OTHER && item.value === true),
+    then: (schema) => schema.required('Please specify the other general symptom'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
 
 export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) => void; onSkip: () => void }) => {
   const { params } = useParameters();
@@ -123,7 +186,6 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
   const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
   const { data: patientVisits } = getPatientVisitTypes(params.id as string);
   const { init, ServerTime } = useServerTime();
-
 
   useEffect(() => {
     // Finds the active visit for the patient from their visit history
@@ -172,9 +234,20 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
         const optionList = reviewOfSystemsOptions[category as keyof typeof reviewOfSystemsOptions];
         const option = optionList.find(opt => opt.value === symptomConcept);
 
+        // If this is "Other" in general category, use the custom text
+        let labelValue = option?.label || symptomConcept;
+        if (symptomConcept === concepts.OTHER && category === 'general' && values.generalOtherText) {
+          // labelValue = values.generalOtherText;
+          return {
+            concept: symptomConcept,
+            value: values.generalOtherText,
+            obsDatetime: currentDateTime
+          };
+        }
+
         return {
           concept: symptomConcept,
-          value: option?.label || symptomConcept,
+          value: labelValue,
           obsDatetime: currentDateTime
         };
       });
@@ -191,45 +264,24 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
     }
 
     console.log("Final obs structure:", obs);
-
-    // Only submit if we have observations
-    if (obs.length === 0) {
-      console.warn("No systems selected, moving to next step anyway");
-      onSubmit(values);
-      return;
-    }
-
-    // Create and submit the encounter
-    const payload = {
-      encounterType: encounters.MEDICAL_IN_PATIENT,
-      patient: params.id,
-      encounterDatetime: currentDateTime,
-      visit: activeVisit.uuid,
-      obs,
-    };
-
-    try {
-      console.log("Submitting payload:", payload);
-      await submitEncounter(payload);
-      onSubmit(values);
-    } catch (error) {
-      console.error("Error submitting Review of Systems:", error);
-    }
+    onSubmit(obs);
   };
 
   return (
     <FormikInit
       initialValues={{
         general: [],
-        // ent: [],
+        HEENT: [],
         endocrine: [],
-        cardiac: [],
+        cardiovascular: [],
         respiratory: [],
         gastrointestinal: [],
         genitourinary: [],
         musculoskeletal: [],
-        neurologic: [],
+        neurological: [],
         psychiatric: [],
+        integumentary: [],
+        generalOtherText: '', // Add initial value for the other text field
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -237,21 +289,26 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
       <FormFieldContainer direction="column">
         <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
           <FormFieldContainerLayout title="Review of Systems">
-            {/* Generate a checkbox list for each category */}
-            {Object.entries(reviewOfSystemsOptions).map(([category, options]) => (
-              <div key={category} style={{ marginBottom: "2ch" }}>
-                <h5 style={{ textTransform: "capitalize" }}>{category.replace(/_/g, " ")}</h5>
-                <CheckboxesGroup
-                  name={category}
-                  allowFilter={false}
-                  options={options.map((item) => ({
-                    key: item.value,  // Use key instead of value to match PresentingComplaintsForm
-                    value: item.value,
-                    label: item.label,
-                  }))}
-                />
-              </div>
-            ))}
+            {/* Special handling for General section with "Other" text field */}
+            <GeneralSystemSection />
+
+            {/* Generate a checkbox list for other categories */}
+            {Object.entries(reviewOfSystemsOptions)
+              .filter(([category]) => category !== 'general') // Exclude general as it's handled above
+              .map(([category, options]) => (
+                <div key={category} style={{ marginBottom: "2ch" }}>
+                  <h5 style={{ textTransform: "capitalize" }}>{category.replace(/_/g, " ")}</h5>
+                  <CheckboxesGroup
+                    name={category}
+                    allowFilter={false}
+                    options={options.map((item) => ({
+                      key: item.value,
+                      value: item.value,
+                      label: item.label,
+                    }))}
+                  />
+                </div>
+              ))}
           </FormFieldContainerLayout>
         </WrapperBox>
       </FormFieldContainer>

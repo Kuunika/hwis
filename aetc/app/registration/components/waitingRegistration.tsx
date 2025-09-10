@@ -10,10 +10,10 @@ import {
   PatientTableListServer,
 } from "@/components";
 
-import Image from "next/image";
+
 import { AbscondButton } from "@/components/abscondButton";
 import { useContext, useEffect, useState } from "react";
-import { Identifier } from "@/interfaces";
+
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
@@ -38,6 +38,7 @@ export const WaitingRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("registration");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -186,6 +187,7 @@ export const WaitingRegistrationList = () => {
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
+          totalEntries
         }}
         searchText={inputText}
         setSearchString={setInputText}

@@ -65,6 +65,27 @@ const options = [
   { id: concepts.BRUISE, label: "Bruise" },
   { id: concepts.BURNS, label: "Burns" },
   { id: concepts.SCAR, label: "Scar" },
+  { id: concepts.FLAT, label: "Flat (Normal)" },
+  // New items
+  {
+    id: concepts.DISTENDED,
+    label: "Distended (Notes appearance: Abdomen Distended)",
+  },
+  {
+    id: concepts.ASYMMETRICAL,
+    label: "Asymmetrical (Notes appearance: Abdomen Asymmetrical)",
+  },
+  { id: concepts.SURGICAL_SCAR, label: "Surgical Scar" },
+  { id: concepts.STRETCH_MARKS, label: "Stretch marks (striae)" },
+  { id: concepts.DISCOLORATION, label: "Discoloration" },
+  { id: concepts.DILATED_VEINS, label: "Dilated veins" },
+  { id: concepts.HERNIA, label: "Hernia" },
+  { id: concepts.STOMA, label: "Stoma" },
+  { id: concepts.VISIBLE_PULSATION, label: "Visible Pulsation" },
+  { id: concepts.MASS, label: "Mass" },
+  { id: concepts.ROUNDED, label: "Rounded" },
+  { id: concepts.PROTUBERANT, label: "Protuberant" },
+  { id: concepts.SCAPHOID, label: "Scaphoid" },
   { id: concepts.OTHER, label: "Other" },
 ];
 

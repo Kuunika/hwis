@@ -18,24 +18,59 @@ import {
 import * as Yup from "yup";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
     label: "Is Airway Patent",
-    coded: true,
+    type: "string",
+    options: {
+      [YES]: "Patent",
+      [NO]: "Not Patent",
+      [concepts.THREATENED]: "Threatened",
+    },
+    children: [
+      {
+        multiple: true,
+        concept: concepts.AIRWAY_REASON,
+        label: "Reason",
+        type: "string",
+      },
+      {
+        multiple: true,
+        concept: concepts.AIRWAY_OPENING_INTERVENTION,
+        label: "Airway Opening Intervention",
+        type: "string",
+      },
+    ],
   },
   isPatientInjured: {
     name: concepts.PATIENT_INJURED,
     label: "Is Patient Injured",
-    coded: true,
+    type: "string",
+    options: {
+      [YES]: "Injured",
+      [NO]: "Not Injured",
+    },
+    children: [
+      {
+        type: "string",
+        concept: concepts.NECK_COLLAR_APPLIED,
+        label: "Neck Collar Applied",
+        options: {
+          [YES]: "Neck collar applied",
+          [NO]: "Neck collar not applied",
+          [concepts.NOT_INDICATED]: "No indication of neck collar",
+        },
+      },
+      { type:"string",concept: concepts.HEAD_BLOCKS_APPLIED, label: "Head Blocks Applied" },
+    ],
   },
   neckCollar: {
     name: concepts.NECK_COLLAR_APPLIED,
     label: "Neck Collar Applied",
-    coded: true,
+    child: true,
   },
   weakness: {
     name: concepts.WEAKNESS,
@@ -44,12 +79,12 @@ const form = {
   headBlocks: {
     name: concepts.HEAD_BLOCKS_APPLIED,
     label: "Head Blocks Applied",
-    coded: true,
+    child: true,
   },
   airWayThreatenedReason: {
     name: concepts.AIRWAY_REASON,
     label: "Reason",
-    coded: true,
+    child: true,
   },
   otherReason: {
     name: concepts.OTHER,
@@ -58,7 +93,6 @@ const form = {
   intervention: {
     name: concepts.AIRWAY_OPENING_INTERVENTION,
     label: "Airway Opening Intervention",
-    coded: true,
   },
   nasopharyngealSize: {
     name: concepts.NASOPHARYNGEAL_AIRWAY,
@@ -69,6 +103,8 @@ const form = {
     label: "Oropharyngeal Airway Size",
   },
 };
+
+export const airwayFormConfig: any = form;
 
 type Prop = {
   onSubmit: () => void;
@@ -181,7 +217,6 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
           obsDatetime,
-          coded: true,
         };
       });
     }

@@ -127,7 +127,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   // Define template forms menu items
   const templateFormsItems: MenuItemConfig[] = [
     {
-      label: "Medical Inpatient",
+      label: "Medical Inpatient Admission Sheet",
       path: `/patient/${patient.id}/medicalInpatient`,
     },
     {
@@ -136,11 +136,11 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     },
     ...(gender === "Female"
       ? [
-          {
-            label: "Gynaecology Ward Admission",
-            path: `/patient/${patient.id}/gyneacology`,
-          },
-        ]
+        {
+          label: "Gynaecology Ward Admission",
+          path: `/patient/${patient.id}/gyneacology`,
+        },
+      ]
       : []),
   ];
 

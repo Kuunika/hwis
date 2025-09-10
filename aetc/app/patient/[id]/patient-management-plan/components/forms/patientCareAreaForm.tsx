@@ -18,10 +18,11 @@ import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import { getDateTime } from "@/helpers/dateTime";
+
 import { concepts, encounters } from "@/constants";
 import { Visit } from "@/interfaces";
 import { useServerTime } from "@/contexts/serverTimeContext";
+
 
 type Prop = {
   onSubmit: (values: any) => void;
@@ -50,11 +51,23 @@ const careAreaFormConfig: Record<
 
   // other: { name: concepts.OTHER, label: "Other (Specify)" },
 };
+export const careAreaConfig=careAreaFormConfig;
 
-const radioOptions = Object.keys(careAreaFormConfig).map((key) => ({
-  value: key as keyof typeof careAreaFormConfig,
-  label: careAreaFormConfig[key as keyof typeof careAreaFormConfig].label,
-}));
+
+const radioOptions = [
+  {value: concepts.GYNAE_BENCH, label: concepts.GYNAE_BENCH},
+  {value: concepts.SURGICAL_BENCH, label: concepts.SURGICAL_BENCH},
+  {value: concepts.MEDICAL_BENCH, label: concepts.MEDICAL_BENCH},
+  {value: concepts.SHORT_STAY, label: concepts.SHORT_STAY},
+  {value: concepts.ISOLATION, label: concepts.ISOLATION},
+  {value: concepts.TRAUMA, label: concepts.TRAUMA},
+  {value: concepts.RESUSCITATION, label: concepts.RESUSCITATION},
+  {value: concepts.PRIORITY, label: concepts.PRIORITY},
+]
+
+
+
+
 
 const schema = Yup.object().shape({
   careArea: Yup.string().required("Please select a patient care area."),
@@ -87,9 +100,9 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
     const currentDateTime = ServerTime.getServerTimeString();
 
     // Determine selected care area
-    let selectedCareArea =
-      careAreaFormConfig[values.careArea as keyof typeof careAreaFormConfig]
-        ?.name;
+    // let selectedCareArea = values.careArea;
+      // careAreaFormConfig[values.careArea as keyof typeof careAreaFormConfig]
+      //   ?.name;
 
     // If 'Other' is selected, use the specified other care area
     // if (values.careArea === "other") {
@@ -99,7 +112,7 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
     const obs = [
       {
         concept: concepts.CARE_AREA, // UUID for care area
-        value: selectedCareArea,
+        value: values.careArea,
         obsDatetime: currentDateTime,
       },
     ];

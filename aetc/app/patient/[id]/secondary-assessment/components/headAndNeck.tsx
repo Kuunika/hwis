@@ -29,10 +29,19 @@ type Props = {
 };
 const form = {
   generalInformation: {
-    name: "generalInformation",
-    label: "General Information",
+      name: "Notes",
+    label: "Notes",
+      type: "string",
+
   },
+    image:{
+        name: concepts.IMAGE_PART_NAME,
+        label: "Image",
+        image: true,
+    }
 };
+export const headAndNeckFormConfig: any = form;
+
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

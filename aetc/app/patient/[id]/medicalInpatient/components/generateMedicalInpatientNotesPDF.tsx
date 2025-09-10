@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } f
 import { useReactToPrint } from "react-to-print";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { LabOrderPlanTable } from "@/app/patient/components/panels/labOrderPlanTable";
+import { BedsideResults } from "@/app/patient/components/panels/bedsideResults";
 import { PatientInfoTab } from "@/components";
 import { encounters } from "@/constants";
 import { useParameters } from "@/hooks";
@@ -33,14 +34,16 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
         const [medicalInpatientInfo, setMedicalInpatientInfo] = useState({
             presentingComplaint: [] as Array<{ complaint: string, duration: string }>,
             presentingHistory: "",
-            medication: "",
+            medication: [] as string[],        // 👈 was string
             hivProgram: "",
+            onARV: "",
+            healthCenter: "",
             other: "",
             surgicalHistory: "",
             socialHistory: "",
             familyHistory: "",
             // drugGiven: "",
-            allergicReaction: "",
+            allergicReaction: [] as string[],  // 👈 was string
             intoxication: [] as string[],
             general: "",
             systolicBloodpressure: "",
@@ -91,7 +94,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             musculoskeletal: [] as string[],
             neurologic: [] as string[],
             psychiatric: [] as string[],
+            integumentary: [] as string[],
             differentialDiagnosis: [] as string[],
+            additionalNotes: "",
             admittingOfficer: "", // Default value
 
 
@@ -133,14 +138,16 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 const inpatientInfo = {
                     presentingComplaint: [] as Array<{ complaint: string, duration: string }>,
                     presentingHistory: "",
-                    medication: "",
+                    medication: [] as string[],
                     hivProgram: "",
+                    healthCenter: "",
+                    onARV: "",
                     other: "",
                     surgicalHistory: "",
                     socialHistory: "",
                     familyHistory: "",
                     // drugGiven: "",
-                    allergicReaction: "",
+                    allergicReaction: [] as string[],
                     intoxication: [] as string[],
                     general: "",
                     systolicBloodpressure: "",
@@ -191,7 +198,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     musculoskeletal: [] as string[],
                     neurologic: [] as string[],
                     psychiatric: [] as string[],
+                    integumentary: [] as string[],
                     differentialDiagnosis: [] as string[],
+                    additionalNotes: "",
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
 
 
@@ -201,7 +210,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     if (conceptName === "Presenting Complaints") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
-                                const childValue = child.value || child.value_text || "";
+                                const childValue = child.names[0].name || "";
                                 let duration = "";
 
                                 // Check if this child has duration information
@@ -226,9 +235,20 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
-                        inpatientInfo.medication = obs.value || obs.value_text || "";
-                    } else if (conceptName === "HIV program") {
+                        if (obs.children && obs.children.length > 0) {
+                            inpatientInfo.medication = obs.children
+                                .map((child: any) => child.value_text || child.value || "")
+                                .filter(Boolean);
+                        } else {
+                            inpatientInfo.medication = [(obs.value_text || obs.value || "")].filter(Boolean);
+                        }
+                    }
+                    else if (conceptName === "HIV program") {
                         inpatientInfo.hivProgram = obs.value || obs.value_text || "";
+                    } else if (conceptName === "On arv") {
+                        inpatientInfo.onARV = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Health center") {
+                        inpatientInfo.healthCenter = obs.value || obs.value_text || "";
                     } else if (conceptName === "Other") {
                         inpatientInfo.other = obs.value || obs.value_text || "";
                     } else if (conceptName === "Surgical History") {
@@ -238,7 +258,17 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     } else if (conceptName === "Family History") {
                         inpatientInfo.familyHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Allergic reaction") {
-                        inpatientInfo.allergicReaction = obs.value || obs.value_text || "";
+                        if (obs.children && obs.children.length > 0) {
+                            const newAllergies = obs.children
+                                .map((child: any) => child.value_text || child.value || "")
+                                .filter(Boolean);
+                            inpatientInfo.allergicReaction.push(...newAllergies);
+                        } else {
+                            const directValue = obs.value_text || obs.value || "";
+                            if (directValue) {
+                                inpatientInfo.allergicReaction.push(directValue);
+                            }
+                        }
                     } else if (conceptName === "Intoxication") {
                         const intoxicationValues = obs.children
                             ?.filter(
@@ -330,18 +360,33 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.coordination = obs.value || obs.value_text || "";
                     } else if (conceptName === "Summary") {
                         inpatientInfo.summary = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Additional Notes") {
+                        inpatientInfo.additionalNotes = obs.value || obs.value_text || "";
                     }
                     // Review of Systems mapping
                     else if (conceptName === "Review of systems, general") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
-                                const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
-                                if (childName) {
-                                    inpatientInfo.generalReview.push(childName);
+                                // Extract the value instead of the name
+                                const childValue = child.value;
+                                if (childValue) {
+                                    inpatientInfo.generalReview.push(childValue);
                                 }
                             });
                         }
-                    } else if (conceptName === "Review of systems ENT") {
+                    }
+                    // else if (conceptName === "Review of systems, general") {
+                    //     if (obs.children && obs.children.length > 0) {
+                    //         obs.children.forEach(child => {
+                    //             const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
+                    //             if (childName) {
+                    //                 inpatientInfo.generalReview.push(childName);
+                    //             }
+                    //         });
+                    //     }
+                    // }
+
+                    else if (conceptName === "Review of systems ENT") {
                         if (obs.children && obs.children.length > 0) {
                             obs.children.forEach(child => {
                                 const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
@@ -422,6 +467,15 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 }
                             });
                         }
+                    } else if (conceptName === "Skin Infection") {
+                        if (obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childName = child.names && child.names.length > 0 ? child.names[0].name : null;
+                                if (childName) {
+                                    inpatientInfo.integumentary.push(childName);
+                                }
+                            });
+                        }
                     }
 
                     else if (conceptName === "Attempted/ Differential Diagnosis") {
@@ -449,13 +503,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-                        Medical Inpatient
-                    </h1>
+                        Medical Inpatient Admission Sheet                    </h1>
 
                     {Object.values(medicalInpatientInfo).every((val) => (typeof val === "string" ? !val.trim() : val.length === 0)
                     ) ? (
                         <p style={{ fontStyle: "italic", color: "gray" }}>
-                            Medical Inpatient not recorded.
+                            Medical Inpatient Admission Sheet not recorded.
                         </p>
                     ) : (
                         <div className="patient-examination-data">
@@ -483,6 +536,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                             {(medicalInpatientInfo.medication ||
                                 medicalInpatientInfo.hivProgram ||
+                                medicalInpatientInfo.onARV ||
+                                medicalInpatientInfo.healthCenter ||
                                 medicalInpatientInfo.other ||
                                 medicalInpatientInfo.surgicalHistory ||
                                 medicalInpatientInfo.socialHistory ||
@@ -491,16 +546,28 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.intoxication) && (
                                     <>
                                         <h2>Medical History</h2>
-                                        {medicalInpatientInfo.medication && (
+                                        {medicalInpatientInfo.medication.length > 0 && (
                                             <p>
                                                 <strong>Drug: </strong>
-                                                {medicalInpatientInfo.medication}
+                                                {medicalInpatientInfo.medication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.hivProgram && (
                                             <p>
                                                 <strong>HIV Status: </strong>
                                                 {medicalInpatientInfo.hivProgram}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.onARV && (
+                                            <p>
+                                                <strong>On ARV: </strong>
+                                                {medicalInpatientInfo.onARV}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.healthCenter && (
+                                            <p>
+                                                <strong>Referral Medical Facility: </strong>
+                                                {medicalInpatientInfo.healthCenter}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.other && (
@@ -527,13 +594,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.familyHistory}
                                             </p>
                                         )}
-                                        {medicalInpatientInfo.allergicReaction && (
+                                        {medicalInpatientInfo.allergicReaction.length > 0 && (
                                             <p>
                                                 <strong>Allergy: </strong>
-                                                {medicalInpatientInfo.allergicReaction}
+                                                {medicalInpatientInfo.allergicReaction.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
-                                        {medicalInpatientInfo.intoxication && (
+                                        {medicalInpatientInfo.intoxication.length > 0 && (
                                             <p>
                                                 <strong>Intoxication: </strong>
                                                 {medicalInpatientInfo.intoxication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
@@ -551,7 +618,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.genitourinary ||
                                 medicalInpatientInfo.musculoskeletal ||
                                 medicalInpatientInfo.neurologic ||
-                                medicalInpatientInfo.psychiatric
+                                medicalInpatientInfo.psychiatric ||
+                                medicalInpatientInfo.integumentary
 
                             ).length > 0 && (
                                     <>
@@ -562,7 +630,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.generalReview.length > 0 && (
                                                             <>
-                                                                <strong>General Impression: </strong>
+                                                                <strong>General(Constitutional): </strong>
                                                                 {/* {medicalInpatientInfo.generalReview} */}
                                                                 {medicalInpatientInfo.generalReview.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -573,7 +641,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.ent.length > 0 && (
                                                             <>
-                                                                <strong>ENT: </strong>
+                                                                <strong>HEENT: </strong>
                                                                 {/* {medicalInpatientInfo.ent} */}
                                                                 {medicalInpatientInfo.ent.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -596,7 +664,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.cardiac.length > 0 && (
                                                             <>
-                                                                <strong>Cardiac: </strong>
+                                                                <strong>Cardiovascular: </strong>
                                                                 {/* {medicalInpatientInfo.cardiac} */}
                                                                 {medicalInpatientInfo.cardiac.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -647,7 +715,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>
                                                         {medicalInpatientInfo.neurologic.length > 0 && (
                                                             <>
-                                                                <strong>Neurologic: </strong>
+                                                                <strong>Neurological: </strong>
                                                                 {/* {medicalInpatientInfo.neurologic} */}
                                                                 {medicalInpatientInfo.neurologic.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
 
@@ -662,6 +730,18 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                                                             </>
                                                         )} </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                        {medicalInpatientInfo.integumentary.length > 0 && (
+                                                            <>
+                                                                <strong>Integumentary(Skin): </strong>
+                                                                {/* {medicalInpatientInfo.integumentary} */}
+                                                                {medicalInpatientInfo.integumentary.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
+
+                                                            </>
+                                                        )} </td>
+
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -712,6 +792,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.coordination ||
                                 medicalInpatientInfo.summary ||
                                 medicalInpatientInfo.differentialDiagnosis ||
+                                medicalInpatientInfo.additionalNotes ||
                                 medicalInpatientInfo.admittingOfficer
 
                             )
@@ -1046,7 +1127,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
                                         <hr />
 
-                                        {medicalInpatientInfo.differentialDiagnosis && (
+                                        {medicalInpatientInfo.differentialDiagnosis.length > 0 && (
 
                                             <p>
                                                 <strong>Differential Diagnosis: </strong>
@@ -1055,8 +1136,21 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
 
                                         <hr />
-                                        <h3>Investigation Plan</h3>
+                                        <h2>Investigation</h2>
+                                        <h3>
+                                            Bedside Results
+                                        </h3>
+                                        <BedsideResults data={[]} />
+
+                                        <h3>Lab results</h3>
                                         <LabOrderPlanTable />
+                                        {medicalInpatientInfo.additionalNotes && (
+                                            <p>
+                                                <strong>Additional Notes: </strong>
+                                                {medicalInpatientInfo.additionalNotes}
+                                            </p>
+                                        )}
+
                                         <hr />
 
 

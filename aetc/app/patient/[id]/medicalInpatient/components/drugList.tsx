@@ -28,31 +28,43 @@ const initialValues = getInitialValues(form);
 export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [showOther, setShowOther] = useState(false);
   const { medicationOptions } = useFetchMedications();
-    const { ServerTime } = useServerTime();
-  
+  const { ServerTime } = useServerTime();
+
 
   const handleSubmit = (values: any) => {
-    const formValues = { ...values }
+    const formValues = { ...values };
     const obsDatetime = ServerTime.getServerTimeString();
-    const drugObs = mapSearchComboOptionsToConcepts(formValues[form.drug.name], form.drug.name, obsDatetime);
+
+    const selectedDrugs = formValues[form.drug.name] || [];
+
+    const drugObs = selectedDrugs.map((drug: any) => {
+      if (drug.id === concepts.OTHER) {
+        return {
+          concept: concepts.MEDICATION,
+          value: formValues[form.other.name] || "Other drug specified",
+          obsDatetime,
+        };
+      }
+
+      return {
+        concept: concepts.MEDICATION,
+        value: drug.label, // 👈 human-readable drug name
+        obsDatetime,
+      };
+    });
 
     const obs = [
       {
         concept: form.drug.name,
-        value: form.drug.name,
+        value: "Medication",
         groupMembers: drugObs,
-        obsDatetime: obsDatetime,
+        obsDatetime,
       },
-      {
-        concept: form.other.name,
-        value: formValues[form.other.name],
-        obsDatetime
-      }
-    ]
-    onSubmit(obs)
+    ];
 
-
+    onSubmit(obs);
   };
+
   return (
     <FormikInit
       validationSchema={schema}

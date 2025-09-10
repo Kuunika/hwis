@@ -1,6 +1,7 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks";
+import * as React from "react";
 
 import {
   CalculateWaitingTime,
@@ -12,13 +13,50 @@ import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
-import { Tooltip, IconButton, Box } from "@mui/material";
-import { FaPlay } from "react-icons/fa";
+import {
+  Tooltip,
+  IconButton,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  Chip,
+  OutlinedInput,
+  Paper,
+  Typography,
+  Button,
+  Collapse,
+  MenuItem
+} from "@mui/material";
+import {
+  FaPlay,
+  FaRandom,
+  FaFilter,
+  FaTimes,
+  FaChevronDown,
+  FaChevronUp
+} from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
 
+interface FilterState {
+  plannedBy: string[];
+  patientCareArea: string[];
+}
+
 export const ClientsWaitingForTestResults = () => {
   const [deleted, setDeleted] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    plannedBy: [],
+    patientCareArea: [],
+  });
+  const [availableFilters, setAvailableFilters] = useState({
+    plannedByOptions: [] as string[],
+    patientCareAreas: [] as string[],
+  });
+
   const { navigateTo } = useNavigation();
   const {
     loading,
@@ -29,6 +67,7 @@ export const ClientsWaitingForTestResults = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("investigations");
 
   const [inputText, setInputText] = useState("");
@@ -45,6 +84,59 @@ export const ClientsWaitingForTestResults = () => {
       patient_arrival_time: getTime(p.arrival_time),
     }))
     .filter((p) => p.id != deleted);
+
+  // Extract unique filter options from data
+  // useEffect(() => {
+  //   if (rows && rows.length > 0) {
+  //     const plannedByOptions = Array.from(new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
+  //     const patientCareAreas = Array.from(new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
+
+  //     setAvailableFilters({
+  //       plannedByOptions: plannedByOptions.sort(),
+  //       patientCareAreas: patientCareAreas.sort(),
+  //     });
+  //   }
+  // }, [rows]);
+
+  // Filter the data based on active filters
+  const filteredData = React.useMemo(() => {
+    if (!rows) return [];
+
+    return rows.filter((item: any) => {
+      const matchesPlannedBy = filters.plannedBy.length === 0 ||
+        filters.plannedBy.includes(item.last_encounter_creator);
+
+      const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+        filters.patientCareArea.includes(item.patient_care_area);
+
+      return matchesPlannedBy && matchesPatientCareArea;
+    });
+  }, [rows, filters]);
+
+  const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: typeof value === 'string' ? value.split(',') : value
+    }));
+  };
+
+  const clearFilter = (filterType: keyof FilterState, valueToRemove: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: prev[filterType].filter(item => item !== valueToRemove)
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      plannedBy: [],
+      patientCareArea: [],
+    });
+  };
+
+  const hasActiveFilters = filters.plannedBy.length > 0 ||
+    filters.patientCareArea.length > 0;
 
   const columns = [
     {
@@ -135,11 +227,20 @@ export const ClientsWaitingForTestResults = () => {
               title={"start"}
               onClick={() => navigateTo(`/triage/${cell.id}/start`)}
             /> */}
-            <AbscondButton
+            {/* <AbscondButton
               onDelete={() => setDeleted(cell.id)}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
-            />
+            /> */}
+            <Tooltip title="Dispose" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/patient/${cell.id}/disposition`)}
+                aria-label="Dispose"
+                sx={{ color: "grey" }}
+              >
+                <FaRandom />
+              </IconButton>
+            </Tooltip>
             <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
           </>
         );
@@ -147,7 +248,7 @@ export const ClientsWaitingForTestResults = () => {
     },
   ];
 
-  const formatForMobileView = rows?.map((row) => {
+  const formatForMobileView = filteredData?.map((row) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -197,6 +298,7 @@ export const ClientsWaitingForTestResults = () => {
         page: paginationModel.page,
         per_page: paginationModel.pageSize,
         total_pages: totalPages,
+        totalEntries
       }}
       searchText={inputText}
       setSearchString={setInputText}

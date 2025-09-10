@@ -52,16 +52,19 @@ export default function TransferForm({
         concept: concepts.TRANSFER_OUT,
         value: concepts.TRANSFER_OUT,
         obsDatetime: currentDateTime,
-      },
-      {
-        concept: concepts.FACILITY_NAME,
-        value: values.facilityName,
-        obsDatetime: currentDateTime,
-      },
-      {
-        concept: concepts.REASON_FOR_TRANSFER,
-        value: values.reason,
-        obsDatetime: currentDateTime,
+        groupMembers: [
+
+          {
+            concept: concepts.FACILITY_NAME,
+            value: values.facilityName,
+            obsDatetime: currentDateTime,
+          },
+          {
+            concept: concepts.REASON_FOR_TRANSFER,
+            value: values.reason,
+            obsDatetime: currentDateTime,
+          },
+        ]
       },
       // { concept: concepts.TRANSFER_NOTES, value: values.transferNotes, obsDatetime: currentDateTime },
     ];

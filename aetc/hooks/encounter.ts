@@ -63,7 +63,7 @@ export const fetchConceptAndCreateEncounter = () => {
     };
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
-
+    
     return createEncounter(filteredEncounter).then((response) => response.data);
   };
 

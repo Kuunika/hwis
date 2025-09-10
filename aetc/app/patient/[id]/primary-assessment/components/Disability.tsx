@@ -39,6 +39,10 @@ const form = {
     name: concepts.MOTOR_RESPONSE,
     label: "Best Motor Response",
   },
+  gcs: {
+    name: concepts.GCS,
+    label: "GCS",
+  },
   focalNeurology: {
     name: concepts.FOCAL_NEUROLOGY,
     label: "Focal Neurology",
@@ -77,6 +81,8 @@ const form = {
     label: "Units",
   },
 };
+
+export const disabilityFormConfig = form;
 
 const schema = yup.object({
   [form.eyeOpening.name]: yup.string().required().label(form.eyeOpening.label),
@@ -237,7 +243,15 @@ export const Disability = ({ onSubmit }: Props) => {
     delete values[form.rightPupilSize.name];
     delete values[form.rightPupilReaction.name];
 
-    const obs = getObservations(values, obsDateTime);
+    const gcs =
+      Number(eyeOpeningValue || 0) +
+      Number(verbalResponseValue || 0) +
+      Number(motorResponseValue || 0);
+
+    const obs = getObservations(
+      { ...values, [concepts.GCS]: gcs },
+      obsDateTime
+    );
 
     const obsWithEyes = [...obs, ...eyes];
     handleSubmit(obsWithEyes);

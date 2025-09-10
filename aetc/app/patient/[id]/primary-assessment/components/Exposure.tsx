@@ -25,23 +25,31 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature",
   },
-  skinRashInfo: {
-    name: concepts.SKIN_RASH,
-    label: "Does the patient have a rash?",
-  },
+  // skinRashInfo: {
+  //   name: concepts.SKIN_RASH,
+  //   label: "Does the patient have a rash?",
+  // },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
-  abnormalities: {
-    name: concepts.ABNORMALITIES,
-    label: "Other Abnormalities",
-  },
-  injuries: {
-    name: concepts.INJURY,
-    label: "Other Injuries",
-  },
+  image:{
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
+  }
+
+  // abnormalities: {
+  //   name: concepts.ABNORMALITIES,
+  //   label: "Other Abnormalities",
+  // },
+  // injuries: {
+  //   name: concepts.INJURY,
+  //   label: "Other Injuries",
+  // },
 };
+
+export const exposureFormConfig=form;
 
 const schema = yup.object({
   [form.temperatureInfo.name]: yup
