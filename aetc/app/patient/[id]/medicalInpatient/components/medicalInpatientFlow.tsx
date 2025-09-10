@@ -14,6 +14,7 @@ import { DrugList } from "./drugList";
 import { PhysicalExamination } from "./physicalExamination";
 import { DifferentialDiagnosis } from "./differentialDiagnosis";
 import { ReviewOfSystems } from "./reviewOfSystems";
+import { Summary } from "./summary";
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
 import { useParameters } from "@/hooks";
@@ -32,7 +33,7 @@ export const MedicalInPatientFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [obs, setObs] = useState<any[]>([]);
 
-  // Restructured steps array to match your desired order
+  // Restructured steps array with Summary as separate section
   const steps = [
     {
       id: 1,
@@ -76,17 +77,21 @@ export const MedicalInPatientFlow = () => {
     },
     {
       id: 11,
-      label: "Differential Diagnosis",
+      label: "Summary",
     },
     {
       id: 12,
+      label: "Differential Diagnosis",
+    },
+    {
+      id: 13,
       label: "Investigation",
     },
   ];
 
   useEffect(() => {
     if (isSuccess) {
-      setActiveStep(12); // Updated to final step
+      setActiveStep(13); // Updated to final step
     }
   }, [isSuccess]);
 
@@ -140,9 +145,14 @@ export const MedicalInPatientFlow = () => {
     setActiveStep(10);
   };
 
-  const handleDifferentialSubmit = (values: any) => {
+  const handleSummary = (values: any) => {
     setObs((obs) => [...obs, ...values]);
     setActiveStep(11);
+  };
+
+  const handleDifferentialSubmit = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(12);
   };
 
   // Final submission happens here after collecting Investigation data
@@ -175,6 +185,7 @@ export const MedicalInPatientFlow = () => {
           onSkip={() => setActiveStep(9)}
         />
         <PhysicalExamination onSubmit={handlePhysicalExam} />
+        <Summary onSubmit={handleSummary} />
         <DifferentialDiagnosis
           loading={isLoading}
           onSubmit={handleDifferentialSubmit}
