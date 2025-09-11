@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local"; // ⬅️ use local instead of google
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
@@ -11,21 +10,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { PrinterDialog } from "@/components/printerDialog";
 import { ErrorBoundary } from "./components/errorBoundary";
 
-// Load Inter locally
-const inter = localFont({
-  src: [
-    {
-      path: "../public/fonts/Inter-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Inter-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-});
+
 
 const APP_NAME = "Mahis";
 const APP_DEFAULT_TITLE = "Malawi Healthcare information System";
@@ -77,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <body
         style={{ backgroundColor: "#F6F6F6" }}
         suppressHydrationWarning={true}
