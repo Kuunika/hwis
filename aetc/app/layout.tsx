@@ -1,18 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local"; // ⬅️ use local instead of google
 import "./globals.css";
 import { NavBar } from "@/components";
 import { ProviderTheme } from "@/components/providers";
 import { ContextProviders, ReactQueryProvider } from "@/providers";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigation } from "@/hooks";
 import { OverlayLoader } from "@/components/backdrop";
 import CssBaseline from "@mui/material/CssBaseline";
 import { PrinterDialog } from "@/components/printerDialog";
 import { ErrorBoundary } from "./components/errorBoundary";
 
-const inter = Inter({ subsets: ["latin"] });
+// Load Inter locally
+const inter = localFont({
+  src: [
+    {
+      path: "../public/fonts/Inter-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Inter-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+});
 
 const APP_NAME = "Mahis";
 const APP_DEFAULT_TITLE = "Malawi Healthcare information System";
@@ -31,7 +44,6 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -65,11 +77,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head></head>
+    <html lang="en" className={inter.className}>
       <body
         style={{ backgroundColor: "#F6F6F6" }}
-        className={inter.className}
         suppressHydrationWarning={true}
       >
         <ErrorBoundary>
