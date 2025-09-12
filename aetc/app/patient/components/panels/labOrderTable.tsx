@@ -89,6 +89,7 @@ export const LabOrderTable = () => {
   const handlePrint = useCallback(() => {
     if (printFuncRef.current && typeof printFuncRef.current === "function") {
       printFuncRef.current();
+      setShowDialog(false);
     }
   }, []);
 
