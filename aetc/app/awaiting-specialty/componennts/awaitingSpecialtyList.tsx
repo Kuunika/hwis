@@ -310,211 +310,222 @@ export const AwaitingSpecialtyList = () => {
     });
 
     return (
-        <>
-            {/* Filter Section */}
-            <Paper sx={{ p: 2, mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FaFilter />
-                        <Typography variant="h6">Filters</Typography>
-                        {hasActiveFilters && (
-                            <Chip
-                                label={`${filters.specialty.length + filters.patientCareArea.length + filters.recordedBy.length} active`}
-                                size="small"
-                                color="primary"
-                            />
-                        )}
+      <>
+        {/* Filter Section */}
+        <Paper sx={{ p: 2, mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <FaFilter />
+              <Typography variant="h6">Filters</Typography>
+              {hasActiveFilters && (
+                <Chip
+                  label={`${filters.specialty.length + filters.patientCareArea.length + filters.recordedBy.length} active`}
+                  size="small"
+                  color="primary"
+                />
+              )}
+            </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              {hasActiveFilters && (
+                <Button
+                  startIcon={<FaTimes />}
+                  onClick={clearAllFilters}
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                >
+                  Clear All
+                </Button>
+              )}
+              <Button
+                startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
+                onClick={() => setShowFilters(!showFilters)}
+                size="small"
+                variant="outlined"
+              >
+                {showFilters ? "Hide" : "Show"} Filters
+              </Button>
+            </Box>
+          </Box>
+
+          <Collapse in={showFilters}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+              {/* Specialty Filter */}
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Specialty</InputLabel>
+                <Select
+                  multiple
+                  value={filters.specialty}
+                  onChange={handleFilterChange("specialty")}
+                  input={<OutlinedInput label="Specialty" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          size="small"
+                          onDelete={() => clearFilter("specialty", value)}
+                          onMouseDown={(event) => {
+                            event.stopPropagation();
+                          }}
+                        />
+                      ))}
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        {hasActiveFilters && (
-                            <Button
-                                startIcon={<FaTimes />}
-                                onClick={clearAllFilters}
-                                size="small"
-                                variant="outlined"
-                                color="secondary"
-                            >
-                                Clear All
-                            </Button>
-                        )}
-                        <Button
-                            startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
-                            onClick={() => setShowFilters(!showFilters)}
-                            size="small"
-                            variant="outlined"
-                        >
-                            {showFilters ? 'Hide' : 'Show'} Filters
-                        </Button>
+                  )}
+                >
+                  {availableFilters.specialties.map((specialty) => (
+                    <MenuItem key={specialty} value={specialty}>
+                      {specialty}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Patient Care Area Filter */}
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Patient Care Area</InputLabel>
+                <Select
+                  multiple
+                  value={filters.patientCareArea}
+                  onChange={handleFilterChange("patientCareArea")}
+                  input={<OutlinedInput label="Patient Care Area" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          size="small"
+                          onDelete={() => clearFilter("patientCareArea", value)}
+                          onMouseDown={(event) => {
+                            event.stopPropagation();
+                          }}
+                        />
+                      ))}
                     </Box>
-                </Box>
+                  )}
+                >
+                  {availableFilters.patientCareAreas.map((area) => (
+                    <MenuItem key={area} value={area}>
+                      {area}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-                <Collapse in={showFilters}>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-                        {/* Specialty Filter */}
-                        <FormControl sx={{ minWidth: 200 }}>
-                            <InputLabel>Specialty</InputLabel>
-                            <Select
-                                multiple
-                                value={filters.specialty}
-                                onChange={handleFilterChange('specialty')}
-                                input={<OutlinedInput label="Specialty" />}
-                                renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip
-                                                key={value}
-                                                label={value}
-                                                size="small"
-                                                onDelete={() => clearFilter('specialty', value)}
-                                                onMouseDown={(event) => {
-                                                    event.stopPropagation();
-                                                }}
-                                            />
-                                        ))}
-                                    </Box>
-                                )}
-                            >
-                                {availableFilters.specialties.map((specialty) => (
-                                    <MenuItem key={specialty} value={specialty}>
-                                        {specialty}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-
-                        {/* Patient Care Area Filter */}
-                        <FormControl sx={{ minWidth: 200 }}>
-                            <InputLabel>Patient Care Area</InputLabel>
-                            <Select
-                                multiple
-                                value={filters.patientCareArea}
-                                onChange={handleFilterChange('patientCareArea')}
-                                input={<OutlinedInput label="Patient Care Area" />}
-                                renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip
-                                                key={value}
-                                                label={value}
-                                                size="small"
-                                                onDelete={() => clearFilter('patientCareArea', value)}
-                                                onMouseDown={(event) => {
-                                                    event.stopPropagation();
-                                                }}
-                                            />
-                                        ))}
-                                    </Box>
-                                )}
-                            >
-                                {availableFilters.patientCareAreas.map((area) => (
-                                    <MenuItem key={area} value={area}>
-                                        {area}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-
-                        {/* Recorded By Filter */}
-                        <FormControl sx={{ minWidth: 200 }}>
-                            <InputLabel>Recorded By</InputLabel>
-                            <Select
-                                multiple
-                                value={filters.recordedBy}
-                                onChange={handleFilterChange('recordedBy')}
-                                input={<OutlinedInput label="Recorded By" />}
-                                renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip
-                                                key={value}
-                                                label={value}
-                                                size="small"
-                                                onDelete={() => clearFilter('recordedBy', value)}
-                                                onMouseDown={(event) => {
-                                                    event.stopPropagation();
-                                                }}
-                                            />
-                                        ))}
-                                    </Box>
-                                )}
-                            >
-                                {availableFilters.recordedByOptions.map((person) => (
-                                    <MenuItem key={person} value={person}>
-                                        {person}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+              {/* Recorded By Filter */}
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Recorded By</InputLabel>
+                <Select
+                  multiple
+                  value={filters.recordedBy}
+                  onChange={handleFilterChange("recordedBy")}
+                  input={<OutlinedInput label="Recorded By" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          size="small"
+                          onDelete={() => clearFilter("recordedBy", value)}
+                          onMouseDown={(event) => {
+                            event.stopPropagation();
+                          }}
+                        />
+                      ))}
                     </Box>
-                </Collapse>
+                  )}
+                >
+                  {availableFilters.recordedByOptions.map((person) => (
+                    <MenuItem key={person} value={person}>
+                      {person}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Collapse>
 
-                {/* Active Filters Display */}
-                {hasActiveFilters && (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
-                            Active filters:
-                        </Typography>
-                        {filters.specialty.map((filter) => (
-                            <Chip
-                                key={`specialty-${filter}`}
-                                label={`Specialty: ${filter}`}
-                                onDelete={() => clearFilter('specialty', filter)}
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                            />
-                        ))}
-                        {filters.patientCareArea.map((filter) => (
-                            <Chip
-                                key={`area-${filter}`}
-                                label={`Care Area: ${filter}`}
-                                onDelete={() => clearFilter('patientCareArea', filter)}
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                            />
-                        ))}
-                        {filters.recordedBy.map((filter) => (
-                            <Chip
-                                key={`recorded-${filter}`}
-                                label={`Recorded By: ${filter}`}
-                                onDelete={() => clearFilter('recordedBy', filter)}
-                                size="small"
-                                color="primary"
-                                variant="outlined"
-                            />
-                        ))}
-                    </Box>
-                )}
-            </Paper>
+          {/* Active Filters Display */}
+          {hasActiveFilters && (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Typography variant="body2" sx={{ mr: 1, alignSelf: "center" }}>
+                Active filters:
+              </Typography>
+              {filters.specialty.map((filter) => (
+                <Chip
+                  key={`specialty-${filter}`}
+                  label={`Specialty: ${filter}`}
+                  onDelete={() => clearFilter("specialty", filter)}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+              {filters.patientCareArea.map((filter) => (
+                <Chip
+                  key={`area-${filter}`}
+                  label={`Care Area: ${filter}`}
+                  onDelete={() => clearFilter("patientCareArea", filter)}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+              {filters.recordedBy.map((filter) => (
+                <Chip
+                  key={`recorded-${filter}`}
+                  label={`Recorded By: ${filter}`}
+                  onDelete={() => clearFilter("recordedBy", filter)}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+            </Box>
+          )}
+        </Paper>
 
-            <PatientTableListServer
-                columns={columns}
-                data={
-                    filteredData?.length
-                        ? {
-                            data: filteredData.map((row: any) => ({ id: row.uuid, ...row })),
-                            page: paginationModel.page,
-                            per_page: paginationModel.pageSize,
-                            total_pages: totalPages,
-                        }
-                        : { data: [], page: 1, per_page: 10, total_pages: 0 }
+        <PatientTableListServer
+          columns={columns}
+          data={
+            filteredData?.length
+              ? {
+                  data: filteredData.map((row: any) => ({
+                    id: row.uuid,
+                    ...row,
+                  })),
+                  page: paginationModel.page,
+                  per_page: paginationModel.pageSize,
+                  total_pages: totalPages,
+                  totalEntries: filteredData.length,
                 }
-                searchText={inputText}
-                setSearchString={setInputText}
-                setPaginationModel={setPaginationModel}
-                paginationModel={paginationModel}
-                loading={loading}
-                formatForMobileView={formatForMobileView ? formatForMobileView : []}
-                onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
-            />
-            <CPRDialogForm
-                patientuuid={patientId}
-                visituuid={visitUUID}
-                open={cpr}
-                onClose={() => setCpr(false)}
-            />
-        </>
+              : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
+          }
+          searchText={inputText}
+          setSearchString={setInputText}
+          setPaginationModel={setPaginationModel}
+          paginationModel={paginationModel}
+          loading={loading}
+          formatForMobileView={formatForMobileView ? formatForMobileView : []}
+          onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
+        />
+        <CPRDialogForm
+          patientuuid={patientId}
+          visituuid={visitUUID}
+          open={cpr}
+          onClose={() => setCpr(false)}
+        />
+      </>
     );
 };
 

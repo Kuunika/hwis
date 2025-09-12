@@ -65,13 +65,13 @@ export const AddClinicalNotes = ({
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
           mb: 2,
           width: "100%",
         }}
       >
-        <Button
+        {/* <Button
           aria-describedby={id}
           variant="contained"
           onClick={handleClick}
@@ -94,7 +94,7 @@ export const AddClinicalNotes = ({
           }}
         >
           Add Notes
-        </Button>
+        </Button> */}
 
         <div>
           <Button

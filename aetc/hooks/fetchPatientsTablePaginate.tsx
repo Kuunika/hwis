@@ -27,6 +27,7 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
   const [patients, setPatients] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalEntries, setTotalEntries] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
@@ -49,6 +50,7 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
 
       setPatients(response.data.data);
       setTotalPages(response.data.total_pages);
+      setTotalEntries(response.data.totalEntries);
     } catch (error) {
       console.error("Error fetching patients:", error);
       // Optionally set error state here
@@ -80,6 +82,7 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
     searchText,
     setSearchText,
     totalPages,
+    totalEntries,
     setOnSwitch,
     refetch, // Add refetch to the returned object
   };

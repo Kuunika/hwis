@@ -441,8 +441,9 @@ export const ClientsWaitingForTestResults = () => {
               page: paginationModel.page,
               per_page: paginationModel.pageSize,
               total_pages: totalPages,
+              totalEntries: filteredData.length,
             }
-            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
         }
         searchText={inputText}
         setSearchString={setInputText}

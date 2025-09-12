@@ -36,6 +36,7 @@ export const ClientWaitingForTriage = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("triage");
 
   const [inputText, setInputText] = useState("");
@@ -162,6 +163,7 @@ export const ClientWaitingForTriage = () => {
         page: paginationModel.page,
         per_page: paginationModel.pageSize,
         total_pages: totalPages,
+        totalEntries,
       }}
       searchText={inputText}
       setSearchString={setInputText}

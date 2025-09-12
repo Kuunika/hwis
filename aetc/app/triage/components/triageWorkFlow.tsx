@@ -268,10 +268,7 @@ export default function TriageWorkFlow() {
           },
           {
             concept: concepts.CARE_AREA,
-            value:
-              triageResult === "green" || triageResult === "yellow"
-                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
-                : "",
+            value: formData?.serviceArea?.[concepts.CARE_AREA] || "",
             obsDatetime: dateTime,
           },
           {
@@ -336,11 +333,11 @@ export default function TriageWorkFlow() {
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
     setShowForm(false);
-    if (triageResult == "green" || triageResult == "yellow") {
-      setShowModal(true);
-      return;
-    }
-    triggerSubmission();
+    setShowModal(true);
+    // if (triageResult == "green" || triageResult == "yellow") {
+    //   return;
+    // }
+    // triggerSubmission();
   };
 
   const handleVitalsSubmit = (values: any) => {
@@ -383,6 +380,7 @@ export default function TriageWorkFlow() {
   };
 
   const handleServiceArea = (values: any) => {
+
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
 
@@ -503,6 +501,8 @@ export default function TriageWorkFlow() {
           // onClickAccordion={handleClickAccordion}
           active={activeStep}
           onBack={() => navigateBack()}
+          allowPanelActiveOnClick={false}
+          backButtonProfileText="Back to triage list"
         >
           <PresentingComplaintsForm
             getFormValues={setPresentingComplaints}
@@ -660,6 +660,8 @@ export default function TriageWorkFlow() {
           Triage status is (
           {triageResult === "green" ? (
             <span style={{ color: "green" }}>{triageResult}</span>
+          ) : triageResult === "red" ? (
+            <span style={{ color: "red" }}>{triageResult}</span>
           ) : (
             <span style={{ color: "#cc9900" }}>{triageResult}</span>
           )}
