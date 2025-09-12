@@ -18,7 +18,7 @@ interface PaginationModel {
   pageSize: number;
 }
 
-export const fetchPatientsTablePaginate = (category: Category) => {
+export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string) => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({
     page: 0,
     pageSize: 10,
@@ -43,7 +43,8 @@ export const fetchPatientsTablePaginate = (category: Category) => {
         paginationModel.pageSize,
         searchText,
         paginationModel.page + 1,
-        date || ""
+        date || "",
+        patientCareArea
       );
 
       setPatients(response.data.data);
@@ -89,7 +90,8 @@ export const getPatientsFromCacheOrFetch = async (
   pageSize: number,
   searchString: string,
   page: number,
-  date: string
+  date: string,
+  patientCareArea?: string
 ): Promise<any> => {
   const cacheKey = [category, pageSize, searchString, page];
   // const cachedPatientList =
@@ -99,9 +101,15 @@ export const getPatientsFromCacheOrFetch = async (
   //   console.log("using cached data", cachedPatientList);
   //   return cachedPatientList;
   // } else {
-  const patientList = await getDailyVisitsPaginated(
-    `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`
-  );
+    let query = `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`;
+
+    if (patientCareArea) {
+      // use the backend endpoint for filtering
+      query = `category=${category}&paginate=false&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+    }
+    
+    const patientList = await getDailyVisitsPaginated(query);
+    
   // queryClient.setQueryData(cacheKey, patientList);
 
   // setTimeout(() => {

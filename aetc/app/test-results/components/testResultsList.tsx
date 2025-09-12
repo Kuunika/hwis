@@ -58,6 +58,8 @@ export const ClientsWaitingForTestResults = () => {
   });
 
   const { navigateTo } = useNavigation();
+  const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+
   const {
     loading,
     patients,
@@ -67,7 +69,7 @@ export const ClientsWaitingForTestResults = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
-  } = fetchPatientsTablePaginate("investigations");
+  } = fetchPatientsTablePaginate("investigations", patientCareFilter);
 
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -426,19 +428,26 @@ export const ClientsWaitingForTestResults = () => {
         )}
       </Paper>
 
+
       <PatientTableListServer
         columns={columns}
-        data={{
-          data: filteredData ?? [],
-          page: paginationModel.page,
-          per_page: paginationModel.pageSize,
-          total_pages: totalPages,
-        }}
+        data={
+          filteredData?.length
+            ? {
+              data: filteredData.map((row: any) => ({
+                id: row.id || row.uuid, // Ensure proper ID mapping
+                ...row,
+              })),
+              page: paginationModel.page,
+              per_page: paginationModel.pageSize,
+              total_pages: totalPages,
+            }
+            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+        }
         searchText={inputText}
         setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
         paginationModel={paginationModel}
-        // loading={isPending || isRefetching}
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}

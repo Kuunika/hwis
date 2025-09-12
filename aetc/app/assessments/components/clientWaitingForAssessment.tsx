@@ -64,6 +64,8 @@ export const ClientWaitingForAssessment = () => {
   });
 
   const { navigateTo } = useNavigation();
+  const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+
   const {
     paginationModel,
     patients: data,
@@ -73,7 +75,7 @@ export const ClientWaitingForAssessment = () => {
     loading,
     totalPages,
     setOnSwitch,
-  } = fetchPatientsTablePaginate("assessment");
+  } = fetchPatientsTablePaginate("assessment", patientCareFilter);
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
 
@@ -449,7 +451,10 @@ export const ClientWaitingForAssessment = () => {
         data={
           filteredData?.length
             ? {
-              data: filteredData,
+              data: filteredData.map((row: any) => ({
+                id: row.uuid || row.id, // Ensure proper ID mapping
+                ...row,
+              })),
               page: paginationModel.page,
               per_page: paginationModel.pageSize,
               total_pages: totalPages,
