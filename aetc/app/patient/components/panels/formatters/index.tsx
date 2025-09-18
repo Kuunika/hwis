@@ -44,6 +44,8 @@ export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
     return { item: { [vital.label]: value || "N/A" } };
   });
 
+  console.log({data});
+
   return [
     {
       heading: "Vitals",
