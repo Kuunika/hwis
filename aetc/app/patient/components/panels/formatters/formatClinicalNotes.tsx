@@ -19,6 +19,7 @@ import {
 import ResultsTable from "../tabularDisplayInformation";
 import { ContinuationNotes } from "../continuationNotes";
 
+
 export const formatClinicalNotesData = (
   getEncountersByType: (type: string) => any[]
 ) => {

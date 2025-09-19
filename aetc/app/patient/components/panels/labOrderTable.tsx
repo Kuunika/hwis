@@ -86,11 +86,11 @@ export const LabOrderTable = () => {
   }, []);
 
   // Use useCallback for the print handler
-  const handlePrint = useCallback(() => {
+  const handlePrint = () => {
     if (printFuncRef.current && typeof printFuncRef.current === "function") {
       printFuncRef.current();
     }
-  }, []);
+  }
 
   const columns = [
     {
