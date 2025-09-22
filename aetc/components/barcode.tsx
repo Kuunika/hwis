@@ -350,7 +350,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
       }
     };
 
-    setTriggerFunc(() => convertToCanvas);
+    setTriggerFunc(convertToCanvas);
   }, [printer, setTriggerFunc]);
 
   return (
