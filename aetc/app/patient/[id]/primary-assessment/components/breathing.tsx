@@ -168,7 +168,7 @@ const form = {
   },
   oxygenSaturation: {
     child: true,
-    name: concepts.OXYGEN_SATURATION,
+    name: concepts.BLOOD_OXYGEN_SATURATION,
     label: "Oxygen Saturation",
   },
   oxygenNeeded: {
