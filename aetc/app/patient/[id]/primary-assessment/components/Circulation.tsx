@@ -158,8 +158,8 @@ const form = {
         label: "Abdomen Image",
         image: true,
         parentConcept: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
-      }]
-    
+      },
+    ],
   },
   abdnomenDistention: {
     name: concepts.HEADACHE,
@@ -263,7 +263,7 @@ const form = {
   },
   pulse: {
     child: true,
-    name: concepts.PULSE_RATE,
+    name: concepts.HEART_RATE,
     label: "Pulse rate",
   },
   centralLineCannulationSite: {
