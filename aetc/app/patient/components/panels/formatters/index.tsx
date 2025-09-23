@@ -220,7 +220,7 @@ export const formatSampleHistory = (data: {
 
 export const formatSoapierNotes = (data: Obs[]) => [
   {
-    heading: "Soapier Notes",
+    heading: "",
     children: buildNotesObject(soapierFormConfig, data),
     user: formatUser(data),
   },

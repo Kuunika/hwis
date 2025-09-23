@@ -106,9 +106,9 @@ export const MultiColumnNotes: React.FC<MultiColumnNotesProps> = ({
                               borderRadius: "6px",
                             }}
                           >
-                            <strong>
+                          { section?.heading && <strong>
                               - {section?.heading || "Untitled Section"}
-                            </strong>
+                            </strong>}
                             <RenderChildren children={section?.children} />
                             <div
                               style={{
