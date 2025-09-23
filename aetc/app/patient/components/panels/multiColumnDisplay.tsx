@@ -110,19 +110,17 @@ export const MultiColumnNotes: React.FC<MultiColumnNotesProps> = ({
                               - {section?.heading || "Untitled Section"}
                             </strong>
                             <RenderChildren children={section?.children} />
-                            {section.user && (
-                              <div
-                                style={{
-                                  color: "#7f8c8d",
-                                  fontSize: "14px",
-                                  letterSpacing: "0.2px",
-                                  marginTop: "8px",
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                ~ {section.user}
-                              </div>
-                            )}
+                            <div
+                              style={{
+                                color: "#7f8c8d",
+                                fontSize: "14px",
+                                letterSpacing: "0.2px",
+                                marginTop: "8px",
+                                fontStyle: "italic",
+                              }}
+                            >
+                              {section.user}
+                            </div>
                           </div>
                         ))
                       ) : (
