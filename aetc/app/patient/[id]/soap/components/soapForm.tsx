@@ -121,7 +121,7 @@ const form = {
   },
   objective: {
     name: concepts.MEDICAL_RECORD_OBSERVATIONS,
-    label: "General observation",
+    label: "General/Other observation",
   },
 
   vitals: {
