@@ -124,7 +124,12 @@ export function NavigationBar({
 
   useEffect(() => {
     // Only runs on the client
-    setCurrentDateTime(getHumanReadableShortDate(getDateTime()));
+    const loadDateTime = async () => {
+      const dateTime = await getDateTime();
+      setCurrentDateTime(getHumanReadableShortDate(dateTime));
+    };
+
+    loadDateTime();
   }, []);
 
   const {
