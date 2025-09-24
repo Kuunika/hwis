@@ -119,16 +119,15 @@ const form = {
     name: concepts.SUBJECTIVE,
     label: "Subjective",
   },
-  objective: {
-    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
-    label: "General/Other observation",
-  },
-
-  vitals: {
-    name: "vitals",
-    label: "Vitals",
+  obj: {
+    name: "objective",
+    label: "Objective",
     type: "title",
     children: [
+      {
+        concept: concepts.MEDICAL_RECORD_OBSERVATIONS,
+        label: "General/Other observation",
+      },
       {
         concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
         label: "Systolic",
@@ -155,6 +154,42 @@ const form = {
       },
     ],
   },
+  objective: {
+    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
+    label: "General/Other observation",
+    child: true,
+  },
+  // vitals: {
+  //   name: "vitals",
+  //   label: "Vitals",
+  //   type: "title",
+  //   children: [
+  //     {
+  //       concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
+  //       label: "Systolic",
+  //     },
+  //     {
+  //       concept: concepts.DIASTOLIC_BLOOD_PRESSURE,
+  //       label: "Diastolic",
+  //     },
+  //     {
+  //       concept: concepts.PULSE_RATE,
+  //       label: "Pulse Rate",
+  //     },
+  //     {
+  //       concept: concepts.RESPIRATORY_RATE,
+  //       label: "Respiratory Rate",
+  //     },
+  //     {
+  //       concept: concepts.BLOOD_OXYGEN_SATURATION,
+  //       label: "SPO2",
+  //     },
+  //     {
+  //       concept: concepts.TEMPERATURE,
+  //       label: "Temperature",
+  //     },
+  //   ],
+  // },
   bedsideInvestigations: {
     name: "bedside",
     label: "Bed side investigations",

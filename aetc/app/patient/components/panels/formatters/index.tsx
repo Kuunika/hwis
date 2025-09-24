@@ -434,8 +434,12 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
     .flatMap((key) => {
       const config = formConfig[key];
       const value = getObservationValue(obs, config.name);
-
-      if (!value && !config.hasGroupMembers && !config.image) {
+      if (
+        !value &&
+        !config.hasGroupMembers &&
+        !config.image &&
+        config.type != "title"
+      ) {
         return [];
       }
 
