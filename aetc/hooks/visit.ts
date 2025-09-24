@@ -17,30 +17,29 @@ export const addVisit = () => {
   });
 };
 export const closeCurrentVisit = () => {
-  const updateVisit = (visitUuid: string) =>
-    closeVisit(visitUuid, { stopDatetime: getDateTime() }).then(
+  const updateVisit = async (visitUuid: string) =>
+    closeVisit(visitUuid, { stopDatetime: await getDateTime() }).then(
       (response) => response.data
     );
 
   return useMutation({
     mutationFn: updateVisit,
-
   });
 };
 
-export const reOpenRecentClosedVisit = (patientId:string) => {
+export const reOpenRecentClosedVisit = (patientId: string) => {
   const queryClient = useQueryClient();
   const updateVisit = (visitUuid: string) =>
-    closeVisit(visitUuid, { stopDatetime: 'null' }).then(
+    closeVisit(visitUuid, { stopDatetime: "null" }).then(
       (response) => response.data
     );
 
   return useMutation({
     mutationFn: updateVisit,
-    onSuccess: ()=>{
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["patients",patientId,"visits"],
+        queryKey: ["patients", patientId, "visits"],
       });
-    }
+    },
   });
 };
