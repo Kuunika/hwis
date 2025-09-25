@@ -2,139 +2,136 @@
 import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import {
-    FormikInit,
-    FormFieldContainer,
-    WrapperBox,
-    RadioGroupInput,
-    FormFieldContainerLayout,
-    TextInputField,
+  FormikInit,
+  FormFieldContainer,
+  WrapperBox,
+  RadioGroupInput,
+  FormFieldContainerLayout,
+  TextInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { useFormikContext, useField } from "formik";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
-
 type Prop = {
-    onSubmit: (values: any) => void;
-    onSkip: () => void;
+  onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 // Validation schema with conditional field
 const schema = Yup.object().shape({
-    hasSurgicalHistory: Yup.string().required("Please select Yes or No"),
-    surgicalDetails: Yup.string().when("hasSurgicalHistory", {
-        is: concepts.YES,
-        then: (schema) => schema.required("Please enter surgical details"),
-        otherwise: (schema) => schema.notRequired(),
-    }),
+  hasSurgicalHistory: Yup.string().required("Please select Yes or No"),
+  surgicalDetails: Yup.string().when("hasSurgicalHistory", {
+    is: concepts.YES,
+    then: (schema) => schema.required("Please enter surgical details"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 export const PastSurgicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
-    const { params } = useParameters();
-    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
-    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
-    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { init, ServerTime } = useServerTime();
+  const { params } = useParameters();
+  const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+  const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+  const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+  const { init, ServerTime } = useServerTime();
 
+  useEffect(() => {
+    if (patientVisits) {
+      const active = patientVisits.find((visit) => !visit.date_stopped);
+      if (active) {
+        setActiveVisit(active as unknown as Visit);
+      }
+    }
+  }, [patientVisits]);
 
-    useEffect(() => {
-        if (patientVisits) {
-            const active = patientVisits.find((visit) => !visit.date_stopped);
-            if (active) {
-                setActiveVisit(active as unknown as Visit);
-            }
-        }
-    }, [patientVisits]);
+  const handleSubmit = async (values: any) => {
+    const currentDateTime = ServerTime.getServerTimeString();
 
-    const handleSubmit = async (values: any) => {
-        const currentDateTime = ServerTime.getServerTimeString();
+    const obs = [
+      {
+        concept: concepts.SURGICAL_PROCEDURE, // this captures YES or NO
+        value: values.hasSurgicalHistory,
+        obsDatetime: currentDateTime,
+      },
+    ];
 
-        const obs = [
-            {
-                concept: concepts.SURGICAL_PROCEDURE, // this captures YES or NO
-                value: values.hasSurgicalHistory,
-                obsDatetime: currentDateTime,
-            },
-        ];
+    // Only add procedures detail if user said YES
+    if (values.hasSurgicalHistory === concepts.YES && values.surgicalDetails) {
+      obs.push({
+        concept: concepts.PROCEDURES,
+        value: values.surgicalDetails,
+        obsDatetime: currentDateTime,
+      });
+    }
 
-        // Only add procedures detail if user said YES
-        if (values.hasSurgicalHistory === concepts.YES && values.surgicalDetails) {
-            obs.push({
-                concept: concepts.PROCEDURES,
-                value: values.surgicalDetails,
-                obsDatetime: currentDateTime,
-            });
-        }
-
-        const payload = {
-            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
-            visit: activeVisit?.uuid,
-            patient: params.id,
-            encounterDatetime: currentDateTime,
-            obs,
-        };
-
-        try {
-            await submitEncounter(payload);
-            onSubmit(values);
-        } catch (error) {
-            console.error("Error submitting surgical history:", error);
-        }
+    const payload = {
+      encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: currentDateTime,
+      obs,
     };
 
-    // Custom component to show conditional field
-    const SurgicalDetailsField = () => {
-        const { values } = useFormikContext<any>();
-        const [field, meta] = useField("surgicalDetails");
+    try {
+      await submitEncounter(payload);
+      onSubmit(values);
+    } catch (error) {
+      console.error("Error submitting surgical history:", error);
+    }
+  };
 
-        if (values.hasSurgicalHistory !== concepts.YES) {
-            return null;
-        }
+  // Custom component to show conditional field
+  const SurgicalDetailsField = () => {
+    const { values } = useFormikContext<any>();
+    const [field, meta] = useField("surgicalDetails");
 
-        return (
-            <TextInputField
-                {...field}
-                id="surgicalDetails"
-                sx={{ width: "100%" }}
-                name="surgicalDetails"
-                label="Enter previous procedures and surgeries (Month & Year)"
-                placeholder="E.g., Appendectomy - January 2020"
-                multiline
-                rows={5}
-            />
-        );
-    };
+    if (values.hasSurgicalHistory !== concepts.YES) {
+      return null;
+    }
 
     return (
-        <FormikInit
-            validationSchema={schema}
-            initialValues={{
-                hasSurgicalHistory: "",
-                surgicalDetails: "",
-            }}
-            onSubmit={handleSubmit}
-        >
-            <FormFieldContainer direction="column">
-                <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
-                    <FormFieldContainerLayout title="Any history of previous surgery or procedures?">
-                        <RadioGroupInput
-                            name="hasSurgicalHistory"
-                            label="Has Surgical History"
-                            options={[
-                                { value: concepts.YES, label: "Yes" },
-                                { value: concepts.NO, label: "No" },
-                            ]}
-                        />
-
-                        <SurgicalDetailsField />
-                    </FormFieldContainerLayout>
-                </WrapperBox>
-            </FormFieldContainer>
-        </FormikInit>
+      <TextInputField
+        {...field}
+        id="surgicalDetails"
+        sx={{ width: "100%" }}
+        name="surgicalDetails"
+        label="Enter previous procedures and surgeries (Month & Year)"
+        placeholder="E.g., Appendectomy - January 2020"
+        multiline
+        rows={5}
+      />
     );
+  };
+
+  return (
+    <FormikInit
+      validationSchema={schema}
+      initialValues={{
+        hasSurgicalHistory: "",
+        surgicalDetails: "",
+      }}
+      onSubmit={handleSubmit}
+    >
+      <FormFieldContainer direction="column">
+        <WrapperBox sx={{ bgcolor: "white", padding: "2ch", width: "100%" }}>
+          <FormFieldContainerLayout title="Any history of previous surgery or procedures?">
+            <RadioGroupInput
+              name="hasSurgicalHistory"
+              label="Has Surgical History"
+              options={[
+                { value: concepts.YES, label: "Yes" },
+                { value: concepts.NO, label: "No" },
+              ]}
+            />
+
+            <SurgicalDetailsField />
+          </FormFieldContainerLayout>
+        </WrapperBox>
+      </FormFieldContainer>
+    </FormikInit>
+  );
 };

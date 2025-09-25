@@ -12,7 +12,6 @@ import {
 } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters, getFacilities } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import {
   addEncounter,
   fetchConceptAndCreateEncounter,
@@ -307,7 +306,7 @@ const initialValues = {
 
 export default function DischargeHomeForm({
   openPatientSummary,
-  setInitialNotes
+  setInitialNotes,
 }: {
   openPatientSummary: () => void;
   setInitialNotes: (notes: any) => void;
@@ -338,9 +337,7 @@ export default function DischargeHomeForm({
 
   // Setup service areas - simplified
 
-
-
-  const handleSubmit = async (values: any, serviceAreas:any) => {
+  const handleSubmit = async (values: any, serviceAreas: any) => {
     const currentDateTime = ServerTime.getServerTimeString();
 
     // Prepare service area information
@@ -456,7 +453,7 @@ const DischargeForm = ({
   setOtherId,
   otherId,
 }: {
-  handleSubmit: (values: any, serviceAreas:any) => void;
+  handleSubmit: (values: any, serviceAreas: any) => void;
   contentRef: React.RefObject<HTMLDivElement>;
   setOtherId: (id: string | null) => void;
   otherId: string | null;
@@ -498,7 +495,7 @@ const DischargeForm = ({
       <FormikInit
         initialValues={initialValues}
         validationSchema={getValidationSchema()}
-        onSubmit={(values)=>handleSubmit(values, serviceAreaOptions)}
+        onSubmit={(values) => handleSubmit(values, serviceAreaOptions)}
         submitButtonText="Submit"
       >
         {({ values, setFieldValue }) => {

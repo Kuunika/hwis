@@ -20,7 +20,6 @@ import * as Yup from "yup";
 import { NewAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
@@ -34,20 +33,20 @@ const form = {
   abnormalitiesPresent: {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
-      children: [
-          {
-              concept: concepts.IMAGE_PART_NAME,
-              label: "Abdomen and Pelvis Abnormalities Image",
-              image: true,
-              parentConcept: concepts.ABDOMINAL_DISTENTION,
-          },
-      ],
-  },
-    image:{
-        name: concepts.IMAGE_PART_NAME,
-        label: "Palpation image",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Abdomen and Pelvis Abnormalities Image",
         image: true,
-    },
+        parentConcept: concepts.ABDOMINAL_DISTENTION,
+      },
+    ],
+  },
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Palpation image",
+    image: true,
+  },
   shiftingDullness: {
     name: concepts.SHIFTING_DULLNESS,
     label: "Shifting Dullness",
@@ -56,10 +55,10 @@ const form = {
     name: concepts.FLUID_THRILL,
     label: "Fluid Thrill",
   },
-    tenderness: {
-        name: concepts.TENDERNESS,
-        label: "Tenderness",
-    },
+  tenderness: {
+    name: concepts.TENDERNESS,
+    label: "Tenderness",
+  },
   bowelSounds: {
     name: concepts.BOWEL_SOUNDS,
     label: "Bowel Sounds",
@@ -71,7 +70,7 @@ const form = {
   general: {
     name: concepts.GENERAL,
     label: "General",
-      multiple: true
+    multiple: true,
   },
   prostate: {
     name: concepts.PROSTATE,
@@ -80,17 +79,17 @@ const form = {
   mass: {
     name: concepts.MASS,
     label: "Mass",
-      children: [
-          {
-              concept: concepts.DESCRIPTION,
-              label: "Mass Description",
-          },
-      ],
+    children: [
+      {
+        concept: concepts.DESCRIPTION,
+        label: "Mass Description",
+      },
+    ],
   },
   massDescription: {
     name: concepts.DESCRIPTION,
     label: "Mass Description",
-      child: true
+    child: true,
   },
   sphincterTone: {
     name: concepts.SPHINCTER_TONE,
@@ -104,81 +103,84 @@ const form = {
     name: concepts.CIRCUMCISION_STATUS,
     label: "Is the patient circumcised?",
   },
-    laceration: {
-        name: concepts.LACERATION,
-        label: "Are there any ulcerations/lacerations, bite marks of any kind present ",
-        children: [
-            {
-                concept: concepts.LACERATION_NOTES,
-                label: "Laceration Notes",
-            },
-        ],
-    },
-    lacerationNotes: {
-        name: concepts.LACERATION_NOTES,
-        label: "Notes",
-        child: true
-    },
-    hematomas: {
-        name: concepts.HEMATOMAS,
-        label: "Are there any signs of  oedema, hematomas, discolourations",
-        children: [
-            {
-                concept: concepts.HEMATOMAS_NOTES,
-                label: "Hematomas Notes",
-            },
-        ],
-    },
-    hematomasNotes: {
-        name: concepts.HEMATOMAS_NOTES,
-        label: "Notes",
-        child: true
-    },
-    inflammation: {
-        name: concepts.INFLAMMATION,
-        label: "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
-        children: [
-            {
-                concept: concepts.INFLAMMATION_NOTES,
-                label: "Inflammation Notes",
-            },
-        ],
-    },
-    inflammationNotes: {
-        name: concepts.INFLAMMATION_NOTES,
-        label: "Notes",
-        child: true
-    },
-    urethraMeatus: {
-        name: concepts.URETHRAL_MEATUS,
-        label: "Are there any signs discharge from the urethra meatus",
-        children: [
-            {
-                concept: concepts.URETHRAL_NOTES,
-                label: "Urethral Notes",
-            },
-        ],
-    },
-    descriptionUrethral: {
-        name: concepts.URETHRAL_NOTES,
+  laceration: {
+    name: concepts.LACERATION,
+    label:
+      "Are there any ulcerations/lacerations, bite marks of any kind present ",
+    children: [
+      {
+        concept: concepts.LACERATION_NOTES,
+        label: "Laceration Notes",
+      },
+    ],
+  },
+  lacerationNotes: {
+    name: concepts.LACERATION_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  hematomas: {
+    name: concepts.HEMATOMAS,
+    label: "Are there any signs of  oedema, hematomas, discolourations",
+    children: [
+      {
+        concept: concepts.HEMATOMAS_NOTES,
+        label: "Hematomas Notes",
+      },
+    ],
+  },
+  hematomasNotes: {
+    name: concepts.HEMATOMAS_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  inflammation: {
+    name: concepts.INFLAMMATION,
+    label:
+      "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
+    children: [
+      {
+        concept: concepts.INFLAMMATION_NOTES,
+        label: "Inflammation Notes",
+      },
+    ],
+  },
+  inflammationNotes: {
+    name: concepts.INFLAMMATION_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  urethraMeatus: {
+    name: concepts.URETHRAL_MEATUS,
+    label: "Are there any signs discharge from the urethra meatus",
+    children: [
+      {
+        concept: concepts.URETHRAL_NOTES,
         label: "Urethral Notes",
-        child: true
-    },
-    scrotum: {
-        name: concepts.SCROTUM,
-        label: "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
-        children: [
-            {
-                concept: concepts.SCROTUM_NOTES,
-                label: "Scrotum Notes",
-            },
-        ],
-    },
-    scrotumNotes: {
-        name: concepts.SCROTUM_NOTES,
+      },
+    ],
+  },
+  descriptionUrethral: {
+    name: concepts.URETHRAL_NOTES,
+    label: "Urethral Notes",
+    child: true,
+  },
+  scrotum: {
+    name: concepts.SCROTUM,
+    label:
+      "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
+    children: [
+      {
+        concept: concepts.SCROTUM_NOTES,
         label: "Scrotum Notes",
-        child: true
-    },
+      },
+    ],
+  },
+  scrotumNotes: {
+    name: concepts.SCROTUM_NOTES,
+    label: "Scrotum Notes",
+    child: true,
+  },
   unusualAppearance: {
     name: concepts.UNUSUAL_SIZE_APPEARANCE_OF_CLITORIS,
     label: "Is the clitoris of unusual size/appearance",
@@ -253,7 +255,6 @@ const form = {
     label: "Sphincter Description",
   },
 
-
   perihymen: {
     name: concepts.PERIHYMEN,
     label: "Does the perihymen have abrasions, lacerations scarring",
@@ -272,7 +273,6 @@ const form = {
   },
 };
 export const abdomenAndPelvisFormConfig: any = form;
-
 
 type Prop = {
   onSubmit: () => void;
@@ -460,13 +460,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesPresent.name,
         value: formValues[form.abnormalitiesPresent.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(abnormalitiesPresentImageEnc),
+        groupMembers: await flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
         concept: concepts.PALPATION,
         value: concepts.PALPATION,
         obsDatetime,
-        groupMembers: flattenImagesObs(tendernessImageEnc),
+        groupMembers: await flattenImagesObs(tendernessImageEnc),
       },
     ];
 

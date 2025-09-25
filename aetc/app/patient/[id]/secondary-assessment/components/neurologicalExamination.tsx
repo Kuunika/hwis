@@ -6,7 +6,6 @@ import * as yup from "yup";
 import { getInitialValues, getObservations } from "@/helpers";
 import { concepts, encounters } from "@/constants";
 import { useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
@@ -17,11 +16,10 @@ const form = {
   generalInformation: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Notes",
-      type: "string",
+    type: "string",
   },
 };
 export const neurologicalFormConfig: any = form;
-
 
 const schema = yup.object({
   [form.generalInformation.name]: yup

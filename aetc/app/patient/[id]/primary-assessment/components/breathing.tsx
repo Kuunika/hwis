@@ -36,7 +36,6 @@ import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
-
 const form = {
   isPatientBreathing: {
     name: concepts.IS_BREATHING_ABNORMAL,
@@ -233,7 +232,6 @@ const form = {
   },
 };
 
-
 export const breathingFormConfig = form;
 
 const schema = Yup.object().shape({
@@ -414,19 +412,19 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(chestAbnormalitiesImage),
+        groupMembers: await flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(percussionImage),
+        groupMembers: await flattenImagesObs(percussionImage),
       },
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
+        groupMembers: await flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: form.breathSounds.name,
@@ -437,25 +435,25 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
             concept: concepts.SITE,
             value: "Lung Lateral Left",
             obsDatetime,
-            groupMembers: flattenImagesObs(lungLeft),
+            groupMembers: await flattenImagesObs(lungLeft),
           },
           {
             concept: concepts.SITE,
             value: "Lung Lateral Right",
             obsDatetime,
-            groupMembers: flattenImagesObs(lungRight),
+            groupMembers: await flattenImagesObs(lungRight),
           },
           {
             concept: concepts.SITE,
             value: "Lung Anterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(lungFront),
+            groupMembers: await flattenImagesObs(lungFront),
           },
           {
             concept: concepts.SITE,
             value: "Lung Posterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(lungBack),
+            groupMembers: await flattenImagesObs(lungBack),
           },
         ],
       },
@@ -463,7 +461,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
       //   concept: concepts.SITE,
       //   value: "Lung Front",
       //   obsDatetime,
-      //   groupMembers: flattenImagesObs(lungFront),
+      //   groupMembers: await flattenImagesObs(lungFront),
       // },
     ];
 
@@ -471,7 +469,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     //   concept: form.chestWallAbnormality.name,
     //   value: formValues[form.chestWallAbnormality.name],
     //   obsDatetime,
-    //   groupMembers: flattenImagesObs(chestAbnormalitiesImage),
+    //   groupMembers: await flattenImagesObs(chestAbnormalitiesImage),
     // });
 
     // return;
@@ -497,7 +495,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.breathSounds.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...obs,
       ...devicesObs,
     ]);

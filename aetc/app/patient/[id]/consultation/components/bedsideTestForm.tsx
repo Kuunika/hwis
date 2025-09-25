@@ -2,7 +2,7 @@
 import { FormFieldContainerMultiple, FormikInit } from "@/components";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { encounters } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getActivePatientDetails } from "@/hooks";
 import {
   fetchConceptAndCreateEncounter,
@@ -19,6 +19,7 @@ import { Button } from "@mui/material";
 
 export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   const { activeVisit, patientId } = getActivePatientDetails();
+  const { ServerTime } = useServerTime();
 
   const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
   const { data: BedSideResults, isLoading: bedsideLoading } =
@@ -61,7 +62,7 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
   }, [isSuccess]);
 
   const handleSubmit = (values: any) => {
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
     const transformedData = transformLabValues(values, formStructure, dateTime);
 
     if (transformedData.length > 0) {
@@ -76,9 +77,8 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
     // onClose?.();
   };
 
-
   const handleSubmitAnyway = (values: any) => {
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
     const transformedData = transformLabValues(values, formStructure, dateTime);
 
     if (transformedData.length > 0) {
@@ -90,8 +90,7 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
         obs: transformedData,
       });
     }
-
-  }
+  };
 
   return (
     <ContainerLoaderOverlay
@@ -102,16 +101,29 @@ export const BedsideTestForm = ({ onClose }: { onClose?: () => void }) => {
         onSubmit={handleSubmit}
         initialValues={{ ...initialValues }}
         submitButton={false}
-      >{({ values, submitCount }) => {
-
-        // console.log(submitCount)
-        return <>
-          <Form>
-            <FormRenderer formStructure={formStructure} />
-          </Form>
-          {submitCount > 0 ? <Button variant="contained" onClick={() => handleSubmitAnyway(values)}>submit anyway</Button> : <Button variant="contained" type="submit">submit</Button>}
-        </>
-      }}
+      >
+        {({ values, submitCount }) => {
+          // console.log(submitCount)
+          return (
+            <>
+              <Form>
+                <FormRenderer formStructure={formStructure} />
+              </Form>
+              {submitCount > 0 ? (
+                <Button
+                  variant="contained"
+                  onClick={() => handleSubmitAnyway(values)}
+                >
+                  submit anyway
+                </Button>
+              ) : (
+                <Button variant="contained" type="submit">
+                  submit
+                </Button>
+              )}
+            </>
+          );
+        }}
       </FormikInit>
     </ContainerLoaderOverlay>
   );

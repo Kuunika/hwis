@@ -1,4 +1,4 @@
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { closeVisit, createVisit } from "@/services/visit";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
@@ -17,10 +17,11 @@ export const addVisit = () => {
   });
 };
 export const closeCurrentVisit = () => {
+  const { ServerTime } = useServerTime();
   const updateVisit = async (visitUuid: string) =>
-    closeVisit(visitUuid, { stopDatetime: await getDateTime() }).then(
-      (response) => response.data
-    );
+    closeVisit(visitUuid, {
+      stopDatetime: ServerTime.getServerTimeString(),
+    }).then((response) => response.data);
 
   return useMutation({
     mutationFn: updateVisit,

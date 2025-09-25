@@ -6,20 +6,6 @@ import { getServerTime } from "@/services/serverTime";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDateTime = async (): Promise<string> => {
-  if (!ServerTime.isInitialized()) {
-    try {
-      await ServerTime.initialize();
-    } catch (error) {
-      console.error("Failed to initialize server time:", error);
-      // Return local time as fallback
-      return new Date().toISOString();
-    }
-  }
-
-  return ServerTime.getServerTimeString();
-};
-
 export const calculateAge = (birthdate: string | Date | undefined) => {
   if (!birthdate) return null;
   var today = new Date();
