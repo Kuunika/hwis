@@ -500,6 +500,8 @@ const buildNotesObject = (formConfig: any, obs: Obs[]) => {
         result.children = children;
       }
 
+      result.bold=config.bold;
+
       return result;
     });
 };

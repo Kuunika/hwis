@@ -118,11 +118,13 @@ const form = {
   subjective: {
     name: concepts.SUBJECTIVE,
     label: "Subjective",
+    bold: true,
   },
   obj: {
     name: "objective",
     label: "Objective",
     type: "title",
+    bold: true,
     children: [
       {
         concept: concepts.MEDICAL_RECORD_OBSERVATIONS,
@@ -159,6 +161,31 @@ const form = {
     label: "General/Other observation",
     child: true,
   },
+  assessment: {
+    name: concepts.ASSESSMENT,
+    label: "Assessment",
+    bold: true,
+  },
+  plan: {
+    name: concepts.PLAN,
+    label: "Plan",
+    bold: true,
+  },
+  implementation: {
+    name: concepts.IMPLEMENTATION,
+    label: "Implementation",
+    bold: true,
+  },
+  evaluation: {
+    name: concepts.EVALUATION,
+    label: "Evaluation",
+    bold: true,
+  },
+  replan: {
+    name: concepts.REPLAN,
+    label: "Replan",
+    bold: true,
+  },
   // vitals: {
   //   name: "vitals",
   //   label: "Vitals",
@@ -194,6 +221,7 @@ const form = {
     name: "bedside",
     label: "Bed side investigations",
     type: "title",
+    bold: true,
     children: [
       {
         concept: concepts.MRDT,
@@ -263,26 +291,6 @@ const form = {
     name: concepts.URINE_DIPSTICK_KETONES,
     label: "Urine Dipstick",
   },
-  assessment: {
-    name: concepts.ASSESSMENT,
-    label: "Assessment",
-  },
-  plan: {
-    name: concepts.PLAN,
-    label: "Plan",
-  },
-  implementation: {
-    name: concepts.IMPLEMENTATION,
-    label: "Implementation",
-  },
-  evaluation: {
-    name: concepts.EVALUATION,
-    label: "Evaluation",
-  },
-  replan: {
-    name: concepts.REPLAN,
-    label: "Replan",
-  },
 
   // medications: [medicationTemplate] as any,
   // procedures: [],
@@ -295,6 +303,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
   supportiveCareConfig: {
     name: concepts.SUPPORTIVE_CARE,
@@ -302,6 +311,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
 };
 
