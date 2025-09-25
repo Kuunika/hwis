@@ -118,17 +118,18 @@ const form = {
   subjective: {
     name: concepts.SUBJECTIVE,
     label: "Subjective",
+    bold: true,
   },
-  objective: {
-    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
-    label: "General observation",
-  },
-
-  vitals: {
-    name: "vitals",
-    label: "Vitals",
+  obj: {
+    name: "objective",
+    label: "Objective",
     type: "title",
+    bold: true,
     children: [
+      {
+        concept: concepts.MEDICAL_RECORD_OBSERVATIONS,
+        label: "General/Other observation",
+      },
       {
         concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
         label: "Systolic",
@@ -155,10 +156,72 @@ const form = {
       },
     ],
   },
+  objective: {
+    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
+    label: "General/Other observation",
+    child: true,
+  },
+  assessment: {
+    name: concepts.ASSESSMENT,
+    label: "Assessment",
+    bold: true,
+  },
+  plan: {
+    name: concepts.PLAN,
+    label: "Plan",
+    bold: true,
+  },
+  implementation: {
+    name: concepts.IMPLEMENTATION,
+    label: "Implementation",
+    bold: true,
+  },
+  evaluation: {
+    name: concepts.EVALUATION,
+    label: "Evaluation",
+    bold: true,
+  },
+  replan: {
+    name: concepts.REPLAN,
+    label: "Replan",
+    bold: true,
+  },
+  // vitals: {
+  //   name: "vitals",
+  //   label: "Vitals",
+  //   type: "title",
+  //   children: [
+  //     {
+  //       concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
+  //       label: "Systolic",
+  //     },
+  //     {
+  //       concept: concepts.DIASTOLIC_BLOOD_PRESSURE,
+  //       label: "Diastolic",
+  //     },
+  //     {
+  //       concept: concepts.PULSE_RATE,
+  //       label: "Pulse Rate",
+  //     },
+  //     {
+  //       concept: concepts.RESPIRATORY_RATE,
+  //       label: "Respiratory Rate",
+  //     },
+  //     {
+  //       concept: concepts.BLOOD_OXYGEN_SATURATION,
+  //       label: "SPO2",
+  //     },
+  //     {
+  //       concept: concepts.TEMPERATURE,
+  //       label: "Temperature",
+  //     },
+  //   ],
+  // },
   bedsideInvestigations: {
     name: "bedside",
     label: "Bed side investigations",
     type: "title",
+    bold: true,
     children: [
       {
         concept: concepts.MRDT,
@@ -228,26 +291,6 @@ const form = {
     name: concepts.URINE_DIPSTICK_KETONES,
     label: "Urine Dipstick",
   },
-  assessment: {
-    name: concepts.ASSESSMENT,
-    label: "Assessment",
-  },
-  plan: {
-    name: concepts.PLAN,
-    label: "Plan",
-  },
-  implementation: {
-    name: concepts.IMPLEMENTATION,
-    label: "Implementation",
-  },
-  evaluation: {
-    name: concepts.EVALUATION,
-    label: "Evaluation",
-  },
-  replan: {
-    name: concepts.REPLAN,
-    label: "Replan",
-  },
 
   // medications: [medicationTemplate] as any,
   // procedures: [],
@@ -260,6 +303,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
   supportiveCareConfig: {
     name: concepts.SUPPORTIVE_CARE,
@@ -267,6 +311,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
 };
 
