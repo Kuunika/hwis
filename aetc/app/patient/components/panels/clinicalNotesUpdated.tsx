@@ -43,7 +43,6 @@ export const ClinicalNotesUpdated = () => {
   const pdfRef = useRef<SurgicalNotesPDFRef>(null);
   const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
-  const [loading, setLoading] = useState(true);
 
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,

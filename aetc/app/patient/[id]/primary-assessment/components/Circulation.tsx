@@ -263,7 +263,7 @@ const form = {
   },
   pulse: {
     child: true,
-    name: concepts.PULSE_RATE,
+    name: concepts.HEART_RATE,
     label: "Pulse rate",
   },
   centralLineCannulationSite: {

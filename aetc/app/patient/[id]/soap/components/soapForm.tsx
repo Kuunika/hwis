@@ -118,17 +118,18 @@ const form = {
   subjective: {
     name: concepts.SUBJECTIVE,
     label: "Subjective",
+    bold: true,
   },
   objective: {
-    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
-    label: "General observation",
-  },
-
-  vitals: {
-    name: "vitals",
-    label: "Vitals",
+    name: "objective",
+    label: "Objective",
     type: "title",
+    bold: true,
     children: [
+      {
+        concept: concepts.MEDICAL_RECORD_OBSERVATIONS,
+        label: "General/Other observation",
+      },
       {
         concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
         label: "Systolic",
@@ -256,6 +257,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
   supportiveCareConfig: {
     name: concepts.SUPPORTIVE_CARE,
@@ -263,6 +265,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
 };
 
