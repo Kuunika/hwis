@@ -30,7 +30,7 @@ export const PatientSearchResultsDialog = ({
   const [selectedPatient, setSelectedPatient] = useState<Person | undefined>();
   //@ts-ignore
   const rows = [...patientResults.locals, ...patientResults.remotes].map(
-    (row) => ({ id: row?.patient_id, ...row })
+    (row: any) => ({ id: row?.patient_id, ...row })
   );
   const {
     loading,
