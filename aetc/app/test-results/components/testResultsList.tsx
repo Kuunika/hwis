@@ -58,6 +58,8 @@ export const ClientsWaitingForTestResults = () => {
   });
 
   const { navigateTo } = useNavigation();
+  const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+
   const {
     loading,
     patients,
@@ -67,8 +69,7 @@ export const ClientsWaitingForTestResults = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
-    totalEntries
-  } = fetchPatientsTablePaginate("investigations");
+  } = fetchPatientsTablePaginate("investigations", patientCareFilter);
 
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -86,17 +87,17 @@ export const ClientsWaitingForTestResults = () => {
     .filter((p) => p.id != deleted);
 
   // Extract unique filter options from data
-  // useEffect(() => {
-  //   if (rows && rows.length > 0) {
-  //     const plannedByOptions = Array.from(new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
-  //     const patientCareAreas = Array.from(new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
+  useEffect(() => {
+    if (rows && rows.length > 0) {
+      const plannedByOptions = Array.from(new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
+      const patientCareAreas = Array.from(new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
 
-  //     setAvailableFilters({
-  //       plannedByOptions: plannedByOptions.sort(),
-  //       patientCareAreas: patientCareAreas.sort(),
-  //     });
-  //   }
-  // }, [rows]);
+      setAvailableFilters({
+        plannedByOptions: plannedByOptions.sort(),
+        patientCareAreas: patientCareAreas.sort(),
+      });
+    }
+  }, [rows]);
 
   // Filter the data based on active filters
   const filteredData = React.useMemo(() => {
@@ -291,24 +292,168 @@ export const ClientsWaitingForTestResults = () => {
   });
 
   return (
-    <PatientTableListServer
-      columns={columns}
-      data={{
-        data: rows ?? [],
-        page: paginationModel.page,
-        per_page: paginationModel.pageSize,
-        total_pages: totalPages,
-        totalEntries
-      }}
-      searchText={inputText}
-      setSearchString={setInputText}
-      setPaginationModel={setPaginationModel}
-      paginationModel={paginationModel}
-      // loading={isPending || isRefetching}
-      loading={loading}
-      formatForMobileView={formatForMobileView ? formatForMobileView : []}
-      onSwitchChange={setOnSwitch}
-      onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
-    />
+    <>
+      {/* Filter Section */}
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FaFilter />
+            <Typography variant="h6">Filters</Typography>
+            {hasActiveFilters && (
+              <Chip
+                label={`${filters.plannedBy.length + filters.patientCareArea.length} active`}
+                size="small"
+                color="primary"
+              />
+            )}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {hasActiveFilters && (
+              <Button
+                startIcon={<FaTimes />}
+                onClick={clearAllFilters}
+                size="small"
+                variant="outlined"
+                color="secondary"
+              >
+                Clear All
+              </Button>
+            )}
+            <Button
+              startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
+              onClick={() => setShowFilters(!showFilters)}
+              size="small"
+              variant="outlined"
+            >
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+          </Box>
+        </Box>
+
+        <Collapse in={showFilters}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+            {/* Planned By Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Planned By</InputLabel>
+              <Select
+                multiple
+                value={filters.plannedBy}
+                onChange={handleFilterChange('plannedBy')}
+                input={<OutlinedInput label="Planned By" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter('plannedBy', value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.plannedByOptions.map((planner) => (
+                  <MenuItem key={planner} value={planner}>
+                    {planner}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Patient Care Area Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Patient Care Area</InputLabel>
+              <Select
+                multiple
+                value={filters.patientCareArea}
+                onChange={handleFilterChange('patientCareArea')}
+                input={<OutlinedInput label="Patient Care Area" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter('patientCareArea', value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.patientCareAreas.map((area) => (
+                  <MenuItem key={area} value={area}>
+                    {area}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Collapse>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
+              Active filters:
+            </Typography>
+            {filters.plannedBy.map((filter) => (
+              <Chip
+                key={`plannedBy-${filter}`}
+                label={`Planned By: ${filter}`}
+                onDelete={() => clearFilter('plannedBy', filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+            {filters.patientCareArea.map((filter) => (
+              <Chip
+                key={`area-${filter}`}
+                label={`Care Area: ${filter}`}
+                onDelete={() => clearFilter('patientCareArea', filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        )}
+      </Paper>
+
+
+      <PatientTableListServer
+        columns={columns}
+        data={
+          filteredData?.length
+            ? {
+              data: filteredData.map((row: any) => ({
+                id: row.id || row.uuid, // Ensure proper ID mapping
+                ...row,
+              })),
+              page: paginationModel.page,
+              per_page: paginationModel.pageSize,
+              total_pages: totalPages,
+              totalEntries: filteredData.length,
+            }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
+        }
+        searchText={inputText}
+        setSearchString={setInputText}
+        setPaginationModel={setPaginationModel}
+        paginationModel={paginationModel}
+        loading={loading}
+        formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
+      />
+    </>
   );
 };
