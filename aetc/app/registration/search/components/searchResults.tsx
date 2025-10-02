@@ -29,7 +29,7 @@ import {
 import { closeCurrentVisit } from "@/hooks/visit";
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
 import {
@@ -385,6 +385,7 @@ const ViewPatientDialog = ({
 }) => {
   const [mergeType, setMergeType] = useState(type);
   const { params } = useParameters();
+  const { ServerTime } = useServerTime();
 
   // encounters for the patient registered during the initial registration
   const { data: patientEncounters } = getPatientsEncounters(
@@ -503,11 +504,11 @@ const ViewPatientDialog = ({
       encounterType: encounters.SOCIAL_HISTORY,
       visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
+      encounterDatetime: ServerTime.getServerTimeString(),
       obs: socialHistory?.obs?.map((ob: any) => ({
         concept: ob.names[0].uuid,
         value: ob.value,
-        obsDatetime: getDateTime(),
+        obsDatetime: ServerTime.getServerTimeString(),
       })),
     });
 
@@ -515,12 +516,12 @@ const ViewPatientDialog = ({
       encounterType: encounters.REFERRAL,
       visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
+      encounterDatetime: ServerTime.getServerTimeString(),
       obs: [
         {
           concept: concepts.REFERRED_FROM,
           value: referralData[concepts.REFERRED_FROM],
-          obsDatetime: getDateTime(),
+          obsDatetime: ServerTime.getServerTimeString(),
         },
       ],
     });
@@ -529,11 +530,11 @@ const ViewPatientDialog = ({
       encounterType: encounters.FINANCING,
       visit: mergedResponse?.active_visit?.uuid,
       patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
+      encounterDatetime: ServerTime.getServerTimeString(),
       obs: financing?.obs?.map((ob) => ({
         concept: ob.names[0].uuid,
         value: ob.value,
-        obsDatetime: getDateTime(),
+        obsDatetime: ServerTime.getServerTimeString(),
       })),
     });
   };
@@ -622,7 +623,7 @@ const ViewPatientDialog = ({
       names: [{ uuid: key }],
       concept: key,
       value: social[key],
-      obsDatetime: getDateTime(),
+      obsDatetime: ServerTime.getServerTimeString(),
     }));
     setSocialHistory({ obs });
   };

@@ -23,7 +23,6 @@ import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails, useNavigation } from "@/hooks";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
@@ -37,7 +36,7 @@ type Prop = {
   encounterType?: string;
   onSubmissionSuccess: () => void;
   medicationTitle?: string;
-  medicationLabelTitle?:string
+  medicationLabelTitle?: string;
 };
 type Medication = {
   name: string;
@@ -98,8 +97,8 @@ const frequencyOptions = [
   { id: concepts.SIX_TIMES_A_DAY, label: "4 Hourly (OD) - Six times a day " },
   { id: concepts.ONCE_A_WEEK, label: "Once a week" },
   { id: concepts.ONCE_A_MONTH, label: "Once a month" },
-  {id:concepts.MORNING, label:"Morning"},
-  {id:concepts.EVENING, label:"Evening"},
+  { id: concepts.MORNING, label: "Morning" },
+  { id: concepts.EVENING, label: "Evening" },
   { id: concepts.OTHER, label: "Other" },
 ];
 

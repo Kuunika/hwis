@@ -470,19 +470,19 @@ export const Circulation = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(abdomenOtherImage),
+        groupMembers: await flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(legImage),
+        groupMembers: await flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
       //   obsDatetime,
-      //   groupMembers: flattenImagesObs(abdomenImage),
+      //   groupMembers: await flattenImagesObs(abdomenImage),
       // },
     ];
 
@@ -520,7 +520,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,

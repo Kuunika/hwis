@@ -7,12 +7,11 @@ import {
   FormFieldContainer,
   WrapperBox,
   FormFieldContainerLayout,
-  FormValuesListener
+  FormValuesListener,
 } from "@/components";
 import { concepts, encounters, durationOptions } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
 import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import { getObservation } from "@/helpers/emr";
 import { useSubmitEncounter } from "@/hooks";
 import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
@@ -61,22 +60,24 @@ const form = {
 
 // Updated validation schema to handle complaints with duration
 const schema = Yup.object().shape({
-  complaints: Yup.array().of(
-    Yup.object().shape({
-      complaint: Yup.string().required("Complaint is required"),
-      duration: Yup.number()
-        .min(1, "Duration must be greater than 0")
-        .required("Duration is required"),
-      duration_unit: Yup.string().required("Duration unit is required"),
-      otherComplaintSpecify: Yup
-        .string()
-        .nullable()
-        .when("complaint", {
-          is: concepts.OTHER,
-          then: (schema) => schema.required("Please specify the other complaint"),
-        }),
-    })
-  ).min(1, "At least one complaint is required"),
+  complaints: Yup.array()
+    .of(
+      Yup.object().shape({
+        complaint: Yup.string().required("Complaint is required"),
+        duration: Yup.number()
+          .min(1, "Duration must be greater than 0")
+          .required("Duration is required"),
+        duration_unit: Yup.string().required("Duration unit is required"),
+        otherComplaintSpecify: Yup.string()
+          .nullable()
+          .when("complaint", {
+            is: concepts.OTHER,
+            then: (schema) =>
+              schema.required("Please specify the other complaint"),
+          }),
+      })
+    )
+    .min(1, "At least one complaint is required"),
   [form.history.name]: Yup.string().label(form.history.label),
 });
 
@@ -117,22 +118,26 @@ export const PresentingComplaints = ({
     const obsDatetime = ServerTime.getServerTimeString();
 
     // Create observations for each complaint with duration
-    const complaintObservations = values.complaints.map((complaint: Complaint) => {
-      const isOther = complaint.complaint === concepts.OTHER;
+    const complaintObservations = values.complaints.map(
+      (complaint: Complaint) => {
+        const isOther = complaint.complaint === concepts.OTHER;
 
-      return {
-        concept: complaint.complaint,
-        value: isOther ? complaint.otherComplaintSpecify : complaint.complaint,
-        obsDatetime: obsDatetime,
-        groupMembers: [
-          {
-            concept: concepts.DURATION,
-            value: `${complaint.duration} ${complaint.duration_unit}`,
-            obsDatetime: obsDatetime,
-          }
-        ]
-      };
-    });
+        return {
+          concept: complaint.complaint,
+          value: isOther
+            ? complaint.otherComplaintSpecify
+            : complaint.complaint,
+          obsDatetime: obsDatetime,
+          groupMembers: [
+            {
+              concept: concepts.DURATION,
+              value: `${complaint.duration} ${complaint.duration_unit}`,
+              obsDatetime: obsDatetime,
+            },
+          ],
+        };
+      }
+    );
 
     const obs = [
       {
@@ -163,59 +168,108 @@ export const PresentingComplaints = ({
         <>
           <FormValuesListener getValues={setFormValues} />
           <FormFieldContainer direction="row">
-            <WrapperBox sx={{ bgcolor: "white", padding: "2ch", mb: "2ch", width: "100%" }}>
+            <WrapperBox
+              sx={{
+                bgcolor: "white",
+                padding: "2ch",
+                mb: "2ch",
+                width: "100%",
+              }}
+            >
               <FormFieldContainerLayout title="Presenting complaints">
                 <FieldArray name="complaints">
-                  {({ }) => (
+                  {({}) => (
                     <DynamicFormList
                       items={values.complaints}
-                      setItems={(newItems) => setFieldValue("complaints", newItems)}
+                      setItems={(newItems) =>
+                        setFieldValue("complaints", newItems)
+                      }
                       newItem={complaintsTemplate}
                       renderFields={(item, index) => (
                         <>
-                          <div style={{ display: "flex-column", width: "100%" }}>
+                          <div
+                            style={{ display: "flex-column", width: "100%" }}
+                          >
                             {/* Complaint Name Field */}
                             <SearchComboBox
-                              name={complaintsFormConfig.complaints_name(index).name}
-                              label={complaintsFormConfig.complaints_name(index).label}
+                              name={
+                                complaintsFormConfig.complaints_name(index).name
+                              }
+                              label={
+                                complaintsFormConfig.complaints_name(index)
+                                  .label
+                              }
                               options={presentingComplaints}
                               multiple={false}
                               sx={{ width: "100%" }}
                             />
                             <MainTypography color="red" variant="subtitle2">
-                              <ErrorMessage name={`complaints[${index}].complaint`} />
+                              <ErrorMessage
+                                name={`complaints[${index}].complaint`}
+                              />
                             </MainTypography>
 
                             {/* Duration and Unit Field */}
                             <UnitInputField
-                              id={complaintsFormConfig.complaints_duration(index).name}
-                              name={complaintsFormConfig.complaints_duration(index).name}
-                              unitName={complaintsFormConfig.complaints_duration_units(index).name}
-                              label={complaintsFormConfig.complaints_duration(index).label}
+                              id={
+                                complaintsFormConfig.complaints_duration(index)
+                                  .name
+                              }
+                              name={
+                                complaintsFormConfig.complaints_duration(index)
+                                  .name
+                              }
+                              unitName={
+                                complaintsFormConfig.complaints_duration_units(
+                                  index
+                                ).name
+                              }
+                              label={
+                                complaintsFormConfig.complaints_duration(index)
+                                  .label
+                              }
                               sx={{ width: "50%" }}
                               unitOptions={durationOptions}
                               placeholder="e.g., 3"
                               inputIcon={<IoTimeOutline />}
                             />
                             <MainTypography color="red" variant="subtitle2">
-                              <ErrorMessage name={`complaints[${index}].duration`} />
+                              <ErrorMessage
+                                name={`complaints[${index}].duration`}
+                              />
                             </MainTypography>
                             <MainTypography color="red" variant="subtitle2">
-                              <ErrorMessage name={`complaints[${index}].duration_unit`} />
+                              <ErrorMessage
+                                name={`complaints[${index}].duration_unit`}
+                              />
                             </MainTypography>
 
                             {/* Other complaint text field - only show if "Other" is selected */}
                             {item.complaint === concepts.OTHER && (
                               <>
                                 <TextInputField
-                                  id={complaintsFormConfig.other_complaint_specify(index).name}
-                                  label={complaintsFormConfig.other_complaint_specify(index).label}
-                                  name={complaintsFormConfig.other_complaint_specify(index).name}
+                                  id={
+                                    complaintsFormConfig.other_complaint_specify(
+                                      index
+                                    ).name
+                                  }
+                                  label={
+                                    complaintsFormConfig.other_complaint_specify(
+                                      index
+                                    ).label
+                                  }
+                                  name={
+                                    complaintsFormConfig.other_complaint_specify(
+                                      index
+                                    ).name
+                                  }
                                   placeholder="Specify the complaint"
                                   sx={{ width: "100%", mt: 1 }}
                                 />
                                 <MainTypography color="red" variant="subtitle2">
-                                  <ErrorMessage name={`complaints[${index}].otherComplaintSpecify`} />
+                                  <ErrorMessage
+                                    name={`complaints[${index}].otherComplaintSpecify`}
+                                  />
                                 </MainTypography>
                               </>
                             )}

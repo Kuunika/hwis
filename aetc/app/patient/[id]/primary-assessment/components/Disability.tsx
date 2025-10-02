@@ -13,11 +13,7 @@ import {
 import * as yup from "yup";
 import { Box, Typography } from "@mui/material";
 import { NO, YES, concepts, encounters } from "@/constants";
-import {
-  getInitialValues,
-  getObservations,
-  mapSubmissionToCodedArray,
-} from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { useServerTime } from "@/contexts/serverTimeContext";

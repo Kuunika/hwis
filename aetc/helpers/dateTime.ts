@@ -6,14 +6,6 @@ import { getServerTime } from "@/services/serverTime";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const getDateTime = () => {
-  if (!ServerTime.isInitialized()) {
-    return "";
-  }
-
-  return ServerTime.getServerTimeString();
-};
-
 export const calculateAge = (birthdate: string | Date | undefined) => {
   if (!birthdate) return null;
   var today = new Date();
@@ -39,9 +31,8 @@ export function getCATTime() {
 export const getTime = (dateString: string) => {
   // Match the time part directly from the ISO string
   const match = dateString.match(/T(\d{2}:\d{2}:\d{2})/);
-  return match ? match[1] : '';
+  return match ? match[1] : "";
 };
-
 
 export const estimateBirthdate = (years: number) => {
   const estimate = dayjs().subtract(years, "year");
@@ -113,8 +104,7 @@ export const getShortDate = (date: string | Date | undefined) => {
 export const getShortDateTime = (date: string | Date | undefined) => {
   if (!date) return "";
 
-  return  dayjs(date).format("DD-MM-YY HH:mm");
-
+  return dayjs(date).format("DD-MM-YY HH:mm");
 };
 export function isToday(dateString: string) {
   const inputDate = new Date(dateString);

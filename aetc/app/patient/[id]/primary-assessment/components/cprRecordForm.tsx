@@ -14,7 +14,7 @@ import {
   getObservations,
   mapSearchComboOptionsToConcepts,
 } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { useSubmitEncounter } from "@/hooks";
 import useFetchMedications from "@/hooks/useFetchMedications";
 import { useEffect, useState } from "react";
@@ -172,9 +172,10 @@ export const RecordForm = ({
   const { medicationOptions } = useFetchMedications();
 
   const handleSubmitForm = (values: any, formik: any) => {
+    const { ServerTime } = useServerTime();
     const formValues = { ...values };
 
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
     const rythmObs = mapSearchComboOptionsToConcepts(
       formValues[form.rhythm.name],
       form.rhythm.name,

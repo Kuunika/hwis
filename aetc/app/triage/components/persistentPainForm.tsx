@@ -119,11 +119,13 @@ export const PersistentPainForm = ({
       validationSchema={schema}
       initialValues={initialsValues}
       submitButton={false}
-      onSubmit={(values) =>
-        onSubmit(mapSubmissionToCodedArray(PersistentFormConfig, values))
+      onSubmit={async (values) =>
+        onSubmit(await mapSubmissionToCodedArray(PersistentFormConfig, values))
       }
-      getFormValues={(value) =>
-        getFormValues(mapSubmissionToCodedArray(PersistentFormConfig, value))
+      getFormValues={async (value) =>
+        getFormValues(
+          await mapSubmissionToCodedArray(PersistentFormConfig, value)
+        )
       }
     >
       <FormValuesListener getValues={setFormValues} />

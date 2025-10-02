@@ -21,7 +21,8 @@ import {
   useSubmitEncounter,
 } from "@/hooks";
 import { encounters, concepts } from "@/constants";
-import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getObservations } from "@/helpers";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { useReactToPrint } from "react-to-print";
@@ -45,12 +46,24 @@ import {
 
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { DisplayInformation } from "./displayInformation";
-import  { formatDiagnosisNotes, formatInvestigationPlans, formatPatientManagamentPlan, formatPresentingComplaints,formatPrimarySurvey,formatSoapierNotes,formatVitals, formatSecondarySurvey } from "./formatters";
+import {
+  formatDiagnosisNotes,
+  formatInvestigationPlans,
+  formatPatientManagamentPlan,
+  formatPresentingComplaints,
+  formatPrimarySurvey,
+  formatSoapierNotes,
+  formatVitals,
+  formatSecondarySurvey,
+} from "./formatters";
 import ResultsTable from "./tabularDisplayInformation";
 import { MultiColumnNotes } from "./multiColumnDisplay";
 
-import {PresentingComplaints} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
-import {GenericNotes, NotesConfig} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
+import { PresentingComplaints } from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {
+  GenericNotes,
+  NotesConfig,
+} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 type PanelData = {
   title: string;
@@ -180,7 +193,6 @@ export const ClinicalNotes = () => {
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     // Refresh clinical notes when component mounts
     setTimeout(() => {
@@ -200,7 +212,6 @@ export const ClinicalNotes = () => {
     filterGyneacologyState,
     filterMedicalInpatientState,
   ]); // Added filterSurgicalState to dependencies
-
 
   const getEncountersByType = (encounterTypeUuid: any) => {
     const {
@@ -369,17 +380,27 @@ export const ClinicalNotes = () => {
     panel9: {
       title: "Secondary Survey",
       data: (
-          <DisplayInformation
-              title=""
-              data={formatSecondarySurvey({
-                generalInformationObs: getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
-                headAndNeckObs: getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
-                chestObs: getEncountersByType(encounters.CHEST_ASSESSMENT),
-                abdomenAndPelvisObs: getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
-                extremitiesObs: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
-                neurologicalObs: getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
-              })}
-          />
+        <DisplayInformation
+          title=""
+          data={formatSecondarySurvey({
+            generalInformationObs: getEncountersByType(
+              encounters.GENERAL_INFORMATION_ASSESSMENT
+            ),
+            headAndNeckObs: getEncountersByType(
+              encounters.HEAD_AND_NECK_ASSESSMENT
+            ),
+            chestObs: getEncountersByType(encounters.CHEST_ASSESSMENT),
+            abdomenAndPelvisObs: getEncountersByType(
+              encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
+            ),
+            extremitiesObs: getEncountersByType(
+              encounters.EXTREMITIES_ASSESSMENT
+            ),
+            neurologicalObs: getEncountersByType(
+              encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
+            ),
+          })}
+        />
       ),
       removeObs: [
         // "Image Part Name",
@@ -452,68 +473,68 @@ export const ClinicalNotes = () => {
       ),
       removeObs: [], // No specific headings to remove
     },
-      panel15: {
-          title: "Sample History",
-          data: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  {/* Presenting Complaints */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
-                      title="Presenting Complaints"
-                      config={NotesConfig.PRESENTING_COMPLAINTS}
-                  />
+    panel15: {
+      title: "Sample History",
+      data: (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {/* Presenting Complaints */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+            title="Presenting Complaints"
+            config={NotesConfig.PRESENTING_COMPLAINTS}
+          />
 
-                  {/* Allergies */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.ALLERGIES)}
-                      title="Allergies"
-                      config={NotesConfig.ALLERGIES}
-                  />
+          {/* Allergies */}
+          <GenericNotes
+            data={getEncountersByType(encounters.ALLERGIES)}
+            title="Allergies"
+            config={NotesConfig.ALLERGIES}
+          />
 
-                  {/* Medications */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.PRESCRIPTIONS)}
-                      title="Medications"
-                      config={NotesConfig.MEDICATIONS}
-                  />
+          {/* Medications */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESCRIPTIONS)}
+            title="Medications"
+            config={NotesConfig.MEDICATIONS}
+          />
 
-                  {/* Diagnosis */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.DIAGNOSIS)}
-                      title="Prior/existing conditions"
-                      config={NotesConfig.DIAGNOSIS}
-                  />
+          {/* Diagnosis */}
+          <GenericNotes
+            data={getEncountersByType(encounters.DIAGNOSIS)}
+            title="Prior/existing conditions"
+            config={NotesConfig.DIAGNOSIS}
+          />
 
-                  {/* Surgical History */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.SURGICAL_HISTORY)}
-                      title="Surgical History"
-                      config={NotesConfig.SURGICAL_HISTORY}
-                  />
+          {/* Surgical History */}
+          <GenericNotes
+            data={getEncountersByType(encounters.SURGICAL_HISTORY)}
+            title="Surgical History"
+            config={NotesConfig.SURGICAL_HISTORY}
+          />
 
-                  {/* Previous Admissions */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
-                      title="Previous Admissions"
-                      config={NotesConfig.ADMISSIONS}
-                  />
+          {/* Previous Admissions */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+            title="Previous Admissions"
+            config={NotesConfig.ADMISSIONS}
+          />
 
-                  <GenericNotes
-                      data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
-                      title="Last Meal"
-                      config={NotesConfig.LAST_MEAL}
-                  />
+          <GenericNotes
+            data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
+            title="Last Meal"
+            config={NotesConfig.LAST_MEAL}
+          />
 
-                  {/* Family Medical History */}
-                  <GenericNotes
-                      data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
-                      title="Family Medical History"
-                      config={NotesConfig.FAMILY_HISTORY}
-                  />
-              </Box>
-          ),
-          removeObs: [],
-      },
+          {/* Family Medical History */}
+          <GenericNotes
+            data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+            title="Family Medical History"
+            config={NotesConfig.FAMILY_HISTORY}
+          />
+        </Box>
+      ),
+      removeObs: [],
+    },
   };
 
   // Process encounter data based on filters and removeObs arrays
@@ -607,8 +628,11 @@ export const ClinicalNotes = () => {
   ]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
+    const { ServerTime } = useServerTime();
     const data = { "Clinical notes construct": note };
-    handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
+    handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
+      () => refresh()
+    );
   };
 
   // Handle accordion expansion
@@ -1130,11 +1154,11 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
-           {/* <DownloadClinicalNotesPDF
+            {/* <DownloadClinicalNotesPDF
               data={notesData}
             /> */}
 
-           {  /*<MultiColumnNotes
+            {/*<MultiColumnNotes
               columns={2}
               data={notesData}
             />

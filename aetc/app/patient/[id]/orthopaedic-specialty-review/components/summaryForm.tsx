@@ -1,7 +1,7 @@
 import { FormikInit, TextInputField } from "@/components";
 import { concepts, encounters, templateForms } from "@/constants";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 import { useSubmitEncounter } from "@/hooks";
 import * as Yup from "yup";
@@ -17,7 +17,8 @@ export const SummaryForm = () => {
   );
 
   const handleSubmitNotes = (values: any) => {
-    const obsDateTime = getDateTime();
+    const { ServerTime } = useServerTime();
+    const obsDateTime = ServerTime.getServerTimeString();
     const obs = [
       {
         concept: concepts.NOTES,

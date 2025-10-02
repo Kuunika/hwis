@@ -162,11 +162,11 @@ export const BloodCirculationForm = ({
       enableReinitialize={true}
       submitButtonText="next"
       submitButton={false}
-      onSubmit={(values) =>
-        onSubmit(mapSubmissionToCodedArray(BloodFormConfig, values))
+      onSubmit={async (values) =>
+        onSubmit(await mapSubmissionToCodedArray(BloodFormConfig, values))
       }
-      getFormValues={(value) =>
-        getFormValues(mapSubmissionToCodedArray(BloodFormConfig, value))
+      getFormValues={async (value) =>
+        getFormValues(await mapSubmissionToCodedArray(BloodFormConfig, value))
       }
     >
       <FormValuesListener getValues={setFormValues} />

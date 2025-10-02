@@ -1,10 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
-import { FormikInit, WrapperBox, FormFieldContainer, FormFieldContainerLayout, CheckboxesGroup, TextInputField } from "@/components";
+import {
+  FormikInit,
+  WrapperBox,
+  FormFieldContainer,
+  FormFieldContainerLayout,
+  CheckboxesGroup,
+  TextInputField,
+} from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
@@ -55,7 +61,10 @@ const reviewOfSystemsOptions = {
     { value: concepts.CYANOSIS, label: "Cyanosis" },
     { value: concepts.CLAUDICATION, label: "Claudication" },
     { value: concepts.ORTHOPNOEA, label: "Orthopnoea" },
-    { value: concepts.PAROXYSMAL_NOCTURNAL_DYSPNOEA, label: "Paroxysmal nocturnal dyspnoea" },
+    {
+      value: concepts.PAROXYSMAL_NOCTURNAL_DYSPNOEA,
+      label: "Paroxysmal nocturnal dyspnoea",
+    },
   ],
   respiratory: [
     { value: concepts.SHORTNESS_OF_BREATH, label: "Shortness Of Breath" },
@@ -79,12 +88,24 @@ const reviewOfSystemsOptions = {
     { value: concepts.INCONTINENCE, label: "Incontinence" },
     { value: concepts.HAEMATURIA, label: "Haematuria" },
     { value: concepts.PYURIA, label: "Pyuria" },
-    { value: concepts.SEXUALLY_TRANSMITTED_INFECTION, label: "Sexually Transmitted Infection (STI)" },
-    { value: concepts.ABNORMAL_VAGINAL_DISCHARGE, label: "Abnormal Vaginal Discharge" },
+    {
+      value: concepts.SEXUALLY_TRANSMITTED_INFECTION,
+      label: "Sexually Transmitted Infection (STI)",
+    },
+    {
+      value: concepts.ABNORMAL_VAGINAL_DISCHARGE,
+      label: "Abnormal Vaginal Discharge",
+    },
     { value: concepts.DYSMENORRHEA, label: "Dysmenorrhea" },
     { value: concepts.PELVIC_PAIN, label: "Pelvic pain" },
-    { value: concepts.INCREASE_URINARY_FREQUENCY, label: "Increased Urinary frequency" },
-    { value: concepts.REDUCED_URINARY_FREQUENCY, label: "Reduced urinary frequency" },
+    {
+      value: concepts.INCREASE_URINARY_FREQUENCY,
+      label: "Increased Urinary frequency",
+    },
+    {
+      value: concepts.REDUCED_URINARY_FREQUENCY,
+      label: "Reduced urinary frequency",
+    },
   ],
   musculoskeletal: [
     { value: concepts.JOINT_PAIN, label: "Joint Pain" },
@@ -138,8 +159,8 @@ const GeneralSystemSection = () => {
 
   // Check if "Other" is selected in the general category
   const generalValues = values.general || [];
-  const isOtherSelected = generalValues.some((item: any) =>
-    item.key === concepts.OTHER && item.value === true
+  const isOtherSelected = generalValues.some(
+    (item: any) => item.key === concepts.OTHER && item.value === true
   );
 
   return (
@@ -173,14 +194,24 @@ const GeneralSystemSection = () => {
 
 // Create a validation schema
 const validationSchema = Yup.object({
-  generalOtherText: Yup.string().when('general', {
-    is: (general: any[]) => general?.some((item: any) => item.key === concepts.OTHER && item.value === true),
-    then: (schema) => schema.required('Please specify the other general symptom'),
+  generalOtherText: Yup.string().when("general", {
+    is: (general: any[]) =>
+      general?.some(
+        (item: any) => item.key === concepts.OTHER && item.value === true
+      ),
+    then: (schema) =>
+      schema.required("Please specify the other general symptom"),
     otherwise: (schema) => schema.notRequired(),
   }),
 });
 
-export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) => void; onSkip: () => void }) => {
+export const ReviewOfSystems = ({
+  onSubmit,
+  onSkip,
+}: {
+  onSubmit: (values: any) => void;
+  onSkip: () => void;
+}) => {
   const { params } = useParameters();
   const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
   const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
@@ -226,29 +257,37 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
       if (!selectedItems.length) continue;
 
       // Get the concept for this category
-      const categoryConcept = categoryConceptMap[category as keyof typeof categoryConceptMap];
+      const categoryConcept =
+        categoryConceptMap[category as keyof typeof categoryConceptMap];
 
       // Create group members for the selected symptoms
       const groupMembers = selectedItems.map((symptomConcept: string) => {
         // Find the option object to get the label
-        const optionList = reviewOfSystemsOptions[category as keyof typeof reviewOfSystemsOptions];
-        const option = optionList.find(opt => opt.value === symptomConcept);
+        const optionList =
+          reviewOfSystemsOptions[
+            category as keyof typeof reviewOfSystemsOptions
+          ];
+        const option = optionList.find((opt) => opt.value === symptomConcept);
 
         // If this is "Other" in general category, use the custom text
         let labelValue = option?.label || symptomConcept;
-        if (symptomConcept === concepts.OTHER && category === 'general' && values.generalOtherText) {
+        if (
+          symptomConcept === concepts.OTHER &&
+          category === "general" &&
+          values.generalOtherText
+        ) {
           // labelValue = values.generalOtherText;
           return {
             concept: symptomConcept,
             value: values.generalOtherText,
-            obsDatetime: currentDateTime
+            obsDatetime: currentDateTime,
           };
         }
 
         return {
           concept: symptomConcept,
           value: labelValue,
-          obsDatetime: currentDateTime
+          obsDatetime: currentDateTime,
         };
       });
 
@@ -258,7 +297,7 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
           concept: categoryConcept,
           value: categoryConcept,
           obsDatetime: currentDateTime,
-          groupMembers
+          groupMembers,
         });
       }
     }
@@ -281,7 +320,7 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
         neurological: [],
         psychiatric: [],
         integumentary: [],
-        generalOtherText: '', // Add initial value for the other text field
+        generalOtherText: "", // Add initial value for the other text field
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -294,10 +333,12 @@ export const ReviewOfSystems = ({ onSubmit, onSkip }: { onSubmit: (values: any) 
 
             {/* Generate a checkbox list for other categories */}
             {Object.entries(reviewOfSystemsOptions)
-              .filter(([category]) => category !== 'general') // Exclude general as it's handled above
+              .filter(([category]) => category !== "general") // Exclude general as it's handled above
               .map(([category, options]) => (
                 <div key={category} style={{ marginBottom: "2ch" }}>
-                  <h5 style={{ textTransform: "capitalize" }}>{category.replace(/_/g, " ")}</h5>
+                  <h5 style={{ textTransform: "capitalize" }}>
+                    {category.replace(/_/g, " ")}
+                  </h5>
                   <CheckboxesGroup
                     name={category}
                     allowFilter={false}
