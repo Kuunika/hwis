@@ -1,19 +1,18 @@
 "use client";
 import {
-    FormikInit,
-    WrapperBox,
-    FormFieldContainer,
-    FormFieldContainerLayout,
-    CheckboxesGroup,
-    RadioGroupInput,
-    TextInputField,
-    FormValuesListener,
+  FormikInit,
+  WrapperBox,
+  FormFieldContainer,
+  FormFieldContainerLayout,
+  CheckboxesGroup,
+  RadioGroupInput,
+  TextInputField,
+  FormValuesListener,
 } from "@/components";
 import * as yup from "yup";
 import React, { useState, useEffect } from "react";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
@@ -22,8 +21,8 @@ import { useFormikContext } from "formik";
 
 
 type Prop = {
-    onSubmit: (values: any) => void;
-    onSkip: () => void;
+  onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 // Define a constant for "None" option
@@ -200,32 +199,32 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
     const { data: patientVisits } = getPatientVisitTypes(params.id as string);
     const { init, ServerTime } = useServerTime();
 
-    useEffect(() => {
-        if (patientVisits) {
-            const active = patientVisits.find((visit) => !visit.date_stopped);
-            if (active) {
-                setActiveVisit(active as unknown as Visit);
-            }
-        }
-    }, [patientVisits]);
+  useEffect(() => {
+    if (patientVisits) {
+      const active = patientVisits.find((visit) => !visit.date_stopped);
+      if (active) {
+        setActiveVisit(active as unknown as Visit);
+      }
+    }
+  }, [patientVisits]);
 
-    // Watch for changes in form values
-    useEffect(() => {
-        if (formValues.pastMedicalHistory) {
-            const selected = formValues.pastMedicalHistory
-                .filter((item: any) => item.value)
-                .map((item: any) => item.key);
-            setSelectedConditions(selected);
-        }
-    }, [formValues.pastMedicalHistory]);
+  // Watch for changes in form values
+  useEffect(() => {
+    if (formValues.pastMedicalHistory) {
+      const selected = formValues.pastMedicalHistory
+        .filter((item: any) => item.value)
+        .map((item: any) => item.key);
+      setSelectedConditions(selected);
+    }
+  }, [formValues.pastMedicalHistory]);
 
-    const handleSubmit = async (values: any) => {
-        const currentDateTime = ServerTime.getServerTimeString();
+  const handleSubmit = async (values: any) => {
+    const currentDateTime = ServerTime.getServerTimeString();
 
-        // Extract the selected conditions
-        const selectedConditions = (values.pastMedicalHistory || [])
-            .filter((item: any) => item.value)
-            .map((item: any) => item.key);
+    // Extract the selected conditions
+    const selectedConditions = (values.pastMedicalHistory || [])
+      .filter((item: any) => item.value)
+      .map((item: any) => item.key);
 
         console.log("Selected conditions:", selectedConditions);
 
@@ -301,23 +300,23 @@ export const PastMedicalHistoryForm = ({ onSubmit, onSkip }: Prop) => {
             };
         });
 
-        // Construct the encounter payload
-        const payload = {
-            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
-            visit: activeVisit?.uuid,
-            patient: params.id,
-            encounterDatetime: currentDateTime,
-            obs,
-        };
-
-        try {
-            await submitEncounter(payload);
-            console.log("Past Medical History submitted successfully!");
-            onSubmit(values);
-        } catch (error) {
-            console.error("Error submitting Past Medical History: ", error);
-        }
+    // Construct the encounter payload
+    const payload = {
+      encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: currentDateTime,
+      obs,
     };
+
+    try {
+      await submitEncounter(payload);
+      console.log("Past Medical History submitted successfully!");
+      onSubmit(values);
+    } catch (error) {
+      console.error("Error submitting Past Medical History: ", error);
+    }
+  };
 
     return (
         <FormikInit

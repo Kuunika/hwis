@@ -20,7 +20,6 @@ import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { useParameters } from "@/hooks";
 import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import { useFormLoading } from "@/hooks/formLoading";
 import { CustomizedProgressBars } from "@/components/loader";
 import { date } from "yup";
@@ -475,10 +474,12 @@ export const MedicalHistoryFlow = () => {
             value: surgery.indication,
           },
           { concept: concepts.COMPLICATIONS, value: surgery.complication },
-          surgery.procedure === "Other Surgical Procedure"?{
-            concept: concepts.OTHER,
-            value: surgery.other
-          }: null,
+          surgery.procedure === "Other Surgical Procedure"
+            ? {
+                concept: concepts.OTHER,
+                value: surgery.other,
+              }
+            : null,
         ] as OutputObservation[],
       };
     });

@@ -11,7 +11,7 @@ import {
   WrapperBox,
 } from "@/components";
 import { getInitialValues, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import {
   getActivePatientDetails,
   useNavigation,
@@ -118,17 +118,18 @@ const form = {
   subjective: {
     name: concepts.SUBJECTIVE,
     label: "Subjective",
+    bold: true,
   },
   objective: {
-    name: concepts.MEDICAL_RECORD_OBSERVATIONS,
-    label: "General observation",
-  },
-
-  vitals: {
-    name: "vitals",
-    label: "Vitals",
+    name: "objective",
+    label: "Objective",
     type: "title",
+    bold: true,
     children: [
+      {
+        concept: concepts.MEDICAL_RECORD_OBSERVATIONS,
+        label: "General/Other observation",
+      },
       {
         concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
         label: "Systolic",
@@ -155,29 +156,29 @@ const form = {
       },
     ],
   },
-  bedsideInvestigations: {
-    name: "bedside",
-    label: "Bed side investigations",
-    type: "title",
-    children: [
-      {
-        concept: concepts.MRDT,
-        label: "MRDT",
-      },
-      {
-        concept: concepts.BLOOD_GLUCOSE,
-        label: "HB",
-      },
-      {
-        concept: concepts.INVESTIGATIONS_PT,
-        label: "PT",
-      },
-      {
-        concept: concepts.URINE_DIPSTICK_KETONES,
-        label: "Urine Dipstick",
-      },
-    ],
-  },
+  // bedsideInvestigations: {
+  //   name: "bedside",
+  //   label: "Bed side investigations",
+  //   type: "title",
+  //   children: [
+  //     {
+  //       concept: concepts.MRDT,
+  //       label: "MRDT",
+  //     },
+  //     {
+  //       concept: concepts.BLOOD_GLUCOSE,
+  //       label: "HB",
+  //     },
+  //     {
+  //       concept: concepts.INVESTIGATIONS_PT,
+  //       label: "PT",
+  //     },
+  //     {
+  //       concept: concepts.URINE_DIPSTICK_KETONES,
+  //       label: "Urine Dipstick",
+  //     },
+  //   ],
+  // },
   systolic: {
     child: true,
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
@@ -208,26 +209,26 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature",
   },
-  MRDT: {
-    child: true,
-    name: concepts.MRDT,
-    label: "MRDT",
-  },
-  HB: {
-    child: true,
-    name: concepts.BLOOD_GLUCOSE,
-    label: "HB",
-  },
-  PT: {
-    child: true,
-    name: concepts.INVESTIGATIONS_PT,
-    label: "PT",
-  },
-  urineDipstick: {
-    child: true,
-    name: concepts.URINE_DIPSTICK_KETONES,
-    label: "Urine Dipstick",
-  },
+  // MRDT: {
+  //   child: true,
+  //   name: concepts.MRDT,
+  //   label: "MRDT",
+  // },
+  // HB: {
+  //   child: true,
+  //   name: concepts.BLOOD_GLUCOSE,
+  //   label: "HB",
+  // },
+  // PT: {
+  //   child: true,
+  //   name: concepts.INVESTIGATIONS_PT,
+  //   label: "PT",
+  // },
+  // urineDipstick: {
+  //   child: true,
+  //   name: concepts.URINE_DIPSTICK_KETONES,
+  //   label: "Urine Dipstick",
+  // },
   assessment: {
     name: concepts.ASSESSMENT,
     label: "Assessment",
@@ -235,10 +236,6 @@ const form = {
   plan: {
     name: concepts.PLAN,
     label: "Plan",
-  },
-  implementation: {
-    name: concepts.IMPLEMENTATION,
-    label: "Implementation",
   },
   evaluation: {
     name: concepts.EVALUATION,
@@ -260,6 +257,7 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
   supportiveCareConfig: {
     name: concepts.SUPPORTIVE_CARE,
@@ -267,11 +265,11 @@ const form = {
     multiple: true,
     type: "string",
     hasGroupMembers: true,
+    bold: true,
   },
 };
 
 export const soapierFormConfig = form;
-
 
 const proceduresConfig = [
   { value: concepts.INTRAVENOUS_CANNULATION, label: "Intravenous Cannulation" },
@@ -321,11 +319,10 @@ const validationSchema = Yup.object().shape({
   [form.plan.name]: Yup.string().required(form.plan.label),
   [form.evaluation.name]: Yup.string().required(form.evaluation.label),
   [form.replan.name]: Yup.string().required(form.replan.label),
-  [form.implementation.name]: Yup.string().required(form.implementation.label),
-  [form.MRDT.name]: Yup.string(),
-  [form.HB.name]: Yup.string(),
-  [form.PT.name]: Yup.string(),
-  [form.urineDipstick.name]: Yup.string(),
+  // [form.MRDT.name]: Yup.string(),
+  // [form.HB.name]: Yup.string(),
+  // [form.PT.name]: Yup.string(),
+  // [form.urineDipstick.name]: Yup.string(),
   procedures: yup
     .array()
     .of(
@@ -406,12 +403,14 @@ const validationSchema = Yup.object().shape({
 });
 
 const initialValues = getInitialValues(form);
+
 initialValues.medications = [medicationTemplate];
 initialValues.procedures = [];
 initialValues.supportiveCare = [];
 initialValues.otherProcedureSpecify = "";
 initialValues.otherSupportiveCareSpecify = "";
 export const SoapForm = () => {
+  const { ServerTime } = useServerTime();
   const { activeVisit, patientId }: { activeVisit: any; patientId: any } =
     getActivePatientDetails();
   const [otherFrequency, setOtherFrequency] = useState<{
@@ -463,22 +462,29 @@ export const SoapForm = () => {
     setMedicationOptionsValues(filteredOptions);
   }, [medicationOptions]);
   const handleSubmitForm = (values: any) => {
-    const { procedures, supportiveCare,medications,otherProcedureSpecify, otherSupportiveCareSpecify, ...mainData } = values;
-
+    const {
+      procedures,
+      supportiveCare,
+      medications,
+      otherProcedureSpecify,
+      otherSupportiveCareSpecify,
+      ...mainData
+    } = values;
 
     submitMedications(medications);
     submitProcedureSupportiveCares({
       procedures,
       supportiveCare,
-      otherProcedureSpecify, otherSupportiveCareSpecify
+      otherProcedureSpecify,
+      otherSupportiveCareSpecify,
     });
-    handleSubmit(getObservations(mainData, getDateTime()));
+    handleSubmit(getObservations(mainData, ServerTime.getServerTimeString()));
   };
   const submitMedications = (medications: any) => {
-
     if (medications.length === 0) return;
     submitDispensedDrugs(medications);
-    const obsDateTime = getDateTime();
+    const obsDateTime = ServerTime.getServerTimeString();
+
     const obs = medications.map((medication: any) => {
       return {
         concept: concepts.DRUG_GIVEN,
@@ -536,7 +542,7 @@ export const SoapForm = () => {
     formValues.medications = [medicationTemplate];
   };
   const submitDispensedDrugs = (medications: any) => {
-    const obsDateTime = getDateTime();
+    const obsDateTime = ServerTime.getServerTimeString();
     const obs = medications.map((medication: any) => {
       return {
         concept: concepts.DRUG_GIVEN,
@@ -551,7 +557,7 @@ export const SoapForm = () => {
           {
             concept: concepts.MEDICATION_ROUTE,
             value: medication.medication_route,
-            obsDatetime: getDateTime(),
+            obsDatetime: ServerTime.getServerTimeString(),
           },
           {
             concept: concepts.DESCRIPTION,
@@ -572,7 +578,7 @@ export const SoapForm = () => {
     mutate(payload);
   };
   const submitProcedureSupportiveCares = async (values: any) => {
-    const currentDateTime = getDateTime();
+    const currentDateTime = ServerTime.getServerTimeString();
 
     const obs = [
       {
@@ -696,7 +702,7 @@ export const SoapForm = () => {
                         unitOfMeasure="°C"
                       />
                     </FormFieldContainerMultiple>
-                    <Typography>Bed side investigations</Typography>
+                    {/* <Typography>Bed side investigations</Typography>
                     <FormFieldContainerMultiple>
                       <TextInputField
                         id={form.MRDT.name}
@@ -719,7 +725,7 @@ export const SoapForm = () => {
                         name={form.urineDipstick.name}
                         label={form.urineDipstick.label}
                       />
-                    </FormFieldContainerMultiple>
+                    </FormFieldContainerMultiple> */}
                   </div>
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
@@ -746,7 +752,7 @@ export const SoapForm = () => {
                 </Paper>
                 <Paper sx={{ p: 2, mb: 2 }}>
                   <Typography variant="h6" sx={{ mb: 2 }}>
-                    Intervention
+                    Intervention/Implementation
                   </Typography>
                   <span style={{ fontSize: "16px", fontWeight: "bold" }}>
                     {" "}
@@ -949,19 +955,6 @@ export const SoapForm = () => {
                     name={form.replan.name}
                     multiline
                     id={form.replan.name}
-                    rows={3}
-                    sx={{ width: "100%" }}
-                  />
-                </Paper>
-                <Paper sx={{ p: 2, mb: 2 }}>
-                  <Typography variant="h6">
-                    {form.implementation.label}
-                  </Typography>
-                  <TextInputField
-                    label=""
-                    name={form.implementation.name}
-                    multiline
-                    id={form.implementation.name}
                     rows={3}
                     sx={{ width: "100%" }}
                   />

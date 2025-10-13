@@ -1,27 +1,25 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-    FormikInit,
-    WrapperBox,
-    FormFieldContainer,
-    TextInputField,
-    FormFieldContainerLayout,
-    CheckboxesGroup,
+  FormikInit,
+  WrapperBox,
+  FormFieldContainer,
+  TextInputField,
+  FormFieldContainerLayout,
+  CheckboxesGroup,
 } from "@/components";
 import * as Yup from "yup";
 import { concepts, encounters } from "@/constants";
 import { useParameters } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { Visit } from "@/interfaces";
 import { useFormikContext } from "formik";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
-
 type Prop = {
-    onSubmit: (values: any) => void;
-    onSkip: () => void;
+  onSubmit: (values: any) => void;
+  onSkip: () => void;
 };
 
 // Define a constant for "None" option
@@ -164,30 +162,29 @@ const AllergyItem = ({ allergy, isNoneSelected }: { allergy: { value: string, la
 };
 
 export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
-    const { params } = useParameters();
-    const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
-    const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
-    const { data: patientVisits } = getPatientVisitTypes(params.id as string);
-    const { init, ServerTime } = useServerTime();
+  const { params } = useParameters();
+  const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
+  const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
+  const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+  const { init, ServerTime } = useServerTime();
 
+  useEffect(() => {
+    // Finds the active visit for the patient from their visit history
+    if (patientVisits) {
+      const active = patientVisits.find((visit) => !visit.date_stopped);
+      if (active) {
+        setActiveVisit(active as unknown as Visit);
+      }
+    }
+  }, [patientVisits]);
 
-    useEffect(() => {
-        // Finds the active visit for the patient from their visit history
-        if (patientVisits) {
-            const active = patientVisits.find((visit) => !visit.date_stopped);
-            if (active) {
-                setActiveVisit(active as unknown as Visit);
-            }
-        }
-    }, [patientVisits]);
+  const handleSubmit = async (values: any) => {
+    const currentDateTime = ServerTime.getServerTimeString();
 
-    const handleSubmit = async (values: any) => {
-        const currentDateTime = ServerTime.getServerTimeString();
-
-        // Extract selected allergies from form values
-        const selectedAllergies = (values.allergies || [])
-            .filter((item: any) => item.value)
-            .map((item: any) => item.key);
+    // Extract selected allergies from form values
+    const selectedAllergies = (values.allergies || [])
+      .filter((item: any) => item.value)
+      .map((item: any) => item.key);
 
         console.log("Selected allergies:", selectedAllergies);
 
@@ -215,14 +212,14 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
             return;
         }
 
-        // Create an array to hold all our observations
-        const obs: { concept: string; value: string; obsDatetime: string; }[] = [];
+    // Create an array to hold all our observations
+    const obs: { concept: string; value: string; obsDatetime: string }[] = [];
 
-        // Process each allergy and add appropriate observations to the array
-        selectedAllergies.forEach((allergyKey: string) => {
-            let value = "";
-            const option = allergyOptions.find(opt => opt.value === allergyKey);
-            const label = option ? option.label : "Unknown";
+    // Process each allergy and add appropriate observations to the array
+    selectedAllergies.forEach((allergyKey: string) => {
+      let value = "";
+      const option = allergyOptions.find((opt) => opt.value === allergyKey);
+      const label = option ? option.label : "Unknown";
 
             // Get details based on allergy type
             if (allergyKey === concepts.RECREATIONAL_DRUG) {
@@ -239,32 +236,32 @@ export const AllergiesForm = ({ onSubmit, onSkip }: Prop) => {
                 value = `${label}: ${values.otherDetails || ""}`;
             }
 
-            // Add this observation to our array
-            obs.push({
-                concept: concepts.ALLERGIC_REACTION,
-                value,
-                obsDatetime: currentDateTime,
-            });
-        });
+      // Add this observation to our array
+      obs.push({
+        concept: concepts.ALLERGIC_REACTION,
+        value,
+        obsDatetime: currentDateTime,
+      });
+    });
 
-        console.log("Submitting observations:", obs);
+    console.log("Submitting observations:", obs);
 
-        const payload = {
-            encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
-            visit: activeVisit?.uuid,
-            patient: params.id,
-            encounterDatetime: currentDateTime,
-            obs,
-        };
-
-        try {
-            await submitEncounter(payload);
-            console.log("Allergies submitted successfully!");
-            onSubmit(values);
-        } catch (error) {
-            console.error("Error submitting Allergies:", error);
-        }
+    const payload = {
+      encounterType: encounters.SURGICAL_NOTES_TEMPLATE_FORM,
+      visit: activeVisit?.uuid,
+      patient: params.id,
+      encounterDatetime: currentDateTime,
+      obs,
     };
+
+    try {
+      await submitEncounter(payload);
+      console.log("Allergies submitted successfully!");
+      onSubmit(values);
+    } catch (error) {
+      console.error("Error submitting Allergies:", error);
+    }
+  };
 
     return (
         <FormikInit

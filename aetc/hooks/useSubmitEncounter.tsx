@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { addEncounter, fetchConceptAndCreateEncounter } from "./encounter";
 import { useParameters } from "./navigation";
 import { getPatientVisitTypes } from "./patientReg";
-import { getDateTime } from "@/helpers/dateTime";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 export const useSubmitEncounter = (
@@ -11,7 +10,7 @@ export const useSubmitEncounter = (
   patientuuid?: string,
   visitId?: string
 ) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { mutate, isSuccess, isPending, data } =
     fetchConceptAndCreateEncounter();
   const { params } = useParameters();

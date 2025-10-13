@@ -28,7 +28,7 @@ import {
 } from "@/components/svgImages";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { CPRDialogForm } from "./cprDialogForm";
 import { getActivePatientDetails } from "@/hooks";
@@ -329,53 +329,54 @@ export const Circulation = ({ onSubmit }: Prop) => {
   );
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
+    const { ServerTime } = useServerTime();
 
     const obs = [
       {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
-        obsDatetime: getDateTime(),
+        obsDatetime: ServerTime.getServerTimeString(),
         coded: true,
-        groupMembers: flattenImagesObs(abdomenOtherImage),
+        groupMembers: await flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
         coded: true,
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(legImage),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
-      //   obsDatetime: getDateTime(),
-      //   groupMembers: flattenImagesObs(abdomenImage),
+      //   obsDatetime: ServerTime.getServerTimeString(),
+      //   groupMembers: await flattenImagesObs(abdomenImage),
       // },
     ];
 
     const mucusAbnormalitiesObs = mapSearchComboOptionsToConcepts(
       formValues[form.mucousAbnormal.name],
       form.mucousAbnormal.name,
-      getDateTime(),
+      ServerTime.getServerTimeString(),
       true
     );
     const sizeOfCatheterObs = mapSearchComboOptionsToConcepts(
       formValues[form.catheterInfo.name],
       form.catheterInfo.name,
-      getDateTime(),
+      ServerTime.getServerTimeString(),
       true
     );
     const siteOfCannulationObs = mapSearchComboOptionsToConcepts(
       formValues[form.siteOfCannulation.name],
       form.siteOfCannulation.name,
-      getDateTime(),
+      ServerTime.getServerTimeString(),
       true
     );
 
     const diagramCannulationSiteObs = mapSearchComboOptionsToConcepts(
       formValues[form.diagramCannulationSite.name],
       form.diagramCannulationSite.name,
-      getDateTime(),
+      ServerTime.getServerTimeString(),
       true
     );
 
@@ -387,7 +388,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...(await mapSubmissionToCodedArray(form, formValues)),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,

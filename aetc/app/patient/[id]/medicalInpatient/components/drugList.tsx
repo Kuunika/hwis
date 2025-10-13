@@ -2,7 +2,6 @@ import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
 import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import useFetchMedications from "@/hooks/useFetchMedications";
 
 import { useState } from "react";
@@ -29,7 +28,6 @@ export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [showOther, setShowOther] = useState(false);
   const { medicationOptions } = useFetchMedications();
   const { ServerTime } = useServerTime();
-
 
   const handleSubmit = (values: any) => {
     const formValues = { ...values };

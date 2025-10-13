@@ -17,7 +17,7 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -156,6 +156,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
   const [showNasopharyngealSize, setShowNasopharyngealSize] = useState(false);
 
   const handleSubmitForm = async (values: any) => {
+    const { ServerTime } = useServerTime();
     const formValues = { ...values };
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
@@ -165,7 +166,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.intervention.name,
           value: intervention.id,
-          obsDateTime: getDateTime(),
+          obsDateTime: ServerTime.getServerTimeString(),
           coded: true,
         };
       });
@@ -178,7 +179,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
-          obsDateTime: getDateTime(),
+          obsDateTime: ServerTime.getServerTimeString(),
           coded: true,
         };
       });
@@ -188,7 +189,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...(await mapSubmissionToCodedArray(form, formValues)),
       ...interventionsObs,
       ...reasonsObs,
     ]);

@@ -28,6 +28,8 @@ export const PatientRegistrationBarcodeTemplate: React.FC<Props> = ({
   orderDate,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+
+
   useEffect(() => {
     const convertToCanvas = async () => {
       const element = document.getElementById("barcode");
@@ -78,6 +80,8 @@ export const BarcodeComponent: React.FC<Props> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
+
+      console.log({ printer });
     const convertToCanvas = async () => {
       const element = document.getElementById("barcode");
       if (element) {
@@ -349,8 +353,7 @@ export const LabBarcodeComponentPrintTemplate: React.FC<Props> = ({
         }
       }
     };
-
-    setTriggerFunc(() => convertToCanvas);
+    setTriggerFunc(convertToCanvas);
   }, [printer, setTriggerFunc]);
 
   return (

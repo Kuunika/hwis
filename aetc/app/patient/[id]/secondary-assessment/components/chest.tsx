@@ -19,7 +19,6 @@ import {
 import * as Yup from "yup";
 
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
@@ -33,7 +32,7 @@ import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import ComponentSlider from "@/components/slider/slider";
-import {number} from "yup";
+import { number } from "yup";
 
 const form = {
   respiratoryRate: {
@@ -43,18 +42,18 @@ const form = {
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
-    children:[
+    children: [
       {
         multiple: true,
         concept: concepts.ABNORMALITIES,
         label: "Abnormalities",
-      }
-    ]
+      },
+    ],
   },
   chestWallAbnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Chest Wall Abnormalities",
-      child: true,
+    child: true,
   },
   otherSpecify: {
     name: concepts.OTHER,
@@ -63,102 +62,102 @@ const form = {
   localizedChestAbnormality: {
     name: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
     label: "Localised Chest Wall Abnormality",
-      children: [
-          {
-              concept: concepts.IMAGE_PART_NAME,
-              label: "Localised Chest wall Abnormality Image",
-              image: true,
-              parentConcept: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
-          },
-      ],
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Localised Chest wall Abnormality Image",
+        image: true,
+        parentConcept: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
+      },
+    ],
   },
   chestExpansion: {
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
-      children: [
-          {
-              concept: concepts.IMAGE_PART_NAME,
-              label: "Chest Expansion Image",
-              image: true,
-              parentConcept: concepts.CHEST_EXPANSION,
-          },
-      ],
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Chest Expansion Image",
+        image: true,
+        parentConcept: concepts.CHEST_EXPANSION,
+      },
+    ],
   },
   tactileFremitus: {
     name: concepts.TACTILE_FREMITUS,
     label: "Tactile Fremitus",
-      children: [
-          {
-              concept: concepts.IMAGE_PART_NAME,
-              label: "Tactile Fremitus Image",
-              image: true,
-              parentConcept: concepts.TACTILE_FREMITUS,
-          },
-      ],
-  },
-    percussion: {
-        name: concepts.PERCUSSION,
-        label: "Percussion",
-        children: [
-            {
-                concept: concepts.IMAGE_PART_NAME,
-                label: "Percussion Image",
-                image: true,
-                parentConcept: concepts.PERCUSSION,
-            },
-        ],
-    },
-    image:{
-        name: concepts.IMAGE_PART_NAME,
-        label: "Image",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Tactile Fremitus Image",
         image: true,
-    },
+        parentConcept: concepts.TACTILE_FREMITUS,
+      },
+    ],
+  },
+  percussion: {
+    name: concepts.PERCUSSION,
+    label: "Percussion",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Percussion Image",
+        image: true,
+        parentConcept: concepts.PERCUSSION,
+      },
+    ],
+  },
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
+  },
   apexBeat: {
     name: concepts.APEX_BEAT,
     label: "Apex Beat",
-      children:[
-          {
-              concept: concepts.POSITIONING,
-              label: "Position",
-          }
-      ]
+    children: [
+      {
+        concept: concepts.POSITIONING,
+        label: "Position",
+      },
+    ],
   },
   position: {
     name: concepts.POSITIONING,
     label: "Position",
-      child: true
+    child: true,
   },
   thrill: {
     name: concepts.TRILL,
     label: "Thrill",
-      children:[
-          {
-              concept: concepts.DESCRIPTION,
-              label: "Thrill Description",
-              type: "string"
-          }
-      ]
+    children: [
+      {
+        concept: concepts.DESCRIPTION,
+        label: "Thrill Description",
+        type: "string",
+      },
+    ],
   },
   thrillDescription: {
     name: concepts.DESCRIPTION,
     label: "Thrill Description",
-      child: true
+    child: true,
   },
   heaves: {
     name: concepts.HEAVES,
     label: "Heaves",
-      children:[
-          {
-              concept: concepts.HEAVES_DESCRIPTION,
-              label: "Heaves Description",
-              type: "string"
-          }
-      ]
+    children: [
+      {
+        concept: concepts.HEAVES_DESCRIPTION,
+        label: "Heaves Description",
+        type: "string",
+      },
+    ],
   },
   heavesDescription: {
     name: concepts.HEAVES_DESCRIPTION,
     label: "Heaves Description",
-      child: true,
+    child: true,
   },
 
   // breathingSounds: {
@@ -172,34 +171,34 @@ const form = {
   heartSounds: {
     name: concepts.HEART_SOUNDS,
     label: "Heart Sounds",
-      children:[
-          {
-              concept: concepts.ABNORMALITIES,
-              label: "Abnormality Description",
-              type: "string"
-          }
-      ]
+    children: [
+      {
+        concept: concepts.ABNORMALITIES,
+        label: "Abnormality Description",
+        type: "string",
+      },
+    ],
   },
   abnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Description of Abnormality",
-      child :true
+    child: true,
   },
   location: {
     name: concepts.LOCATION,
     label: "Location of murmur",
-      children:[
-          {
-              concept: concepts.TYPE_OF_MURMUR,
-              label: "Type of murmur",
-              type: "string"
-          }
-      ]
+    children: [
+      {
+        concept: concepts.TYPE_OF_MURMUR,
+        label: "Type of murmur",
+        type: "string",
+      },
+    ],
   },
   type: {
     name: concepts.TYPE_OF_MURMUR,
     label: "Type of murmur",
-      child:true
+    child: true,
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
@@ -223,7 +222,6 @@ const form = {
   },
 };
 export const chestFormConfig: any = form;
-
 
 type Prop = {
   onSubmit: () => void;
@@ -452,13 +450,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
+        groupMembers: await flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: form.tactileFremitus.name,
         value: formValues[form.tactileFremitus.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(tactileFremitusImagesEnc),
+        groupMembers: await flattenImagesObs(tactileFremitusImagesEnc),
       },
       {
         concept: concepts.AUSCULTATION_LUNG,
@@ -469,25 +467,29 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             concept: concepts.SITE,
             value: "Auscultation Lung Anterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
+            groupMembers: await flattenImagesObs(breathingSoundsImagesEnc),
           },
           {
             concept: concepts.SITE,
             value: "Auscultation Lung Posterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsPosteriorImagesEnc),
+            groupMembers: await flattenImagesObs(
+              breathingSoundsPosteriorImagesEnc
+            ),
           },
           {
             concept: concepts.SITE,
             value: "Auscultation Lung Lateral Left",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsLateralLeftImagesEnc),
+            groupMembers: await flattenImagesObs(
+              breathingSoundsLateralLeftImagesEnc
+            ),
           },
           {
             concept: concepts.SITE,
             value: "Auscultation Lung Lateral Right",
             obsDatetime,
-            groupMembers: flattenImagesObs(
+            groupMembers: await flattenImagesObs(
               breathingSoundsLateralRightImagesEnc
             ),
           },
@@ -497,13 +499,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(percussionImagesEnc),
+        groupMembers: await flattenImagesObs(percussionImagesEnc),
       },
       {
         concept: form.localizedChestAbnormality.name,
         value: formValues[form.localizedChestAbnormality.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(localizedChestImagesEnc),
+        groupMembers: await flattenImagesObs(localizedChestImagesEnc),
       },
       {
         concept: form.globalChestWallAbnormality.name,
