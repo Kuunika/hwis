@@ -19,6 +19,7 @@ interface Props {
         familyHistory: string[];
         allergies: string;
         differentialDiagnosis: string;
+        notes: string;
         smoking: {
             status: string;
             duration: string;
@@ -122,6 +123,7 @@ export const SurgicalNotesContent: React.FC<Props> = ({
         ...presentingInfo.familyHistory,
         presentingInfo.allergies,
         presentingInfo.differentialDiagnosis,
+        presentingInfo.notes,
         presentingInfo.smoking.status,
         presentingInfo.smoking.duration,
         presentingInfo.alcoholIntake,
@@ -570,6 +572,12 @@ export const SurgicalNotesContent: React.FC<Props> = ({
             <BedsideResults data={bedsideResults} />
             <h3>Lab Results</h3>
             <LabResultsTable rows={[]} />
+            {presentingInfo.notes && (
+                <>
+                    <hr />
+                    <p><strong>Additional Investigation Notes:</strong> {presentingInfo.notes}</p>
+                </>
+            )}
 
             {/* Medications Section - Always show as it contains dynamic components */}
             <hr />

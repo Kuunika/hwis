@@ -23,6 +23,8 @@ import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
+import { FaHeartbeat } from "react-icons/fa";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 export const InitialRegistrationList = () => {
   const {
@@ -43,6 +45,9 @@ export const InitialRegistrationList = () => {
     setSearchText(debouncedSearch);
   }, [debouncedSearch]);
   const { navigateTo } = useNavigation();
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const { mutate } = deletePatient();
 
@@ -105,6 +110,19 @@ export const InitialRegistrationList = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -174,6 +192,12 @@ export const InitialRegistrationList = () => {
         onRowClick={(row: any) => {
           navigateTo(`/prescreening/${row.id}`);
         }}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
       />
     </>
   );

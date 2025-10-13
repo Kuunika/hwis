@@ -36,6 +36,8 @@ const physicalExaminationOptions = {
     eyes: [
         { value: concepts.PALLOR, label: "Pallor" },
         { value: concepts.JAUNDICE, label: "Jaundice" },
+        { value: concepts.NONE, label: "None" },
+
     ],
     mouth: [
         { value: concepts.CANDIDA, label: "Candida" },
