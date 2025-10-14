@@ -13,7 +13,6 @@ import {
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
 import { concepts, encounters } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { useFormLoading } from "@/hooks/formLoading";
 import { OperationSuccess } from "@/components/operationSuccess";
@@ -24,7 +23,7 @@ import { Navigation } from "@/app/components/navigation";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 export default function Prescreening() {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { activeVisit, patientId } = getActivePatientDetails();
   const { navigateTo } = useNavigation();
 
@@ -60,9 +59,7 @@ export default function Prescreening() {
     setLoading(true);
     setMessage("add Screening data... ");
 
-
-    const dateTime = ServerTime.getServerTimeString()
-
+    const dateTime = ServerTime.getServerTimeString();
 
     createEncounter({
       encounterType: encounters.SCREENING_ENCOUNTER,
@@ -74,13 +71,11 @@ export default function Prescreening() {
           concept: concepts.IS_PATIENT_REFERRED,
           value: values[concepts.IS_PATIENT_REFERRED],
           obsDatetime: dateTime,
-    
         },
         {
           concept: concepts.IS_SITUATION_URGENT,
           value: values[concepts.IS_SITUATION_URGENT],
           obsDatetime: dateTime,
-    
         },
         {
           concept: concepts.PATIENT_REFERRED_TO,

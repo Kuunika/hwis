@@ -1,5 +1,5 @@
 import { concepts } from "@/constants";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { Button, Checkbox, FormControlLabel } from "@mui/material";
 
 type Props = {
@@ -15,12 +15,13 @@ export const CheckBoxNext = ({
   onNext,
   title,
 }: Props) => {
+  const { ServerTime } = useServerTime();
   const handleNext = () => {
     onNext([
       {
         concept: concepts.IS_NORMAL,
         value: concepts.YES,
-        obsDateTime: getDateTime(),
+        obsDateTime: ServerTime.getServerTimeString(),
       },
     ]);
   };

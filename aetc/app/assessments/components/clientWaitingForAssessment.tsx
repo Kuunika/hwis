@@ -254,21 +254,21 @@ export const ClientWaitingForAssessment = () => {
               <BasicMenu patient={cell.row} />
             </Tooltip>
 
-            {cell.row.triage_result == "red" && (
-              <Tooltip title="Initiate CPR" arrow>
-                <IconButton
-                  onClick={() => {
-                    setPatientId(cell.id);
-                    setCpr(true);
-                    setVisitUUID(cell.row.visit_uuid);
-                  }}
-                  aria-label="initiate CPR"
-                  color="error"
-                >
-                  <FaHeartbeat />
-                </IconButton>
-              </Tooltip>
-            )}
+            {/* {cell.row.triage_result == "red" && ( */}
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
+            {/* )} */}
           </Box>
         );
       },

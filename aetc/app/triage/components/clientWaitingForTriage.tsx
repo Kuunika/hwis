@@ -23,8 +23,13 @@ import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
+import { FaHeartbeat } from "react-icons/fa";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 export const ClientWaitingForTriage = () => {
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
   const {
@@ -107,6 +112,20 @@ export const ClientWaitingForTriage = () => {
               patientId={cell.id}
             />
             <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
+
           </>
         );
       },
@@ -156,24 +175,32 @@ export const ClientWaitingForTriage = () => {
   });
 
   return (
-    <PatientTableListServer
-      columns={columns}
-      data={{
-        data: rows ?? [],
-        page: paginationModel.page,
-        per_page: paginationModel.pageSize,
-        total_pages: totalPages,
-        totalEntries,
-      }}
-      searchText={inputText}
-      setSearchString={setInputText}
-      setPaginationModel={setPaginationModel}
-      paginationModel={paginationModel}
-      // loading={isPending || isRefetching}
-      loading={loading}
-      formatForMobileView={formatForMobileView ? formatForMobileView : []}
-      onSwitchChange={setOnSwitch}
-      onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
-    />
+    <>
+      <PatientTableListServer
+        columns={columns}
+        data={{
+          data: rows ?? [],
+          page: paginationModel.page,
+          per_page: paginationModel.pageSize,
+          total_pages: totalPages,
+          totalEntries,
+        }}
+        searchText={inputText}
+        setSearchString={setInputText}
+        setPaginationModel={setPaginationModel}
+        paginationModel={paginationModel}
+        // loading={isPending || isRefetching}
+        loading={loading}
+        formatForMobileView={formatForMobileView ? formatForMobileView : []}
+        onSwitchChange={setOnSwitch}
+        onRowClick={(row: any) => navigateTo(`/triage/${row.id}/start`)}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
+      />
+    </>
   );
 };

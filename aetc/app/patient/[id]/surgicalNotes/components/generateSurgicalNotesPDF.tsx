@@ -45,6 +45,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
             familyHistory: [] as string[],
             allergies: "",
             differentialDiagnosis: "",
+            notes: "",
             smoking: {
                 status: "",
                 duration: ""
@@ -53,8 +54,8 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
             recreationalDrugs: "",
         });
 
-           // Add gynae history state
-           const [gynaeHistory, setGynaeHistory] = useState({
+        // Add gynae history state
+        const [gynaeHistory, setGynaeHistory] = useState({
             isPregnant: "",
             lnmp: "",
             gestationalAge: "",
@@ -146,6 +147,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     familyHistory: [] as string[],
                     allergies: "",
                     differentialDiagnosis: "",
+                    notes: "",
                     smoking: {
                         status: "",
                         duration: ""
@@ -211,19 +213,19 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         newClerkInfo.signature = obs.value || obs.value_text || "";
                     } else if (conceptName === "Additional Notes") {
                         newClerkInfo.additionalNotes = obs.value || obs.value_text || "";
-                    } 
-                        // Gynae History mapping
-                        else if (conceptName === "B-HCG") {
-                            newGynaeHistory.isPregnant = obs.value || obs.value_text || "";
-                        } else if (conceptName === "LNMP") {
-                            newGynaeHistory.lnmp = obs.value || obs.value_text || "";
-                        } else if (conceptName === "Gestational age") {
-                            newGynaeHistory.gestationalAge = obs.value || obs.value_text || "";
-                        } else if (conceptName === "Parity") {
-                            newGynaeHistory.parity = obs.value || obs.value_text || "";
-                        }
-                    
-                    
+                    }
+                    // Gynae History mapping
+                    else if (conceptName === "B-HCG") {
+                        newGynaeHistory.isPregnant = obs.value || obs.value_text || "";
+                    } else if (conceptName === "LNMP") {
+                        newGynaeHistory.lnmp = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Gestational age") {
+                        newGynaeHistory.gestationalAge = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Parity") {
+                        newGynaeHistory.parity = obs.value || obs.value_text || "";
+                    }
+
+
                     // In your useEffect where you process the surgical encounter observations:
                     else if (conceptName === "Presenting Complaints") {
                         if (obs.children && obs.children.length > 0) {
@@ -266,7 +268,10 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         newPresentingInfo.allergies = obs.value || obs.value_text || "";
                     } else if (conceptName === "Attempted/ Differential Diagnosis") {
                         newPresentingInfo.differentialDiagnosis = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Patient smokes") {
+                    } else if (conceptName === "Clinician notes") {
+                        newPresentingInfo.notes = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Patient smokes") {
                         newPresentingInfo.smoking.status = obs.value || obs.value_text || "";
                         if (obs.children && obs.children.length > 0) {
                             const durationChild = obs.children.find(child =>

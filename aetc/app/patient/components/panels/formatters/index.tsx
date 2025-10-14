@@ -14,24 +14,36 @@ import { soapierFormConfig } from "@/app/patient/[id]/soap/components/soapForm";
 import { nonPharmacologicalFormConfig } from "@/app/patient/[id]/patient-management-plan/components/forms/nonPharmacologicalForm";
 import {
   abdomenAndPelvisFormConfig,
-  chestFormConfig, extremitiesFormConfig,
+  chestFormConfig,
+  extremitiesFormConfig,
   generalInformationFormConfig,
-  headAndNeckFormConfig, neurologicalFormConfig
+  headAndNeckFormConfig,
+  neurologicalFormConfig,
 } from "@/app/patient/[id]/secondary-assessment/components";
-import {allergiesFormConfig, lastMealFormConfig} from "@/app/patient/[id]/medicalHistory/components";
+import {
+  allergiesFormConfig,
+  lastMealFormConfig,
+} from "@/app/patient/[id]/medicalHistory/components";
 import { dispositionFormConfig } from "@/app/patient/[id]/disposition/components/DischargeHomeForm";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+
+/** Utility: Formats user info safely */
+const formatUser = (obs: Obs[]) => {
+  if (!obs?.length) return "Notes not entered";
+  const first = obs[0];
+  return first?.created_by
+    ? `${first.created_by} ${getHumanReadableDateTime(first?.obs_datetime)}`
+    : `Notes not entered"`;
+};
 
 export const formatPresentingComplaints = (
   data: Obs[]
 ): ClinicalNotesDataType => {
-  const items = data?.map((item) => {
-    return { item: item?.value };
-  });
+  const items = data?.map((item) => ({ item: item?.value }));
   return {
     heading: "Presenting Complaints",
     children: items,
-    user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+    user: formatUser(data),
   };
 };
 
@@ -48,21 +60,21 @@ export const formatVitals = (data: Obs[]): ClinicalNotesDataType[] => {
     {
       heading: "Vitals",
       children: items,
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+      user: formatUser(data),
     },
     {
       heading: "Triage Result",
       children: [
         { item: getObservationValue(data, concepts.TRIAGE_RESULT) || "N/A" },
       ],
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+      user: formatUser(data),
     },
     {
       heading: "Patient Care Area",
       children: [
         { item: getObservationValue(data, concepts.CARE_AREA) || "N/A" },
       ],
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+      user: formatUser(data),
     },
   ];
 };
@@ -73,51 +85,46 @@ export const formatPrimarySurvey = (data: {
   circulationObs: Obs[];
   disabilityObs: Obs[];
   exposureObs: Obs[];
-}): ClinicalNotesDataType[] => {
-
-  return [
-    {
-      heading: "Airway",
-      children: buildNotesObject(airwayFormConfig, data.airwayObs),
-      user: `${data.airwayObs[0]?.created_by} ${getHumanReadableDateTime(data.airwayObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Breathing",
-      children: buildNotesObject(breathingFormConfig, data.breathingObs),
-      user: `${data.breathingObs[0]?.created_by} ${getHumanReadableDateTime(data.breathingObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Circulation",
-      children: buildNotesObject(circulationFormConfig, data.circulationObs),
-      user: `${data.circulationObs[0]?.created_by} ${getHumanReadableDateTime(data.circulationObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Disability",
-      children: buildNotesObject(disabilityFormConfig, data.disabilityObs),
-      user: `${data.disabilityObs[0]?.created_by} ${getHumanReadableDateTime(data.disabilityObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Exposure",
-      children: buildNotesObject(exposureFormConfig, data.exposureObs),
-      user: `${data.exposureObs[0]?.created_by} ${getHumanReadableDateTime(data.exposureObs[0]?.obs_datetime)}`,
-    },
-  ];
-};
+}): ClinicalNotesDataType[] => [
+  {
+    heading: "Airway",
+    children: buildNotesObject(airwayFormConfig, data.airwayObs),
+    user: formatUser(data.airwayObs),
+  },
+  {
+    heading: "Breathing",
+    children: buildNotesObject(breathingFormConfig, data.breathingObs),
+    user: formatUser(data.breathingObs),
+  },
+  {
+    heading: "Circulation",
+    children: buildNotesObject(circulationFormConfig, data.circulationObs),
+    user: formatUser(data.circulationObs),
+  },
+  {
+    heading: "Disability",
+    children: buildNotesObject(disabilityFormConfig, data.disabilityObs),
+    user: formatUser(data.disabilityObs),
+  },
+  {
+    heading: "Exposure",
+    children: buildNotesObject(exposureFormConfig, data.exposureObs),
+    user: formatUser(data.exposureObs),
+  },
+];
 
 export const formatPatientManagamentPlan = (data: {
   nonPharmalogical: Obs[];
-}): ClinicalNotesDataType[] => {
-  return [
-    {
-      heading: "Non-Pharmacological",
-      children: buildNotesObject(
-        nonPharmacologicalFormConfig,
-        data.nonPharmalogical
-      ),
-      user: `${data.nonPharmalogical[0]?.created_by} ${getHumanReadableDateTime(data.nonPharmalogical[0]?.obs_datetime)}`,
-    },
-  ];
-};
+}): ClinicalNotesDataType[] => [
+  {
+    heading: "Non-Pharmacological",
+    children: buildNotesObject(
+      nonPharmacologicalFormConfig,
+      data.nonPharmalogical
+    ),
+    user: formatUser(data.nonPharmalogical),
+  },
+];
 
 export const formatSecondarySurvey = (data: {
   generalInformationObs: Obs[];
@@ -126,46 +133,45 @@ export const formatSecondarySurvey = (data: {
   abdomenAndPelvisObs: Obs[];
   extremitiesObs: Obs[];
   neurologicalObs: Obs[];
-}): ClinicalNotesDataType[] => {
-  return [
-    {
-      heading: "General Information",
-      children: buildNotesObject(
-        generalInformationFormConfig,
-        data.generalInformationObs
-      ),
-      user: `${data.generalInformationObs[0]?.created_by} ${getHumanReadableDateTime(data.generalInformationObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Head and Neck",
-      children: buildNotesObject(headAndNeckFormConfig, data.headAndNeckObs),
-      user: `${data.headAndNeckObs[0]?.created_by} ${getHumanReadableDateTime(data.headAndNeckObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Chest",
-      children: buildNotesObject(chestFormConfig, data.chestObs),
-      user: `${data.chestObs[0]?.created_by} ${getHumanReadableDateTime(data.chestObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Abdomen and Pelvis",
-      children: buildNotesObject(
-        abdomenAndPelvisFormConfig,
-        data.abdomenAndPelvisObs
-      ),
-      user: `${data.abdomenAndPelvisObs[0]?.created_by} ${getHumanReadableDateTime(data.abdomenAndPelvisObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Extremities",
-      children: buildNotesObject(extremitiesFormConfig, data.extremitiesObs),
-      user: `${data.extremitiesObs[0]?.created_by} ${getHumanReadableDateTime(data.extremitiesObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Neurological",
-      children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
-      user: `${data.neurologicalObs[0]?.created_by} ${getHumanReadableDateTime(data.neurologicalObs[0]?.obs_datetime)}`,
-    },
-  ];
-};
+}): ClinicalNotesDataType[] => [
+  {
+    heading: "General Information",
+    children: buildNotesObject(
+      generalInformationFormConfig,
+      data.generalInformationObs
+    ),
+    user: formatUser(data.generalInformationObs),
+  },
+  {
+    heading: "Head and Neck",
+    children: buildNotesObject(headAndNeckFormConfig, data.headAndNeckObs),
+    user: formatUser(data.headAndNeckObs),
+  },
+  {
+    heading: "Chest",
+    children: buildNotesObject(chestFormConfig, data.chestObs),
+    user: formatUser(data.chestObs),
+  },
+  {
+    heading: "Abdomen and Pelvis",
+    children: buildNotesObject(
+      abdomenAndPelvisFormConfig,
+      data.abdomenAndPelvisObs
+    ),
+    user: formatUser(data.abdomenAndPelvisObs),
+  },
+  {
+    heading: "Extremities",
+    children: buildNotesObject(extremitiesFormConfig, data.extremitiesObs),
+    user: formatUser(data.extremitiesObs),
+  },
+  {
+    heading: "Neurological",
+    children: buildNotesObject(neurologicalFormConfig, data.neurologicalObs),
+    user: formatUser(data.neurologicalObs),
+  },
+];
+
 export const formatSampleHistory = (data: {
   presentingComplaintsObs: Obs[];
   allergiesObs: Obs[];
@@ -173,78 +179,73 @@ export const formatSampleHistory = (data: {
   existingConditionsObs: Obs[];
   lastMealObs: Obs[];
   eventsObs: Obs[];
-}): ClinicalNotesDataType[] => {
-  return [
-    {
-      heading: "Presenting Complaints",
-      children: buildNotesObject(
-        generalInformationFormConfig,
-        data.presentingComplaintsObs
-      ),
-      user: `${data.presentingComplaintsObs[0]?.created_by} ${getHumanReadableDateTime(data.presentingComplaintsObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Allergies",
-      children: buildNotesObject(allergiesFormConfig, data.allergiesObs),
-      user: `${data.allergiesObs[0]?.created_by} ${getHumanReadableDateTime(data.allergiesObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Medications",
-      children: buildNotesObject(chestFormConfig, data.medicationsObs),
-      user: `${data.medicationsObs[0]?.created_by} ${getHumanReadableDateTime(data.medicationsObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Existing Conditions",
-      children: buildNotesObject(
-        abdomenAndPelvisFormConfig,
-        data.existingConditionsObs
-      ),
-      user: `${data.existingConditionsObs[0]?.created_by} ${getHumanReadableDateTime(data.existingConditionsObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Last Meal",
-      children: buildNotesObject(lastMealFormConfig, data.lastMealObs),
-      user: `${data.lastMealObs[0]?.created_by} ${getHumanReadableDateTime(data.lastMealObs[0]?.obs_datetime)}`,
-    },
-    {
-      heading: "Events",
-      children: buildNotesObject(neurologicalFormConfig, data.eventsObs),
-      user: `${data.eventsObs[0]?.created_by} ${getHumanReadableDateTime(data.eventsObs[0]?.obs_datetime)}`,
-    },
-  ];
-};
+}): ClinicalNotesDataType[] => [
+  {
+    heading: "Presenting Complaints",
+    children: buildNotesObject(
+      generalInformationFormConfig,
+      data.presentingComplaintsObs
+    ),
+    user: formatUser(data.presentingComplaintsObs),
+  },
+  {
+    heading: "Allergies",
+    children: buildNotesObject(allergiesFormConfig, data.allergiesObs),
+    user: formatUser(data.allergiesObs),
+  },
+  {
+    heading: "Medications",
+    children: buildNotesObject(chestFormConfig, data.medicationsObs),
+    user: formatUser(data.medicationsObs),
+  },
+  {
+    heading: "Existing Conditions",
+    children: buildNotesObject(
+      abdomenAndPelvisFormConfig,
+      data.existingConditionsObs
+    ),
+    user: formatUser(data.existingConditionsObs),
+  },
+  {
+    heading: "Last Meal",
+    children: buildNotesObject(lastMealFormConfig, data.lastMealObs),
+    user: formatUser(data.lastMealObs),
+  },
+  {
+    heading: "Events",
+    children: buildNotesObject(neurologicalFormConfig, data.eventsObs),
+    user: formatUser(data.eventsObs),
+  },
+];
 
+export const formatSoapierNotes = (data: Obs[]) => [
+  {
+    heading: "",
+    children: buildNotesObject(soapierFormConfig, data),
+    user: formatUser(data),
+  },
+];
 
-export const formatSoapierNotes = (data: Obs[]) => {
-  return [
-    {
-      heading: "Soapier Notes",
-      children: buildNotesObject(soapierFormConfig, data),
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
-    },
-  ];
-};
 export const formatDiagnosisNotes = (data: Obs[]) => {
-
   const diagnosisNotesConfig = {
     diagnosis: {
       name: concepts.DIFFERENTIAL_DIAGNOSIS,
       label: "Diagnosis",
       type: "title",
-      children:[
+      children: [
         {
           concept: concepts.DIFFERENTIAL_DIAGNOSIS,
           label: "Differential",
           type: "string",
-          multiple:true
+          multiple: true,
         },
         {
           concept: concepts.FINAL_DIAGNOSIS,
           label: "Final",
           type: "string",
-          multiple:true
+          multiple: true,
         },
-      ]
+      ],
     },
   };
 
@@ -252,239 +253,255 @@ export const formatDiagnosisNotes = (data: Obs[]) => {
     {
       heading: "Diagnosis Notes",
       children: buildNotesObject(diagnosisNotesConfig, data),
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
+      user: formatUser(data),
     },
   ];
 };
 
-export const formatInvestigationPlans = (data: Obs[]) => {
-
- return data.map(ob=>{
+export const formatInvestigationPlans = (data: Obs[]) =>
+  data.map((ob) => {
     const plan = ob.value;
-    const result= ob.children.map((child: Obs) => {
-      return {
-        test: child.names[0].name,
-        result: child.value,
-      }
-      });
+    const result = ob.children.map((child: Obs) => ({
+      test: child.names[0].name,
+      result: child.value,
+    }));
 
-    return { plan, result };
-
-  })
-
-
-}
-export const formatManagementPlan  = (
-    data: Obs[]
-): ClinicalNotesDataType => {
-    const items = data?.map((item) => {
-        return { item: item?.value };
-    });
     return {
-        heading: "Non Pharmacological", children: items };
+      plan,
+      result,
+      user: ob?.created_by
+        ? `${ob.created_by} ${getHumanReadableDateTime(ob?.obs_datetime)}`
+        : undefined,
+    };
+  });
+
+export const formatManagementPlan = (data: Obs[]): ClinicalNotesDataType => {
+  const items = data?.map((item) => ({ item: item?.value }));
+  return {
+    heading: "Non Pharmacological",
+    children: items,
+    user: formatUser(data),
+  };
 };
+
+export const formatDisposition = (data: Obs[]) => [
+  {
+    heading: "Disposition",
+    children: buildNotesObject(dispositionFormConfig, data),
+    user: formatUser(data),
+  },
+];
+
+/** ------------------------------
+ * Helpers for children + notes
+ * ------------------------------ */
+
 const handleImagesObsRestructure = (children: Obs[]) => {
-    return children
-        .filter((ob: Obs) => ob.value || (ob.children && ob.children.length > 0))
-        .map((ob: Obs) => {
-            const childItems = ob.children
-                ?.filter((childOb: Obs) => childOb.value || (childOb.children && childOb.children.length > 0)) // skip empty
-                .map((childOb: Obs) => {
-                    let nestedChildren: any[] = [];
+  return children
+    .filter((ob: Obs) => ob.value || (ob.children && ob.children.length > 0))
+    .map((ob: Obs) => {
+      const childItems =
+        ob.children
+          ?.filter(
+            (childOb: Obs) =>
+              childOb.value || (childOb.children && childOb.children.length > 0)
+          )
+          .map((childOb: Obs) => {
+            let nestedChildren: any[] = [];
 
-                    if (childOb?.children && childOb.children.length > 0) {
-                        nestedChildren = childOb.children
-                            .filter((cOb: Obs) => cOb.value)
-                            .map((cOb: Obs) => ({
-                                item: {
-                                    [cOb.names?.[0]?.name || "Unnamed"]: cOb.value,
-                                },
-                            }));
-                    }
-
-                    return {
-                        item:
-                            nestedChildren.length === 0
-                                ? { [childOb.names?.[0]?.name || "Unnamed"]: childOb.value }
-                                : childOb.value,
-                        children: nestedChildren.length > 0 ? nestedChildren : undefined,
-                    };
-                }) ?? [];
+            if (childOb?.children && childOb.children.length > 0) {
+              nestedChildren = childOb.children
+                .filter((cOb: Obs) => cOb.value)
+                .map((cOb: Obs) => ({
+                  item: {
+                    [cOb.names?.[0]?.name || "Unnamed"]: cOb.value,
+                  },
+                }));
+            }
 
             return {
-                item: ob.value,
-                children: childItems.length > 0 ? childItems : undefined,
+              item:
+                nestedChildren.length === 0
+                  ? { [childOb.names?.[0]?.name || "Unnamed"]: childOb.value }
+                  : childOb.value,
+              children: nestedChildren.length > 0 ? nestedChildren : undefined,
             };
-        });
-};
-export const formatDisposition = (data: Obs[]) => {
-  return [
-    {
-      heading: "Disposition",
-      children: buildNotesObject(dispositionFormConfig, data),
-      user: `${data[0]?.created_by} ${getHumanReadableDateTime(data[0]?.obs_datetime)}`,
-    },
-  ];
+          }) ?? [];
+
+      return {
+        item: ob.value,
+        children: childItems.length > 0 ? childItems : undefined,
+      };
+    });
 };
 
 const buildChildren = (obs: Obs[], children: any) => {
-    if (!children) return [];
-    return (
-        obs.length > 0 &&
-        children.flatMap((child: any) => {
-            const innerObs = filterObservations(obs, child.concept);
+  if (!children) return [];
+  return (
+    obs.length > 0 &&
+    children.flatMap((child: any) => {
+      const innerObs = filterObservations(obs, child.concept);
 
-            if (!innerObs || innerObs.length === 0) return [];
+      if (!innerObs || innerObs.length === 0) return [];
 
-            // Handle image-type obs
-            if (child?.image) {
-                const parentOb = filterObservations(obs, child?.parentConcept);
-                if (!parentOb?.length) return [];
-                return handleImagesObsRestructure(parentOb[0].children);
-            }
+      // Handle image-type obs
+      if (child?.image) {
+        const parentOb = filterObservations(obs, child?.parentConcept);
+        if (!parentOb?.length) return [];
+        return handleImagesObsRestructure(parentOb[0].children);
+      }
 
-            const obValue = getObservationValue(obs, child?.concept);
+      const obValue = getObservationValue(obs, child?.concept);
 
-            // If there's no usable value, skip this child
-            if (
-                (!obValue || obValue === "" || obValue === null) &&
-                (!child.multiple || innerObs.length === 0)
-            ) {
-                return [];
-            }
+      // If there's no usable value, skip this child
+      if (
+        (!obValue || obValue === "" || obValue === null) &&
+        (!child.multiple || innerObs.length === 0)
+      ) {
+        return [];
+      }
 
-            let transformedObs: any;
+      let transformedObs: any;
 
-            if (child?.type === "string") {
-                const childValue = child?.multiple
-                    ? innerObs
-                        .map((innerOb) => {
-                            const val = child?.options
-                                ? child.options[innerOb.value]
-                                : innerOb.value;
-                            return val ? { item: val } : null;
-                        })
-                        .filter(Boolean) // filter out null/empty
-                    : child?.options
-                        ? child.options[obValue]
-                        : obValue;
+      if (child?.type === "string") {
+        const childValue = child?.multiple
+          ? innerObs
+              .map((innerOb) => {
+                const val = child?.options
+                  ? child.options[innerOb.value]
+                  : innerOb.value;
+                return val ? { item: val } : null;
+              })
+              .filter(Boolean)
+          : child?.options
+            ? child.options[obValue]
+            : obValue;
 
-                if (
-                    childValue === undefined ||
-                    childValue === null ||
-                    (Array.isArray(childValue) && childValue.length === 0)
-                ) {
-                    return [];
-                }
+        if (
+          childValue === undefined ||
+          childValue === null ||
+          (Array.isArray(childValue) && childValue.length === 0)
+        ) {
+          return [];
+        }
 
-                transformedObs = {
-                    item: child.label,
-                    children: child?.children
-                        ? buildChildren(obs, child?.children)
-                        : childValue,
-                };
-            } else {
-                const childValue = child?.multiple
-                    ? innerObs
-                        .map((innerOb) => {
-                            const val = child?.options
-                                ? child.options[innerOb.value]
-                                : innerOb.value;
-                            return val ? { item: val } : null;
-                        })
-                        .filter(Boolean)
-                    : obValue
-                        ? { [child.label]: obValue }
-                        : null;
+        transformedObs = {
+          item: child.label,
+          children: child?.children
+            ? buildChildren(obs, child?.children)
+            : childValue,
+        };
+      } else {
+        const childValue = child?.multiple
+          ? innerObs
+              .map((innerOb) => {
+                const val = child?.options
+                  ? child.options[innerOb.value]
+                  : innerOb.value;
+                return val ? { item: val } : null;
+              })
+              .filter(Boolean)
+          : obValue
+            ? { [child.label]: obValue }
+            : null;
 
-                if (!childValue || (Array.isArray(childValue) && childValue.length === 0)) {
-                    return [];
-                }
+        if (
+          !childValue ||
+          (Array.isArray(childValue) && childValue.length === 0)
+        ) {
+          return [];
+        }
 
-                transformedObs = {
-                    item: childValue,
-                    children: child?.children
-                        ? buildChildren(obs, child?.children)
-                        : childValue,
-                };
-            }
+        transformedObs = {
+          item: childValue,
+          children: child?.children
+            ? buildChildren(obs, child?.children)
+            : childValue,
+        };
+      }
 
-            return transformedObs;
-        })
-    );
+      return transformedObs;
+    })
+  );
 };
 
-
 const buildNotesObject = (formConfig: any, obs: Obs[]) => {
-    return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
-        .filter((key) => {
-            const config = formConfig[key];
-            return !config.child;
-        })
-        .flatMap((key) => {
-            const config = formConfig[key];
-            const value = getObservationValue(obs, config.name);
+  return (Object.keys(formConfig) as Array<keyof typeof formConfig>)
+    .filter((key) => {
+      const config = formConfig[key];
+      return !config.child;
+    })
+    .flatMap((key) => {
+      const config = formConfig[key];
+      const value = getObservationValue(obs, config.name);
+      if (
+        !value &&
+        !config.hasGroupMembers &&
+        !config.image &&
+        config.type != "title"
+      ) {
+        return [];
+      }
 
-            if (!value && !config.hasGroupMembers && !config.image) {
-                return [];
-            }
+      const displayValue = config.options?.[value] ?? value;
+      const topParentType = config?.type || "N/A";
 
-            const displayValue = config.options?.[value] ?? value;
-            const topParentType = config?.type || "N/A";
+      let groupMemberChildren = [];
 
-            let groupMemberChildren = [];
+      if (config.groupMembersWithLabel) {
+        const parentObs: any = filterObservations(obs, config.name);
+        if (parentObs?.length > 0) {
+          groupMemberChildren = parentObs[0]?.children;
+        }
+      }
 
-            if (config.groupMembersWithLabel)
-            {
-               const parentObs: any = filterObservations(obs, config.name);
-               if(parentObs?.length > 0) {
-                groupMemberChildren = parentObs[0]?.children
-               }
-            }
-            let children = buildChildren([...obs, ...groupMemberChildren], config.children) ?? [];
+      let children =
+        buildChildren([...obs, ...groupMemberChildren], config.children) ?? [];
 
-            if (config.hasGroupMembers) {
-                const parentObs: any = filterObservations(obs, config.name);
-                if (parentObs?.length > 0) {
-                    children = [
-                        ...children,
-                        ...parentObs[0]?.children
-                            .filter((child: any) => child.value) // only keep ones with values
-                            .map((child: any) => ({
-                                item: child.value,
-                            })),
-                    ];
-                }
+      if (config.hasGroupMembers) {
+        const parentObs: any = filterObservations(obs, config.name);
+        if (parentObs?.length > 0) {
+          children = [
+            ...children,
+            ...parentObs[0]?.children
+              .filter((child: any) => child.value)
+              .map((child: any) => ({
+                item: child.value,
+              })),
+          ];
+        }
 
-                if (!value && children.length === 0) {
-                    return [];
-                }
-            }
+        if (!value && children.length === 0) {
+          return [];
+        }
+      }
 
-            if (config?.image) {
-                const parentObs: any = filterObservations(obs, config.name);
-                const imagesObs = parentObs
-                    .filter((ob: Obs) => ob.value || (ob.children?.length ?? 0) > 0)
-                    .map((ob: Obs) => ({
-                        item: ob.value,
-                        children: handleImagesObsRestructure(ob.children),
-                    }));
-                return imagesObs;
-            }
+      if (config?.image) {
+        const parentObs: any = filterObservations(obs, config.name);
+        const imagesObs = parentObs
+          .filter((ob: Obs) => ob.value || (ob.children?.length ?? 0) > 0)
+          .map((ob: Obs) => ({
+            item: ob.value,
+            children: handleImagesObsRestructure(ob.children),
+          }));
+        return imagesObs;
+      }
 
-            const result: any = {
-                item:
-                    topParentType === "string"
-                        ? displayValue
-                        : topParentType === "title"
-                            ? config.label
-                            : { [config.label]: displayValue },
-            };
+      const result: any = {
+        item:
+          topParentType === "string"
+            ? displayValue
+            : topParentType === "title"
+              ? config.label
+              : { [config.label]: displayValue },
+      };
 
-            if (children.length > 0) {
-                result.children = children;
-            }
+      if (children.length > 0) {
+        result.children = children;
+      }
 
-            return result;
-        });
+      result.bold=config.bold;
+
+      return result;
+    });
 };

@@ -106,11 +106,15 @@ export const ConsciousnessForm = ({
         [ConsciousnessFormConfig.bloodGlucose.name]: flow["glucose"],
       }}
       enableReinitialize={true}
-      onSubmit={(values) =>
-        onSubmit(mapSubmissionToCodedArray(ConsciousnessFormConfig, values))
+      onSubmit={async (values) =>
+        onSubmit(
+          await mapSubmissionToCodedArray(ConsciousnessFormConfig, values)
+        )
       }
-      getFormValues={(value) =>
-        getFormValues(mapSubmissionToCodedArray(ConsciousnessFormConfig, value))
+      getFormValues={async (value) =>
+        getFormValues(
+          await mapSubmissionToCodedArray(ConsciousnessFormConfig, value)
+        )
       }
       submitButtonText="next"
       submitButton={false}

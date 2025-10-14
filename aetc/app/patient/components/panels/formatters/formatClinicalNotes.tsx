@@ -19,6 +19,7 @@ import {
 import ResultsTable from "../tabularDisplayInformation";
 import { ContinuationNotes } from "../continuationNotes";
 
+
 export const formatClinicalNotesData = (
   getEncountersByType: (type: string) => any[]
 ) => {
@@ -37,7 +38,7 @@ export const formatClinicalNotesData = (
         formatPresentingComplaints(
           getEncountersByType(encounters.PRESENTING_COMPLAINTS)
         ),
-        ...formatVitals(getEncountersByType(encounters.VITALS)),
+        ...formatVitals([...getEncountersByType(encounters.VITALS), ...getEncountersByType(encounters.TRIAGE_RESULT)]),
       ],
     },
     {

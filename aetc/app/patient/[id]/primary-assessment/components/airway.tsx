@@ -64,7 +64,11 @@ const form = {
           [concepts.NOT_INDICATED]: "No indication of neck collar",
         },
       },
-      { type:"string",concept: concepts.HEAD_BLOCKS_APPLIED, label: "Head Blocks Applied" },
+      {
+        type: "string",
+        concept: concepts.HEAD_BLOCKS_APPLIED,
+        label: "Head Blocks Applied",
+      },
     ],
   },
   neckCollar: {
@@ -225,7 +229,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...interventionsObs,
       ...reasonsObs,
     ]);

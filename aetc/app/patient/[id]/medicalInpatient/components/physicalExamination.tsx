@@ -15,7 +15,6 @@ import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { concepts } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Box, Typography } from "@mui/material";
 import { Form } from "formik";
@@ -91,7 +90,6 @@ const form = {
     name: concepts.SENSATION,
     label: "Facial Movements / Sensation:",
   },
-
 
   apexBeat: {
     name: concepts.APEX_BEAT,
@@ -257,7 +255,7 @@ const schema = Yup.object().shape({
   [form.description.name]: Yup.string()
     .label(form.description.label)
     .when(form.symmetricalExpansion.name, {
-      is: concepts.NO,   // only require if "No" is selected
+      is: concepts.NO, // only require if "No" is selected
       then: (schema) => schema.required("Please provide a description"),
       otherwise: (schema) => schema.notRequired(),
     }),
@@ -319,9 +317,6 @@ const tracheaOptions = [
   // { value: concepts.PRESENT, label: "Present" },
   { value: concepts.TRACHEA_DEVIATED, label: "Deviated" },
   { value: concepts.IS_TRACHEA_CENTRAL, label: "Central" },
-
-
-
 ];
 
 const normalAbnormalOptions = [
@@ -363,14 +358,19 @@ const verbalResponses = [
   { label: "None", value: "None", weight: 1 },
 ];
 
-export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
+export const PhysicalExamination = ({
+  onSubmit,
+}: {
+  onSubmit: (values: any) => void;
+}) => {
   const [formValues, setFormValues] = useState<any>({});
   const { gender } = getActivePatientDetails();
   const [percussionImageEnc, setPercussionImageEnc] = useState([]);
   const [abdomenImageEnc, setAbdomenImageEnc] = useState([]);
   const { ServerTime } = useServerTime();
 
-  const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] = useState([]);
+  const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] =
+    useState([]);
 
   const getWeight = (value: string, lists: any) => {
     const found = lists.find((l: any) => l.value == value);
@@ -384,36 +384,33 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
     eyeOpeningResponses
   );
 
-  const handleSubmit = (values: any) => {
-    const formValues = { ...values }
+  const handleSubmit = async (values: any) => {
+    const formValues = { ...values };
     const obsDatetime = ServerTime.getServerTimeString();
-
 
     const obs = [
       {
         concept: concepts.SITE,
-        values: 'Lung Anterior',
-        groupMembers: flattenImagesObs(percussionImageEnc),
-        obsDatetime
+        values: "Lung Anterior",
+        groupMembers: await flattenImagesObs(percussionImageEnc),
+        obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: 'Lung Posterior',
-        groupMembers: flattenImagesObs(percussionPosteriorImageEnc),
-        obsDatetime
+        values: "Lung Posterior",
+        groupMembers: await flattenImagesObs(percussionPosteriorImageEnc),
+        obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: 'Abdomen',
-        groupMembers: flattenImagesObs(abdomenImageEnc),
-        obsDatetime
-      }
-    ]
+        values: "Abdomen",
+        groupMembers: await flattenImagesObs(abdomenImageEnc),
+        obsDatetime,
+      },
+    ];
 
-
-    onSubmit([...getObservations(formValues, obsDatetime), ...obs])
-
-  }
+    onSubmit([...getObservations(formValues, obsDatetime), ...obs]);
+  };
 
   return (
     <FormikInit
@@ -440,17 +437,13 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
             label={form.systolic.label}
             id={form.systolic.name}
             unitOfMeasure="mmHg"
-
-
           />
           <TextInputField
             name={form.diastolic.name}
             label={form.diastolic.label}
             id={form.diastolic.name}
             unitOfMeasure="mmHg"
-
           />
-
         </FormFieldContainerMultiple>
         <FormFieldContainerMultiple>
           <TextInputField
@@ -648,8 +641,6 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
             />
           </>
         )}
-
-
       </FormFieldContainerLayout>
 
       <FormFieldContainerLayout title="Abdomen">
@@ -714,7 +705,6 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
             options={motorResponses}
             row={false}
           />
-
         </FormFieldContainerMultiple>
         <RadioGroupInput
           name={form.eyeOpeningResponse.name}

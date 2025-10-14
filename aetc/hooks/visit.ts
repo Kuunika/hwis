@@ -1,4 +1,4 @@
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { closeVisit, createVisit } from "@/services/visit";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
@@ -17,30 +17,30 @@ export const addVisit = () => {
   });
 };
 export const closeCurrentVisit = () => {
-  const updateVisit = (visitUuid: string) =>
-    closeVisit(visitUuid, { stopDatetime: getDateTime() }).then(
-      (response) => response.data
-    );
+  const { ServerTime } = useServerTime();
+  const updateVisit = async (visitUuid: string) =>
+    closeVisit(visitUuid, {
+      stopDatetime: ServerTime.getServerTimeString(),
+    }).then((response) => response.data);
 
   return useMutation({
     mutationFn: updateVisit,
-
   });
 };
 
-export const reOpenRecentClosedVisit = (patientId:string) => {
+export const reOpenRecentClosedVisit = (patientId: string) => {
   const queryClient = useQueryClient();
   const updateVisit = (visitUuid: string) =>
-    closeVisit(visitUuid, { stopDatetime: 'null' }).then(
+    closeVisit(visitUuid, { stopDatetime: "null" }).then(
       (response) => response.data
     );
 
   return useMutation({
     mutationFn: updateVisit,
-    onSuccess: ()=>{
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["patients",patientId,"visits"],
+        queryKey: ["patients", patientId, "visits"],
       });
-    }
+    },
   });
 };

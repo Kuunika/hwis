@@ -9,21 +9,21 @@ import { Panel } from "./panel";
 import { formatClinicalNotesData } from "./formatters/formatClinicalNotes";
 import { AddClinicalNotes } from "./addClinicalData";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import {
   GenerateGyneacologyNotesPDF,
-  GyneacologyNotesPDFRef
+  GyneacologyNotesPDFRef,
 } from "../../[id]/gyneacology/components/generateGyneacologyNotesPDF";
 import {
   GenerateMedicalInpatientlNotesPDF,
-  MedicalInpatientNotesPDFRef
+  MedicalInpatientNotesPDFRef,
 } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
 import {
   GenerateSurgicalNotesPDF,
-  SurgicalNotesPDFRef
+  SurgicalNotesPDFRef,
 } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
 
 export const ClinicalNotesUpdated = () => {
@@ -36,13 +36,13 @@ export const ClinicalNotesUpdated = () => {
   const [filterAETCState, setFilterAETCState] = useState(false);
   const [filterSurgicalState, setFilterSurgicalState] = useState(false);
   const [filterGyneacologyState, setFilterGyneacologyState] = useState(false);
-  const [filterMedicalInpatientState, setFilterMedicalInpatientState] = useState(false);
+  const [filterMedicalInpatientState, setFilterMedicalInpatientState] =
+    useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const pdfRef = useRef<SurgicalNotesPDFRef>(null);
   const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
-  const [loading, setLoading] = useState(true);
 
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
@@ -80,8 +80,11 @@ export const ClinicalNotesUpdated = () => {
   };
 
   const addClinicalNote = (note: string) => {
+    const { ServerTime } = useServerTime();
     const data = { "Clinical notes construct": note };
-    handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
+    handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
+      () => refresh()
+    );
   };
 
   const handleSurgicalPrintComplete = () => {
@@ -90,7 +93,7 @@ export const ClinicalNotesUpdated = () => {
 
   const notesData = formatClinicalNotesData(getEncountersByType);
 
-  const filteredNotes = notesData.filter(notes => {
+  const filteredNotes = notesData.filter((notes) => {
     if (filterSoapierState) {
       return notes.title === "Soapier Notes";
     }
@@ -135,7 +138,9 @@ export const ClinicalNotesUpdated = () => {
           onDownload={handlePrint}
           surgicalData={{
             title: "Surgical Notes",
-            data: [...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM)],
+            data: [
+              ...getEncountersByType(encounters.SURGICAL_NOTES_TEMPLATE_FORM),
+            ],
             removeObs: [],
           }}
           gyneacologyData={{
@@ -153,28 +158,30 @@ export const ClinicalNotesUpdated = () => {
       </WrapperBox>
 
       {/* Conditional rendering based on filter states */}
-      {!filterSurgicalState && !filterGyneacologyState && !filterMedicalInpatientState && (
-        <div ref={contentRef}>
-          <div>
-            <PatientInfoTab />
-            <div style={{ paddingTop: "10px" }}>
-              <p style={{ marginLeft: "10px" }}>
-                Report type: {printoutTitle}
-              </p>
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: "20px",
-                  textAlign: "center",
-                }}
-              >
-                Clinical Notes
+      {!filterSurgicalState &&
+        !filterGyneacologyState &&
+        !filterMedicalInpatientState && (
+          <div ref={contentRef}>
+            <div>
+              <PatientInfoTab />
+              <div style={{ paddingTop: "10px" }}>
+                <p style={{ marginLeft: "10px" }}>
+                  Report type: {printoutTitle}
+                </p>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "20px",
+                    textAlign: "center",
+                  }}
+                >
+                  Clinical Notes
+                </div>
               </div>
             </div>
+            <MultiColumnNotes columns={2} data={filteredNotes} />
           </div>
-          <MultiColumnNotes columns={2} data={filteredNotes} />
-        </div>
-      )}
+        )}
 
       {/* Surgical Notes PDF Component */}
       {filterSurgicalState && (

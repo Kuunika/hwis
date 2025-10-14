@@ -10,7 +10,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { MainTypography, WrapperBox } from "..";
 import MenuIcon from "@mui/icons-material/Menu";
-import { getHumanReadableShortDate, getDateTime } from "@/helpers/dateTime";
+import { getHumanReadableShortDate, ServerTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import {
   Divider,
   InputBase,
@@ -124,7 +125,13 @@ export function NavigationBar({
 
   useEffect(() => {
     // Only runs on the client
-    setCurrentDateTime(getHumanReadableShortDate(getDateTime()));
+    const loadDateTime = async () => {
+      await ServerTime.initialize();
+      const dateTime = ServerTime.getServerTimeString();
+      setCurrentDateTime(getHumanReadableShortDate(dateTime));
+    };
+
+    loadDateTime();
   }, []);
 
   const {

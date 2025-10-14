@@ -11,7 +11,7 @@ import { concepts, encounters } from "@/constants";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
 import { Box, Typography } from "@mui/material";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { getOnePatient } from "@/hooks/patientReg";
 import { getActivePatientDetails, useParameters } from "@/hooks";
@@ -69,25 +69,29 @@ export const Exposure = ({ onSubmit }: Props) => {
     onSubmit
   );
 
-  const handleFormSubmit = (values: any) => {
+  const handleFormSubmit = async (values: any) => {
+    const { ServerTime } = useServerTime();
     const formValues = { ...values };
 
     const obs = [
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body front",
-        obsDatetime: getDateTime(),
-        groupMembers: [...flattenImagesObs(fullImageFront)],
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: [...(await flattenImagesObs(fullImageFront))],
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body back",
-        obsDatetime: getDateTime(),
-        groupMembers: [...flattenImagesObs(fullImageBack)],
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: [...(await flattenImagesObs(fullImageBack))],
       },
     ];
 
-    handleSubmit([...getObservations(formValues, getDateTime()), ...obs]);
+    handleSubmit([
+      ...getObservations(formValues, ServerTime.getServerTimeString()),
+      ...obs,
+    ]);
   };
 
   const gender = patient && patient?.gender;

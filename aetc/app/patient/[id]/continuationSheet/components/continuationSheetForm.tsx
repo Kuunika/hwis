@@ -1,7 +1,7 @@
 import { FormikInit, TextInputField } from "@/components";
 import { encounters } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { useNavigation, useSubmitEncounter } from "@/hooks";
 import { Box, Button } from "@mui/material";
 import * as Yup from "yup";
@@ -26,8 +26,8 @@ export const ContinuationSheetForm = () => {
   );
 
   const handleSubmitForm = (values: any) => {
-    console.log("🚀 ~ handleSubmitForm ~ values:", values);
-    handleSubmit(getObservations(values, getDateTime()));
+    const { ServerTime } = useServerTime();
+    handleSubmit(getObservations(values, ServerTime.getServerTimeString()));
   };
 
   return (

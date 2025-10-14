@@ -16,7 +16,7 @@ import {
   getObservations,
   mapSearchComboOptionsToConcepts,
 } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
 import { useRef, useState } from "react";
 import { RecordForm } from "./cprRecordForm";
@@ -90,8 +90,9 @@ const CPRForm = ({
   };
 
   const handleFormSubmit = () => {
+    const { ServerTime } = useServerTime();
     // Proceed with data processing
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
     const basicObs = getObservations(basicFormRef.current.values, obsDatetime);
     const formValues = { ...endFormRef.current.values };
 

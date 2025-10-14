@@ -17,7 +17,7 @@ import {
 } from "@/hooks/labOrder";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
-import { getDateTime, getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import * as Yup from "yup";
 import {
   Typography,
@@ -322,7 +322,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
           tests: mappedTests,
           reason_for_test: "b998cdac-8d80-11d8-abbb-0024217bb78e",
           target_lab: "Blantyre Dream Project Clinic",
-          date: testDate, // Use the test date instead of getDateTime()
+          date: testDate,
           requesting_clinician: localStorage.getItem("userName"),
           comment_to_fulfiller: testsArray[0].comment_to_fulfiller || "",
           specimen: {

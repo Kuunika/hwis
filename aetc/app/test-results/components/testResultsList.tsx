@@ -13,6 +13,9 @@ import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
+import { FaHeartbeat } from "react-icons/fa";
+
 import {
   Tooltip,
   IconButton,
@@ -46,6 +49,9 @@ interface FilterState {
 }
 
 export const ClientsWaitingForTestResults = () => {
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
@@ -243,6 +249,19 @@ export const ClientsWaitingForTestResults = () => {
               </IconButton>
             </Tooltip>
             <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -453,6 +472,12 @@ export const ClientsWaitingForTestResults = () => {
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}
         onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
       />
     </>
   );
