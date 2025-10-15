@@ -94,16 +94,32 @@ export const ClientsWaitingForTestResults = () => {
 
   // Extract unique filter options from data
   useEffect(() => {
-    if (rows && rows.length > 0) {
-      const plannedByOptions = Array.from(new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
-      const patientCareAreas = Array.from(new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
+    if (!rows || rows.length === 0) return;
 
-      setAvailableFilters({
-        plannedByOptions: plannedByOptions.sort(),
-        patientCareAreas: patientCareAreas.sort(),
-      });
-    }
+    const plannedByOptions = Array.from(
+      new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))
+    ).sort();
+
+    const patientCareAreas = Array.from(
+      new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))
+    ).sort();
+
+    // Only update if filters actually changed
+    setAvailableFilters((prev) => {
+      const samePlannedBy =
+        JSON.stringify(prev.plannedByOptions) === JSON.stringify(plannedByOptions);
+      const sameAreas =
+        JSON.stringify(prev.patientCareAreas) === JSON.stringify(patientCareAreas);
+
+      if (samePlannedBy && sameAreas) return prev;
+
+      return {
+        plannedByOptions,
+        patientCareAreas,
+      };
+    });
   }, [rows]);
+
 
   // Filter the data based on active filters
   const filteredData = React.useMemo(() => {
