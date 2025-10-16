@@ -18,6 +18,7 @@ import {
 } from "../../clinicalNotes/updated-clinical-notes/genericNotes";
 import ResultsTable from "../tabularDisplayInformation";
 import { ContinuationNotes } from "../continuationNotes";
+import {MonitoringCharts} from "@/app/patient/components/clinicalNotes/monitoringCharts";
 
 
 export const formatClinicalNotesData = (
@@ -42,31 +43,8 @@ export const formatClinicalNotesData = (
       ],
     },
       {
-          title: "Monitoring Chart Notes",
-          content: (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                  {[
-                      {
-                          type: encounters.VITALS,
-                          title: "-Observations",
-                          config: NotesConfig.VITALS,
-                      },
-                      {
-                          type: encounters.PROCEDURES_DONE,
-                          title: "-Interventions",
-                          config: NotesConfig.PROCEDURES_DONE,
-                      },
-
-                  ].map((item) => (
-                      <GenericNotes
-                          key={item.type}
-                          data={getEncountersByType(item.type)}
-                          title={item.title}
-                          config={item.config}
-                      />
-                  ))}
-              </Box>
-          ),
+          title: "Monitoring Charts",
+          content: <MonitoringCharts />,
       },
     {
       title: "Soapier Notes",

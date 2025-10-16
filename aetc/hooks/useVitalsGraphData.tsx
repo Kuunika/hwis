@@ -8,25 +8,46 @@ import { getShortDate, getShortDateTime } from "@/helpers/dateTime";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 
 export const getObsGraphData = (conceptName = "") => {
-  const { selectedVisit } = useVisitDates();
-  const { patientId }: { patientId: any } = getActivePatientDetails();
+    const { selectedVisit } = useVisitDates();
+    const { patientId }: { patientId: any } = getActivePatientDetails();
 
-  const { data: obsData }: any = getAllObservations(
-    patientId,
-    conceptName,
-    selectedVisit?.id
-  );
-  const values = obsData?.map((item: any) => Number(item.value)) ?? [];
+    const { data: obsData }: any = getAllObservations(
+        patientId,
+        conceptName,
+        selectedVisit?.id
+    );
 
-  const dateTimes =
-    obsData?.map((item: any) => getShortDateTime(item.obs_datetime)) ??
-    [];
+    const values =
+        obsData?.map((item: any) => {
+            // Check if numeric value exists
+            if (item.value_numeric !== undefined && item.value_numeric !== null) {
+                return item.value_numeric;
+            }
 
-  return {
-    values,
-    dateTimes,
-  };
+            // If value is a string like "6.5 mmol/L", extract number
+            if (typeof item.value === "string") {
+                const numericPart = parseFloat(item.value);
+                return isNaN(numericPart) ? null : numericPart;
+            }
+
+            // If value is just a plain number
+            if (typeof item.value === "number") {
+                return item.value;
+            }
+
+            // Fallback: null if not found
+            return null;
+        }) ?? [];
+
+    const dateTimes =
+        obsData?.map((item: any) => getShortDateTime(item.obs_datetime)) ?? [];
+
+    return {
+        values,
+        dateTimes,
+    };
 };
+
 export const useVitalsGraphData = () => {
   const { activeVisitId } = getActivePatientDetails();
   const { patientId } = getActivePatientDetails();
