@@ -1,7 +1,5 @@
 import {
   FormikInit,
-  FormDatePicker,
-  FormTimePicker,
   FormFieldContainerMultiple,
   RadioGroupInput,
   TextInputField,
@@ -10,8 +8,7 @@ import {
 } from "@/components";
 import { concepts } from "@/constants";
 import { getInitialValues } from "@/helpers";
-import { Button } from "@mui/material";
-import { useRef } from "react";
+
 import * as Yup from "yup";
 
 const form = {
@@ -40,8 +37,14 @@ const form = {
 };
 const sites = [
   { label: "Rescitation", value: concepts.RESUSCITATION },
+  { label: "Short Stay", value: concepts.SHORT_STAY },
+  { label: "Gynae Bench", value: concepts.GYNAE_BENCH },
+  { label: "Isolation Room", value: concepts.ISOLATION },
+  { label: "Trauma", value: concepts.TRAUMA },
+  { label: "Medical Bench", value: concepts.MEDICAL_BENCH },
+  { label: "Surgical Bench", value: concepts.SURGICAL_BENCH  },
   { label: "SSW", value: concepts.SSW },
-  { label: "Priority", value: concepts.PRIORITY },
+  { label: "Priority Area", value: concepts.PRIORITY },
   { label: "Other", value: concepts.OTHER },
 ];
 
@@ -96,16 +99,16 @@ export const BasicDetailsForm = ({
             {/* <FieldsContainer></FieldsContainer> */}
             <FormFieldContainerMultiple>
               <RadioGroupInput
-                options={radioOptions}
-                label={form.cardiacArrest.label}
-                name={form.cardiacArrest.name}
-                row
-              />
-              <RadioGroupInput
                 //   sx={{ backgroundColor: "red" }}
                 name={form.site.name}
                 label={form.site.label}
                 options={sites}
+                row
+              />
+              <RadioGroupInput
+                options={radioOptions}
+                label={form.cardiacArrest.label}
+                name={form.cardiacArrest.name}
                 row
               />
             </FormFieldContainerMultiple>

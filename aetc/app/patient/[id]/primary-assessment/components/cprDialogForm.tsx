@@ -35,6 +35,7 @@ const CPRForm = ({
   patientuuid?: string;
   visituuid?: string;
 }) => {
+   const { ServerTime } = useServerTime();
   const { patientId, activeVisit } = getActivePatientDetails();
   const [submittingRecord, setSubmittingRecord] = useState(false);
   const { handleSubmit } = useSubmitEncounter(
@@ -90,7 +91,6 @@ const CPRForm = ({
   };
 
   const handleFormSubmit = () => {
-    const { ServerTime } = useServerTime();
     // Proceed with data processing
     const obsDatetime = ServerTime.getServerTimeString();
     const basicObs = getObservations(basicFormRef.current.values, obsDatetime);
