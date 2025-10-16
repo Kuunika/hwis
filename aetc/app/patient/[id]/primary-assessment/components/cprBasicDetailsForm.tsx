@@ -99,16 +99,16 @@ export const BasicDetailsForm = ({
             {/* <FieldsContainer></FieldsContainer> */}
             <FormFieldContainerMultiple>
               <RadioGroupInput
-                options={radioOptions}
-                label={form.cardiacArrest.label}
-                name={form.cardiacArrest.name}
-                row
-              />
-              <RadioGroupInput
                 //   sx={{ backgroundColor: "red" }}
                 name={form.site.name}
                 label={form.site.label}
                 options={sites}
+                row
+              />
+              <RadioGroupInput
+                options={radioOptions}
+                label={form.cardiacArrest.label}
+                name={form.cardiacArrest.name}
                 row
               />
             </FormFieldContainerMultiple>
