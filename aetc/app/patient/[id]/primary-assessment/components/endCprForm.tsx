@@ -109,43 +109,35 @@ const endCPRValidationSchema = Yup.object().shape({
   [form.spo.name]: Yup.number()
     .min(0)
     .max(100)
-    .required()
     .label(form.spo.label),
-  [form.oxygen.name]: Yup.string().required().label(form.oxygen.label),
+  [form.oxygen.name]: Yup.string().label(form.oxygen.label),
   [form.outcome.name]: Yup.string().label(form.outcome.label),
   [form.respiratoryRate.name]: Yup.number()
     .min(0)
     .max(90)
-    .required()
     .label(form.respiratoryRate.label),
   [form.systolic.name]: Yup.number()
     .min(0)
     .max(300)
-    .required()
     .label(form.systolic.label),
   [form.diastolic.name]: Yup.number()
     .min(0)
     .max(300)
-    .required()
     .label(form.diastolic.label),
   // [form.gcs.name]: Yup.string().required().label(form.gcs.label),
   [form.temperature.name]: Yup.number()
     .min(20)
     .max(45)
-    .required()
     .label(form.temperature.label),
   [form.pulseRate.name]: Yup.number()
     .min(0)
     .max(220)
     .label(form.pulseRate.label),
   [form.eyeOpeningResponse.name]: Yup.string()
-    .required()
     .label(form.eyeOpeningResponse.label),
   [form.motorResponse.name]: Yup.string()
-    .required()
     .label(form.motorResponse.label),
   [form.verbalResponse.name]: Yup.string()
-    .required()
     .label(form.verbalResponse.label),
   [form.teamLeader.name]: Yup.string().required().label(form.teamLeader.label),
   [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
