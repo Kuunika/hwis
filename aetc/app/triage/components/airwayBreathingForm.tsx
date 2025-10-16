@@ -131,11 +131,13 @@ export const AirwayAndBreathingForm = ({
       initialValues={initialValues}
       submitButtonText="next"
       submitButton={false}
-      onSubmit={(values) =>
-        onSubmit(mapSubmissionToCodedArray(AirwayBreathingForm, values))
+      onSubmit={async (values) =>
+        onSubmit(await mapSubmissionToCodedArray(AirwayBreathingForm, values))
       }
-      getFormValues={(value) =>
-        getFormValues(mapSubmissionToCodedArray(AirwayBreathingForm, value))
+      getFormValues={async (value) =>
+        getFormValues(
+          await mapSubmissionToCodedArray(AirwayBreathingForm, value)
+        )
       }
     >
       <FormValuesListener getValues={setFormValues} />

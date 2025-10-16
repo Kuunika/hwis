@@ -5,7 +5,6 @@ import {
   TextInputField,
 } from "@/components";
 import { concepts, encounters } from "@/constants";
-import { getDateTime, ServerTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Bounce, toast } from "react-toastify";
 import {
@@ -109,9 +108,15 @@ const formConfig = {
   PCO2_T: { name: bloodGasConcepts.PCO2_T, label: bloodGasConcepts.PCO2_T },
   PO2_T: { name: bloodGasConcepts.PO2_T, label: bloodGasConcepts.PO2_T },
   P50E: { name: bloodGasConcepts.P50E, label: bloodGasConcepts.P50E },
-  BASE_EXCESS: { name: bloodGasConcepts.BASE_EXCESS, label: bloodGasConcepts.BASE_EXCESS },
+  BASE_EXCESS: {
+    name: bloodGasConcepts.BASE_EXCESS,
+    label: bloodGasConcepts.BASE_EXCESS,
+  },
   HCO3: { name: bloodGasConcepts.HCO3, label: bloodGasConcepts.HCO3 },
-  ANION_GAPC: { name: bloodGasConcepts.ANION_GAP, label: bloodGasConcepts.ANION_GAP },
+  ANION_GAPC: {
+    name: bloodGasConcepts.ANION_GAP,
+    label: bloodGasConcepts.ANION_GAP,
+  },
   MOSMC: { name: bloodGasConcepts.MOSM, label: bloodGasConcepts.MOSM },
 
   // Added Missing Tests
@@ -189,7 +194,13 @@ const formConfig = {
 // Define the structure of the form sections, including parent-child relationships
 // --- START: MODIFICATIONS ---
 // Added Dipstick, Additional Tests, and Pregnancy Test sections
-const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormField[]; subSections?: SectionKey[] } } = {
+const sectionDefinitions: {
+  [key in SectionKey]: {
+    title: string;
+    fields?: FormField[];
+    subSections?: SectionKey[];
+  };
+} = {
   arterialVenousBloodGasMain: {
     title: "Arterial/Venous Blood Gas",
     subSections: [
@@ -207,7 +218,13 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
   },
   oximetryValues: {
     title: "Oximetry Values",
-    fields: [formConfig.CTHB, formConfig.SO2E, formConfig.FO2HBE, formConfig.FHHBE, formConfig.FMETHB],
+    fields: [
+      formConfig.CTHB,
+      formConfig.SO2E,
+      formConfig.FO2HBE,
+      formConfig.FHHBE,
+      formConfig.FMETHB,
+    ],
   },
   electrolyteValues: {
     title: "Electrolyte Values",
@@ -219,11 +236,21 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
   },
   temperatureCorrectedValues: {
     title: "Temperature Corrected Values",
-    fields: [formConfig.PH_T, formConfig.PCO2_T, formConfig.PO2_T, formConfig.P50E],
+    fields: [
+      formConfig.PH_T,
+      formConfig.PCO2_T,
+      formConfig.PO2_T,
+      formConfig.P50E,
+    ],
   },
   acidBaseStatus: {
     title: "Acid Base Status",
-    fields: [formConfig.BASE_EXCESS, formConfig.HCO3, formConfig.ANION_GAPC, formConfig.MOSMC],
+    fields: [
+      formConfig.BASE_EXCESS,
+      formConfig.HCO3,
+      formConfig.ANION_GAPC,
+      formConfig.MOSMC,
+    ],
   },
   dipstick: {
     title: "Dipstick",
@@ -249,7 +276,8 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
       formConfig.other,
     ],
   },
-  pregnancyTest: { // Defined as a section for consistent handling with CheckboxGroup, but it only has one field.
+  pregnancyTest: {
+    // Defined as a section for consistent handling with CheckboxGroup, but it only has one field.
     title: "Pregnancy Test",
     fields: [formConfig.pregnancyTest],
   },
@@ -259,7 +287,7 @@ const sectionDefinitions: { [key in SectionKey]: { title: string; fields?: FormF
 export const BedsideTestPlanForm = () => {
   const { activeVisit, patientId, gender } = getActivePatientDetails();
   const { mutate, isPending, isSuccess } = fetchConceptAndCreateEncounter();
-   const { ServerTime } = useServerTime();
+  const { ServerTime } = useServerTime();
 
   // --- START: MODIFICATIONS ---
   // Added separate state for MRDT, HIV, VDRL as they are standalone checkboxes
@@ -269,8 +297,14 @@ export const BedsideTestPlanForm = () => {
   // --- END: MODIFICATIONS ---
 
   // Initialize state for all sections (leaf sections will have selectedFields)
-  const initializeSectionState = useCallback((): Record<SectionKey, SectionState> => {
-    const initialState: Record<SectionKey, SectionState> = {} as Record<SectionKey, SectionState>;
+  const initializeSectionState = useCallback((): Record<
+    SectionKey,
+    SectionState
+  > => {
+    const initialState: Record<SectionKey, SectionState> = {} as Record<
+      SectionKey,
+      SectionState
+    >;
     (Object.keys(sectionDefinitions) as SectionKey[]).forEach((key) => {
       const sectionDef = sectionDefinitions[key];
       initialState[key] = {
@@ -286,7 +320,9 @@ export const BedsideTestPlanForm = () => {
     return initialState;
   }, []);
 
-  const [sections, setSections] = useState<Record<SectionKey, SectionState>>(initializeSectionState);
+  const [sections, setSections] = useState<Record<SectionKey, SectionState>>(
+    initializeSectionState
+  );
 
   // Helper to reset all form states
   const resetAllFormStates = useCallback(() => {
@@ -308,7 +344,8 @@ export const BedsideTestPlanForm = () => {
       const sectionDef = sectionDefinitions[sectionKey];
       const sectionState = sections[sectionKey];
 
-      if (sectionDef.fields) { // Only process leaf sections with fields
+      if (sectionDef.fields) {
+        // Only process leaf sections with fields
         const selectedFields = sectionDef.fields.filter(
           (field) => sectionState.selectedFields[field.name] // Use field.name (which is now the label)
         );
@@ -319,17 +356,17 @@ export const BedsideTestPlanForm = () => {
           if (sectionKey === "pregnancyTest") {
             observations.push({
               concept: formConfig.pregnancyTest.name,
-              obsDatetime:  ServerTime.getServerTimeString(),
+              obsDatetime: ServerTime.getServerTimeString(),
               value: true, // Indicates the test was selected/planned
             });
           } else {
             observations.push({
               concept: concepts.BEDSIDE_INVESTIGATIONS, // Group under a general concept
-              obsDatetime:  ServerTime.getServerTimeString(),
+              obsDatetime: ServerTime.getServerTimeString(),
               value: sectionDef.title, // Use section title as value for grouping
               groupMembers: selectedFields.map((field) => ({
                 concept: field.name, // Use field.name (which is now the label) as the concept
-                obsDatetime:  ServerTime.getServerTimeString(),
+                obsDatetime: ServerTime.getServerTimeString(),
                 value: true, // Indicates the test was selected/planned
               })),
             });
@@ -341,9 +378,11 @@ export const BedsideTestPlanForm = () => {
     // Iterate through all sections that have fields (leaf sections and the pregnancy test section)
     // --- START: MODIFICATIONS ---
     // Added calls for new sections
-    sectionDefinitions.arterialVenousBloodGasMain.subSections?.forEach((key) => {
-      addSectionObservations(key);
-    });
+    sectionDefinitions.arterialVenousBloodGasMain.subSections?.forEach(
+      (key) => {
+        addSectionObservations(key);
+      }
+    );
 
     addSectionObservations("dipstick");
     addSectionObservations("additionalTests");
@@ -356,7 +395,7 @@ export const BedsideTestPlanForm = () => {
     if (mrdtChecked) {
       observations.push({
         concept: formConfig.mrdt.name,
-        obsDatetime:  ServerTime.getServerTimeString(),
+        obsDatetime: ServerTime.getServerTimeString(),
         value: true,
       });
     }
@@ -364,7 +403,7 @@ export const BedsideTestPlanForm = () => {
     if (hivChecked) {
       observations.push({
         concept: formConfig.hiv.name,
-        obsDatetime:  ServerTime.getServerTimeString(),
+        obsDatetime: ServerTime.getServerTimeString(),
         value: true,
       });
     }
@@ -372,7 +411,7 @@ export const BedsideTestPlanForm = () => {
     if (vdrlChecked) {
       observations.push({
         concept: formConfig.vdrl.name,
-        obsDatetime:  ServerTime.getServerTimeString(),
+        obsDatetime: ServerTime.getServerTimeString(),
         value: true,
       });
     }
@@ -381,23 +420,32 @@ export const BedsideTestPlanForm = () => {
     return observations;
   }, [sections, mrdtChecked, hivChecked, vdrlChecked, gender]); // Added dependencies
 
-  const handleSubmit = useCallback((event: React.FormEvent | string): void => {
-    if (typeof event !== 'string' && event) {
-      event.preventDefault();
-    }
+  const handleSubmit = useCallback(
+    (event: React.FormEvent | string): void => {
+      if (typeof event !== "string" && event) {
+        event.preventDefault();
+      }
 
-    const obs = createObservationsObject();
-    console.log("🚀 ~ handleSubmit ~ obs:", obs); // Log observations for debugging
+      const obs = createObservationsObject();
+      console.log("🚀 ~ handleSubmit ~ obs:", obs); // Log observations for debugging
 
-    mutate({
-      encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
-      visit: activeVisit,
-      patient: patientId,
-      encounterDatetime: ServerTime.getServerTimeString(),
-      obs,
-    });
-    resetAllFormStates();
-  }, [createObservationsObject, mutate, activeVisit, patientId, resetAllFormStates]);
+      mutate({
+        encounterType: encounters.BEDSIDE_INVESTIGATION_PLAN,
+        visit: activeVisit,
+        patient: patientId,
+        encounterDatetime: ServerTime.getServerTimeString(),
+        obs,
+      });
+      resetAllFormStates();
+    },
+    [
+      createObservationsObject,
+      mutate,
+      activeVisit,
+      patientId,
+      resetAllFormStates,
+    ]
+  );
 
   useEffect(() => {
     if (!isSuccess) return;
@@ -426,129 +474,158 @@ export const BedsideTestPlanForm = () => {
   }, []);
 
   // Toggle a single field within a leaf section
-  const toggleField = useCallback((sectionKey: SectionKey, fieldName: string): void => {
-    setSections((prev) => ({
-      ...prev,
-      [sectionKey]: {
-        ...prev[sectionKey],
-        selectedFields: {
-          ...prev[sectionKey].selectedFields,
-          [fieldName]: !prev[sectionKey].selectedFields[fieldName],
+  const toggleField = useCallback(
+    (sectionKey: SectionKey, fieldName: string): void => {
+      setSections((prev) => ({
+        ...prev,
+        [sectionKey]: {
+          ...prev[sectionKey],
+          selectedFields: {
+            ...prev[sectionKey].selectedFields,
+            [fieldName]: !prev[sectionKey].selectedFields[fieldName],
+          },
         },
-      },
-    }));
-  }, []);
+      }));
+    },
+    []
+  );
 
   // Check if all fields in a leaf section are selected
-  const areAllFieldsSelected = useCallback((sectionKey: SectionKey): boolean => {
-    const sectionDef = sectionDefinitions[sectionKey];
-    const sectionState = sections[sectionKey];
-    if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
-    return sectionDef.fields.every((field) => sectionState.selectedFields[field.name]); // Use field.name
-  }, [sections]);
+  const areAllFieldsSelected = useCallback(
+    (sectionKey: SectionKey): boolean => {
+      const sectionDef = sectionDefinitions[sectionKey];
+      const sectionState = sections[sectionKey];
+      if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
+      return sectionDef.fields.every(
+        (field) => sectionState.selectedFields[field.name]
+      ); // Use field.name
+    },
+    [sections]
+  );
 
   // Check if some but not all fields in a leaf section are selected
-  const areSomeFieldsSelected = useCallback((sectionKey: SectionKey): boolean => {
-    const sectionDef = sectionDefinitions[sectionKey];
-    const sectionState = sections[sectionKey];
-    if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
-    const selectedCount = sectionDef.fields.filter(
-      (field) => sectionState.selectedFields[field.name] // Use field.name
-    ).length;
-    return selectedCount > 0 && selectedCount < sectionDef.fields.length;
-  }, [sections]);
+  const areSomeFieldsSelected = useCallback(
+    (sectionKey: SectionKey): boolean => {
+      const sectionDef = sectionDefinitions[sectionKey];
+      const sectionState = sections[sectionKey];
+      if (!sectionDef.fields || sectionDef.fields.length === 0) return false; // Not applicable for parent sections or sections without fields
+      const selectedCount = sectionDef.fields.filter(
+        (field) => sectionState.selectedFields[field.name] // Use field.name
+      ).length;
+      return selectedCount > 0 && selectedCount < sectionDef.fields.length;
+    },
+    [sections]
+  );
 
   // Toggle all fields in a leaf section
-  const toggleAllFieldsInLeafSection = useCallback((sectionKey: SectionKey): void => {
-    const sectionDef = sectionDefinitions[sectionKey];
-    if (!sectionDef.fields) return; // Only for leaf sections
+  const toggleAllFieldsInLeafSection = useCallback(
+    (sectionKey: SectionKey): void => {
+      const sectionDef = sectionDefinitions[sectionKey];
+      if (!sectionDef.fields) return; // Only for leaf sections
 
-    const currentSectionState = sections[sectionKey];
-    const allSelected = areAllFieldsSelected(sectionKey);
-    const newSelectedState = !allSelected;
+      const currentSectionState = sections[sectionKey];
+      const allSelected = areAllFieldsSelected(sectionKey);
+      const newSelectedState = !allSelected;
 
-    const updatedSelectedFields = { ...currentSectionState.selectedFields };
-    sectionDef.fields.forEach((field) => {
-      updatedSelectedFields[field.name] = newSelectedState; // Use field.name
-    });
+      const updatedSelectedFields = { ...currentSectionState.selectedFields };
+      sectionDef.fields.forEach((field) => {
+        updatedSelectedFields[field.name] = newSelectedState; // Use field.name
+      });
 
-    setSections((prev) => ({
-      ...prev,
-      [sectionKey]: {
-        ...prev[sectionKey],
-        selectedFields: updatedSelectedFields,
-        open: true, // Always open when toggling all
-      },
-    }));
-  }, [sections, areAllFieldsSelected]);
+      setSections((prev) => ({
+        ...prev,
+        [sectionKey]: {
+          ...prev[sectionKey],
+          selectedFields: updatedSelectedFields,
+          open: true, // Always open when toggling all
+        },
+      }));
+    },
+    [sections, areAllFieldsSelected]
+  );
 
   // Check if all fields in all child sections of a parent section are selected
-  const areAllChildSectionsFieldsSelected = useCallback((parentSectionKey: SectionKey): boolean => {
-    const parentDef = sectionDefinitions[parentSectionKey];
-    if (!parentDef.subSections) return false;
+  const areAllChildSectionsFieldsSelected = useCallback(
+    (parentSectionKey: SectionKey): boolean => {
+      const parentDef = sectionDefinitions[parentSectionKey];
+      if (!parentDef.subSections) return false;
 
-    return parentDef.subSections.every(subSectionKey => {
-      const subSectionDef = sectionDefinitions[subSectionKey];
-      if (!subSectionDef.fields || subSectionDef.fields.length === 0) return true; // If sub-section has no fields, consider it "selected"
-      return areAllFieldsSelected(subSectionKey);
-    });
-  }, [areAllFieldsSelected]);
+      return parentDef.subSections.every((subSectionKey) => {
+        const subSectionDef = sectionDefinitions[subSectionKey];
+        if (!subSectionDef.fields || subSectionDef.fields.length === 0)
+          return true; // If sub-section has no fields, consider it "selected"
+        return areAllFieldsSelected(subSectionKey);
+      });
+    },
+    [areAllFieldsSelected]
+  );
 
   // Check if some fields in child sections of a parent section are selected
-  const areSomeChildSectionsFieldsSelected = useCallback((parentSectionKey: SectionKey): boolean => {
-    const parentDef = sectionDefinitions[parentSectionKey];
-    if (!parentDef.subSections) return false;
+  const areSomeChildSectionsFieldsSelected = useCallback(
+    (parentSectionKey: SectionKey): boolean => {
+      const parentDef = sectionDefinitions[parentSectionKey];
+      if (!parentDef.subSections) return false;
 
-    let selectedCount = 0;
-    let totalCount = 0;
+      let selectedCount = 0;
+      let totalCount = 0;
 
-    parentDef.subSections.forEach(subSectionKey => {
-      const subSectionDef = sectionDefinitions[subSectionKey];
-      if (subSectionDef.fields) {
-        totalCount += subSectionDef.fields.length;
-        selectedCount += subSectionDef.fields.filter(
-          field => sections[subSectionKey].selectedFields[field.name] // Use field.name
-        ).length;
-      }
-    });
-    return selectedCount > 0 && selectedCount < totalCount;
-  }, [sections]);
-
-  // Toggle all fields in all child sections of a parent section
-  const toggleAllChildSectionsFields = useCallback((parentSectionKey: SectionKey): void => {
-    const parentDef = sectionDefinitions[parentSectionKey];
-    if (!parentDef.subSections) return;
-
-    const allChildrenSelected = areAllChildSectionsFieldsSelected(parentSectionKey);
-    const newSelectedState = !allChildrenSelected;
-
-    setSections(prevSections => {
-      const updatedSections = { ...prevSections };
-      parentDef.subSections?.forEach(subSectionKey => {
+      parentDef.subSections.forEach((subSectionKey) => {
         const subSectionDef = sectionDefinitions[subSectionKey];
         if (subSectionDef.fields) {
-          const updatedSelectedFields = { ...updatedSections[subSectionKey].selectedFields };
-          subSectionDef.fields.forEach(field => {
-            updatedSelectedFields[field.name] = newSelectedState; // Use field.name
-          });
-          updatedSections[subSectionKey] = {
-            ...updatedSections[subSectionKey],
-            selectedFields: updatedSelectedFields,
-            open: true, // Always open child sections when parent is toggled
-          };
+          totalCount += subSectionDef.fields.length;
+          selectedCount += subSectionDef.fields.filter(
+            (field) => sections[subSectionKey].selectedFields[field.name] // Use field.name
+          ).length;
         }
       });
-      // Also open the parent section itself
-      updatedSections[parentSectionKey] = {
-        ...updatedSections[parentSectionKey],
-        open: true,
-      };
-      return updatedSections;
-    });
-  }, [areAllChildSectionsFieldsSelected]);
+      return selectedCount > 0 && selectedCount < totalCount;
+    },
+    [sections]
+  );
+
+  // Toggle all fields in all child sections of a parent section
+  const toggleAllChildSectionsFields = useCallback(
+    (parentSectionKey: SectionKey): void => {
+      const parentDef = sectionDefinitions[parentSectionKey];
+      if (!parentDef.subSections) return;
+
+      const allChildrenSelected =
+        areAllChildSectionsFieldsSelected(parentSectionKey);
+      const newSelectedState = !allChildrenSelected;
+
+      setSections((prevSections) => {
+        const updatedSections = { ...prevSections };
+        parentDef.subSections?.forEach((subSectionKey) => {
+          const subSectionDef = sectionDefinitions[subSectionKey];
+          if (subSectionDef.fields) {
+            const updatedSelectedFields = {
+              ...updatedSections[subSectionKey].selectedFields,
+            };
+            subSectionDef.fields.forEach((field) => {
+              updatedSelectedFields[field.name] = newSelectedState; // Use field.name
+            });
+            updatedSections[subSectionKey] = {
+              ...updatedSections[subSectionKey],
+              selectedFields: updatedSelectedFields,
+              open: true, // Always open child sections when parent is toggled
+            };
+          }
+        });
+        // Also open the parent section itself
+        updatedSections[parentSectionKey] = {
+          ...updatedSections[parentSectionKey],
+          open: true,
+        };
+        return updatedSections;
+      });
+    },
+    [areAllChildSectionsFieldsSelected]
+  );
 
   // Component for rendering a leaf checkbox group
-  const CheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({ sectionKey }) => {
+  const CheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({
+    sectionKey,
+  }) => {
     const sectionDef = sectionDefinitions[sectionKey];
     const sectionState = sections[sectionKey];
     const allSelected = areAllFieldsSelected(sectionKey);
@@ -560,7 +637,9 @@ export const BedsideTestPlanForm = () => {
     }
 
     return (
-      <Box sx={{ mb: 1 }}> {/* Indent leaf sections */}
+      <Box sx={{ mb: 1 }}>
+        {" "}
+        {/* Indent leaf sections */}
         <FormControlLabel
           control={
             <Checkbox
@@ -590,7 +669,6 @@ export const BedsideTestPlanForm = () => {
             </Typography>
           }
         />
-
         <Collapse in={sectionState.open}>
           <Box sx={{ pl: 4, mt: 1 }}>
             {sectionDef.fields?.map((field) => (
@@ -614,7 +692,9 @@ export const BedsideTestPlanForm = () => {
   };
 
   // Component for rendering a parent checkbox group (e.g., Arterial/Venous Blood Gas)
-  const ParentCheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({ sectionKey }) => {
+  const ParentCheckboxGroup: React.FC<{ sectionKey: SectionKey }> = ({
+    sectionKey,
+  }) => {
     const sectionDef = sectionDefinitions[sectionKey];
     const sectionState = sections[sectionKey]; // Parent section's open state
     const allChildrenSelected = areAllChildSectionsFieldsSelected(sectionKey);
@@ -731,9 +811,7 @@ export const BedsideTestPlanForm = () => {
           </Box>
 
           {/* Re-added Pregnancy Test as a CheckboxGroup, conditional on gender */}
-          {gender === "Female" && (
-            <CheckboxGroup sectionKey="pregnancyTest" />
-          )}
+          {gender === "Female" && <CheckboxGroup sectionKey="pregnancyTest" />}
 
           {/* Re-added Dipstick as a CheckboxGroup */}
           <CheckboxGroup sectionKey="dipstick" />

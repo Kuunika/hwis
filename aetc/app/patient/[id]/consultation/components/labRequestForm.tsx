@@ -17,7 +17,7 @@ import {
 } from "@/hooks/labOrder";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
-import { getDateTime, getHumanReadableDateTimeLab } from "@/helpers/dateTime";
+import { getHumanReadableDateTimeLab } from "@/helpers/dateTime";
 import * as Yup from "yup";
 import {
   Typography,
@@ -33,6 +33,7 @@ import { useFormikContext } from "formik";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
 import { Bounce, toast } from "react-toastify";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 
 // Types
 interface LabOrderTest {
@@ -165,15 +166,17 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   const { params } = useParameters();
   const { activeVisit, patientId } = getActivePatientDetails();
   const { mutate, isPending, isSuccess: orderCreated } = createOrder();
+  const { selectedVisit } = useVisitDates();
+
   const { data: labOrdersPlan, refetch: refetchLabOrdersPlan } =
     getPatientsEncounters(
       params?.id as string,
-      `encounter_type=${encounters.LAB_ORDERS_PLAN}`
+      `encounter_type=${encounters.LAB_ORDERS_PLAN}&visit=${selectedVisit?.uuid}`
     );
   const { data: labOrdersObs, refetch: refetchLabOrders } =
     getPatientsEncounters(
       params?.id as string,
-      `encounter_type=${encounters.LAB}`
+      `encounter_type=${encounters.LAB}&visit=${selectedVisit?.uuid}`
     );
 
   useEffect(() => {
@@ -319,7 +322,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
           tests: mappedTests,
           reason_for_test: "b998cdac-8d80-11d8-abbb-0024217bb78e",
           target_lab: "Blantyre Dream Project Clinic",
-          date: testDate, // Use the test date instead of getDateTime()
+          date: testDate,
           requesting_clinician: localStorage.getItem("userName"),
           comment_to_fulfiller: testsArray[0].comment_to_fulfiller || "",
           specimen: {
@@ -364,11 +367,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   // Parse lab orders plan
   let flattenedLabOrdersPlan: LabOrderTest[] = [];
 
-
-
-
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
-    
     flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) => {
       return obs.children.map((test: any) => {
         let descriptionConcept;
@@ -377,7 +376,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
             child.names.find((name: any) => name.name == concepts.DESCRIPTION)
           );
         }
-        
+
         return {
           test: test.names[0].name,
           testConceptId: test.concept_id,
@@ -396,7 +395,6 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
         flattenedLabOrdersPlan,
         labOrdersObs
       );
-
   }
 
   // Group tests by specimen type

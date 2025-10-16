@@ -8,7 +8,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
 
-import { FaPlay, FaHeartbeat } from "react-icons/fa";
+import { FaPlay, FaHeartbeat, FaRandom, FaFilter, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import {
   CalculateWaitingTime,
@@ -20,7 +20,20 @@ import {
 import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, IconButton } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  Chip,
+  OutlinedInput,
+  Paper,
+  Typography,
+  Button,
+  Collapse
+} from "@mui/material";
 import {
   FetchAndDisplayTriageBarcode,
   PrinterBarcodeButton,
@@ -30,12 +43,29 @@ import { HiPrinter } from "react-icons/hi2";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
 
+interface FilterState {
+  triageBy: string[];
+  patientCareArea: string[];
+}
+
 export const ClientWaitingForAssessment = () => {
   const [cpr, setCpr] = useState(false);
   const [patientId, setPatientId] = useState("");
   const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    triageBy: [],
+    patientCareArea: [],
+  });
+  const [availableFilters, setAvailableFilters] = useState({
+    triageByOptions: [] as string[],
+    patientCareAreas: [] as string[],
+  });
+
   const { navigateTo } = useNavigation();
+  const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+
   const {
     paginationModel,
     patients: data,
@@ -45,13 +75,14 @@ export const ClientWaitingForAssessment = () => {
     loading,
     totalPages,
     setOnSwitch,
-  } = fetchPatientsTablePaginate("assessment");
+  } = fetchPatientsTablePaginate("assessment", patientCareFilter);
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
 
   useEffect(() => {
     setSearchText(debouncedSearch);
   }, [debouncedSearch]);
+
   const [patientsData, setPatientsData] = useState<any>([]);
 
   useEffect(() => {
@@ -59,6 +90,59 @@ export const ClientWaitingForAssessment = () => {
       setPatientsData(data);
     }
   }, [data]);
+
+  // Extract unique filter options from data
+  useEffect(() => {
+    if (patientsData && patientsData.length > 0) {
+      const triageByOptions = Array.from(new Set(patientsData.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
+      const patientCareAreas = Array.from(new Set(patientsData.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
+
+      setAvailableFilters({
+        triageByOptions: triageByOptions.sort(),
+        patientCareAreas: patientCareAreas.sort(),
+      });
+    }
+  }, [patientsData]);
+
+  // Filter the data based on active filters
+  const filteredData = React.useMemo(() => {
+    if (!patientsData) return [];
+
+    return patientsData.filter((item: any) => {
+      const matchesTriageBy = filters.triageBy.length === 0 ||
+        filters.triageBy.includes(item.last_encounter_creator);
+
+      const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+        filters.patientCareArea.includes(item.patient_care_area);
+
+      return matchesTriageBy && matchesPatientCareArea;
+    });
+  }, [patientsData, filters]);
+
+  const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: typeof value === 'string' ? value.split(',') : value
+    }));
+  };
+
+  const clearFilter = (filterType: keyof FilterState, valueToRemove: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: prev[filterType].filter(item => item !== valueToRemove)
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      triageBy: [],
+      patientCareArea: [],
+    });
+  };
+
+  const hasActiveFilters = filters.triageBy.length > 0 ||
+    filters.patientCareArea.length > 0;
 
   const handleDelete = (deletedId: string) => {
     const updatedData = patientsData.filter(
@@ -149,40 +233,49 @@ export const ClientWaitingForAssessment = () => {
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Mark as absconded" arrow>
+            {/* <Tooltip title="Mark as absconded" arrow>
               <AbscondButton
                 onDelete={() => handleDelete(cell.id)}
                 visitId={cell.row.visit_uuid}
                 patientId={cell.id}
               />
+            </Tooltip> */}
+            <Tooltip title="Dispose" arrow>
+              <IconButton
+                onClick={() => navigateTo(`/patient/${cell.id}/disposition`)}
+                aria-label="Dispose"
+                sx={{ color: "grey" }}
+              >
+                <FaRandom />
+              </IconButton>
             </Tooltip>
 
             <Tooltip title="Print options" arrow>
               <BasicMenu patient={cell.row} />
             </Tooltip>
 
-            {cell.row.triage_result == "red" && (
-              <Tooltip title="Initiate CPR" arrow>
-                <IconButton
-                  onClick={() => {
-                    setPatientId(cell.id);
-                    setCpr(true);
-                    setVisitUUID(cell.row.visit_uuid);
-                  }}
-                  aria-label="initiate CPR"
-                  color="error"
-                >
-                  <FaHeartbeat />
-                </IconButton>
-              </Tooltip>
-            )}
+            {/* {cell.row.triage_result == "red" && ( */}
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
+            {/* )} */}
           </Box>
         );
       },
     },
   ];
 
-  const formatForMobileView = patientsData?.map((row: any) => {
+  const formatForMobileView = filteredData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -218,17 +311,156 @@ export const ClientWaitingForAssessment = () => {
 
   return (
     <>
+      {/* Filter Section */}
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <FaFilter />
+            <Typography variant="h6">Filters</Typography>
+            {hasActiveFilters && (
+              <Chip
+                label={`${filters.triageBy.length + filters.patientCareArea.length} active`}
+                size="small"
+                color="primary"
+              />
+            )}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {hasActiveFilters && (
+              <Button
+                startIcon={<FaTimes />}
+                onClick={clearAllFilters}
+                size="small"
+                variant="outlined"
+                color="secondary"
+              >
+                Clear All
+              </Button>
+            )}
+            <Button
+              startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
+              onClick={() => setShowFilters(!showFilters)}
+              size="small"
+              variant="outlined"
+            >
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+          </Box>
+        </Box>
+
+        <Collapse in={showFilters}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+            {/* Triaged By Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Triaged By</InputLabel>
+              <Select
+                multiple
+                value={filters.triageBy}
+                onChange={handleFilterChange('triageBy')}
+                input={<OutlinedInput label="Triaged By" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter('triageBy', value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.triageByOptions.map((triager) => (
+                  <MenuItem key={triager} value={triager}>
+                    {triager}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Patient Care Area Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Patient Care Area</InputLabel>
+              <Select
+                multiple
+                value={filters.patientCareArea}
+                onChange={handleFilterChange('patientCareArea')}
+                input={<OutlinedInput label="Patient Care Area" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter('patientCareArea', value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.patientCareAreas.map((area) => (
+                  <MenuItem key={area} value={area}>
+                    {area}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Collapse>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
+              Active filters:
+            </Typography>
+            {filters.triageBy.map((filter) => (
+              <Chip
+                key={`triageBy-${filter}`}
+                label={`Triaged By: ${filter}`}
+                onDelete={() => clearFilter('triageBy', filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+            {filters.patientCareArea.map((filter) => (
+              <Chip
+                key={`area-${filter}`}
+                label={`Care Area: ${filter}`}
+                onDelete={() => clearFilter('patientCareArea', filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        )}
+      </Paper>
+
       <PatientTableListServer
         columns={columns}
         data={
-          patientsData?.length
+          filteredData?.length
             ? {
-                data: patientsData,
-                page: paginationModel.page,
-                per_page: paginationModel.pageSize,
-                total_pages: totalPages,
-              }
-            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+              data: filteredData.map((row: any) => ({
+                id: row.uuid || row.id, // Ensure proper ID mapping
+                ...row,
+              })),
+              page: paginationModel.page,
+              per_page: paginationModel.pageSize,
+              total_pages: totalPages,
+              totalEntries: filteredData.length,
+            }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
         }
         searchText={inputText}
         setSearchString={setInputText}

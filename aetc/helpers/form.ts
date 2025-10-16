@@ -1,5 +1,6 @@
 import { concepts } from "@/constants";
-import { getDateTime } from "./dateTime";
+// import { useServerTime } from "@/contexts/serverTimeContext";
+import { ServerTime } from "./dateTime";
 
 export const getInitialValues = (values: any) => {
   const keys = Object.keys(values);
@@ -19,62 +20,69 @@ export const getObservations = (values: any, dateTime: any) => {
   }));
 };
 
-
-export const getFormLabels = (formConceptLabels:any, selectOptionsFormLabels:Array<{label:string,id:string}>, radioOptionFormLabels:Array<{label:string,value:string}> )=>{
- let form=Object.keys(formConceptLabels).map((key:string)=>{
-  return {
-    concept:formConceptLabels[key].name,
-    label: formConceptLabels[key].label,
-  }
- })
-
-
- const selects= selectOptionsFormLabels.map(op=>{
+export const getFormLabels = (
+  formConceptLabels: any,
+  selectOptionsFormLabels: Array<{ label: string; id: string }>,
+  radioOptionFormLabels: Array<{ label: string; value: string }>
+) => {
+  let form = Object.keys(formConceptLabels).map((key: string) => {
     return {
-      concept: op.id,
-      label: op.label
-    }
-})
-
-  const radios =radioOptionFormLabels.map(op=>{
-    return {
-      concept: op.value,
-      label: op.label
-    }
-})
-
-return [...form, ...radios, ...selects]
-}
-
-export const flattenImagesObs = (formImageEncounters: Array<{formData: {obs:any}, label:string}>)=>{
-
- return formImageEncounters.map(enc=>{
-    return  {
-      concept: concepts.IMAGE_PART_NAME,
-      value:  enc.label,
-      obsDateTime: getDateTime(),
-      groupMembers: enc.formData.obs
-    }
+      concept: formConceptLabels[key].name,
+      label: formConceptLabels[key].label,
+    };
   });
 
-// console.log({obs});
+  const selects = selectOptionsFormLabels.map((op) => {
+    return {
+      concept: op.id,
+      label: op.label,
+    };
+  });
 
+  const radios = radioOptionFormLabels.map((op) => {
+    return {
+      concept: op.value,
+      label: op.label,
+    };
+  });
 
-// return formImageEncounters.flatMap((enc)=>{
-//   return enc.formData.obs
-// })
+  return [...form, ...radios, ...selects];
+};
 
-}
+export const flattenImagesObs = async (
+  formImageEncounters: Array<{ formData: { obs: any }; label: string }>
+) => {
+  await ServerTime.initialize();
+  return formImageEncounters.map((enc) => {
+    return {
+      concept: concepts.IMAGE_PART_NAME,
+      value: enc.label,
+      obsDateTime: ServerTime.getServerTimeString(),
+      groupMembers: enc.formData.obs,
+    };
+  });
 
-export const mapSearchComboOptionsToConcepts = (options: Array<any>, concept:string, obsDatetime:any, coded:boolean=false)=>{
-return Array.isArray(options)
-? options.map((opt: any) => ({
-    concept,
-    value: opt.id,
-    obsDatetime,
-  }))
-: [];
-}
+  // console.log({obs});
+
+  // return formImageEncounters.flatMap((enc)=>{
+  //   return enc.formData.obs
+  // })
+};
+
+export const mapSearchComboOptionsToConcepts = (
+  options: Array<any>,
+  concept: string,
+  obsDatetime: any,
+  coded: boolean = false
+) => {
+  return Array.isArray(options)
+    ? options.map((opt: any) => ({
+        concept,
+        value: opt.id,
+        obsDatetime,
+      }))
+    : [];
+};
 
 type FormType = {
   [key: string]: { name: string; label: string; coded?: boolean };
@@ -82,11 +90,12 @@ type FormType = {
 
 type SubmissionType = { [key: string]: any };
 
-export const mapSubmissionToCodedArray = (
+export const mapSubmissionToCodedArray = async (
   formDefinition: FormType,
   submission: SubmissionType,
-  obsDateTime?:string
+  obsDateTime?: string
 ) => {
+  await ServerTime.initialize();
   return Object.entries(submission)
     .map(([key, value]) => {
       // Find the matching form key where `name` matches the submitted key
@@ -113,15 +122,14 @@ export const mapSubmissionToCodedArray = (
         concept: conceptName,
         value,
         coded,
-        obsDatetime: obsDateTime ? obsDateTime : getDateTime()
+        obsDatetime: obsDateTime
+          ? obsDateTime
+          : ServerTime.getServerTimeString(),
       };
     })
     .flat() // Flatten in case of nested arrays
-    .filter(Boolean); 
-
- 
+    .filter(Boolean);
 };
-
 
 export function debounceFn<T extends (...args: any[]) => void>(
   func: T,

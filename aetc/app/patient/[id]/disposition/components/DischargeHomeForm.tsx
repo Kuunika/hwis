@@ -12,7 +12,6 @@ import {
 } from "@/components";
 import { concepts, encounters } from "@/constants";
 import { useParameters, getFacilities } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import {
   addEncounter,
   fetchConceptAndCreateEncounter,
@@ -307,8 +306,10 @@ const initialValues = {
 
 export default function DischargeHomeForm({
   openPatientSummary,
+  setInitialNotes,
 }: {
   openPatientSummary: () => void;
+  setInitialNotes: (notes: any) => void;
 }) {
   const { params } = useParameters();
   const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
@@ -336,7 +337,7 @@ export default function DischargeHomeForm({
 
   // Setup service areas - simplified
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: any, serviceAreas: any) => {
     const currentDateTime = ServerTime.getServerTimeString();
 
     // Prepare service area information
@@ -344,6 +345,18 @@ export default function DischargeHomeForm({
     if (values.specialistClinic === otherId && values.otherServiceArea) {
       serviceAreaValue = values.otherServiceArea;
     }
+
+    setInitialNotes({
+      dischargeNotes: values.dischargeNotes,
+      dischargePlan: values.dischargePlan,
+      followUpDetails: values.followUpDetails,
+      followUpPlan: values.followUpPlan,
+      clinic:
+        serviceAreas.find(
+          (service: any) => service.id === values.specialistClinic
+        )?.label || values.specialistClinic,
+      homeCareInstructions: values.homeCareInstructions,
+    });
 
     const obs = [
       {
@@ -440,7 +453,7 @@ const DischargeForm = ({
   setOtherId,
   otherId,
 }: {
-  handleSubmit: (values: any) => void;
+  handleSubmit: (values: any, serviceAreas: any) => void;
   contentRef: React.RefObject<HTMLDivElement>;
   setOtherId: (id: string | null) => void;
   otherId: string | null;
@@ -482,7 +495,7 @@ const DischargeForm = ({
       <FormikInit
         initialValues={initialValues}
         validationSchema={getValidationSchema()}
-        onSubmit={handleSubmit}
+        onSubmit={(values) => handleSubmit(values, serviceAreaOptions)}
         submitButtonText="Submit"
       >
         {({ values, setFieldValue }) => {

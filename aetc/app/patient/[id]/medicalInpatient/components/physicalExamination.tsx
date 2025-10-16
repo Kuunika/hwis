@@ -15,7 +15,6 @@ import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { concepts } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
 import { flattenImagesObs, getInitialValues, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
 import { getActivePatientDetails } from "@/hooks";
 import { Box, Typography } from "@mui/material";
 import { Form } from "formik";
@@ -79,6 +78,19 @@ const form = {
     name: concepts.SYMMETRICAL_EXPANSION,
     label: "Symmetrical expansion",
   },
+  description: {
+    name: concepts.DESCRIPTION,
+    label: "Description",
+  },
+  lungCondition: {
+    name: concepts.CONDITION,
+    label: "Lung Condition",
+  },
+  // facialSensation: {
+  //   name: concepts.SENSATION,
+  //   label: "Facial Movements / Sensation:",
+  // },
+
   apexBeat: {
     name: concepts.APEX_BEAT,
     label: "Apex Beat",
@@ -89,7 +101,7 @@ const form = {
   },
   thrillHeaves: {
     name: concepts.THRILL_HEAVES,
-    label: "Thrill heaves",
+    label: "Thrill/Heaves",
   },
   specify: {
     name: concepts.SPECIFY,
@@ -131,66 +143,73 @@ const form = {
     name: concepts.EYE_OPENING_RESPONSE,
     label: "Eye Opening Response",
   },
-  summary: {
-    name: concepts.SUMMARY,
-    label: "Summary",
-  },
+  // summary: {
+  //   name: concepts.SUMMARY,
+  //   label: "Summary",
+  // },
   pupil: {
     name: concepts.PUPIL,
-    label: "Pupil",
+    label: "Pupil:",
   },
 
   visualFieldAcuity: {
     name: concepts.VISUAL_FIELD_ACUITY,
-    label: "Visual Field Acuity",
+    label: " Visual Field/Acuity:",
   },
   eyeMovementsNystagmus: {
     name: concepts.EYE_MOVEMENTS_NYSTAGMUS,
-    label: "Eye Movements/Nystagmus",
+    label: "Eye Movements/Nystagmus:",
   },
-  eyeMovementsSensation: {
-    name: concepts.EYE_MOVEMENTS_SENSATION,
-    label: "Eye Movements/Sensation",
+  // eyeMovementsSensation: {
+  //   name: concepts.EYE_MOVEMENTS_SENSATION,
+  //   label: "Eye Movements/Sensation:",
+  // },
+
+  facialSensation: {
+    name: concepts.SENSATION,
+    label: "Facial Movements / Sensation:",
   },
+
+
   hearing: {
     name: concepts.HEARING,
-    label: "Hearing",
+    label: "Hearing:",
   },
   tongueMovementsTastes: {
     name: concepts.TONGUE_MOVEMENTS_TASTES,
-    label: "Tongue Movement/Tastes",
+    label: "Tongue Movement/Tastes:",
   },
   coughGagReflex: {
     name: concepts.COUGH_GAG_REFLEX,
-    label: "Cough Gag Reflex",
+    label: "Cough/Gag Reflex:",
   },
   power: {
     name: concepts.POWER,
-    label: "Power",
+    label: "Power:",
   },
   tone: {
     name: concepts.TONE,
-    label: "Tone",
+    label: "Tone:",
   },
   reflexes: {
     name: concepts.REFLEXES,
-    label: "Reflexes",
+    label: "Reflexes:",
   },
   plantars: {
     name: concepts.PLANTARS,
-    label: "Plantars",
+    label: "Plantars:",
   },
   sensation: {
     name: concepts.SENSATION,
-    label: "Sensation",
+    label: "Sensation:",
   },
   coordination: {
     name: concepts.COORDINATION,
-    label: "Coordination",
+    label: "Coordination:",
   },
   gait: {
     name: concepts.GAIT,
-    label: "Gait",
+    label: "Gait:",
   },
   auscultationLung: {
     name: concepts.AUSCULTATION_LUNG,
@@ -229,12 +248,29 @@ const schema = Yup.object().shape({
     .required(),
   [form.oralKs.name]: Yup.string().label(form.oralKs.label).required(),
   [form.oralThrush.name]: Yup.string().label(form.oralThrush.label).required(),
-  [form.jvpRaised.name]: Yup.string().label(form.jvpRaised.label).required(),
+  [form.jvpRaised.name]: Yup.number()
+    .min(0)
+    // .max(20)
+    .label(form.jvpRaised.label)
+    .required(),
   [form.trachea.name]: Yup.string().label(form.trachea.label).required(),
   [form.other.name]: Yup.string().label(form.other.label).required(),
   [form.symmetricalExpansion.name]: Yup.string()
     .label(form.symmetricalExpansion.label)
     .required(),
+
+  [form.description.name]: Yup.string()
+    .label(form.description.label)
+    .when(form.symmetricalExpansion.name, {
+      is: concepts.NO, // only require if "No" is selected
+      then: (schema) => schema.required("Please provide a description"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+  [form.lungCondition.name]: Yup.string()
+    .label(form.lungCondition.label)
+    .required(),
+  // [form.facialSensation.name]: Yup.string().label(form.facialSensation.label),
+
   [form.apexBeat.name]: Yup.string().label(form.apexBeat.label).required(),
   [form.oedema.name]: Yup.string().label(form.oedema.label).required(),
   [form.rash.name]: Yup.string().label(form.rash.label).required(),
@@ -247,15 +283,15 @@ const schema = Yup.object().shape({
   [form.eyeOpeningResponse.name]: Yup.string().label(
     form.eyeOpeningResponse.label
   ),
-  [form.summary.name]: Yup.string().label(form.summary.label),
+  // [form.summary.name]: Yup.string().label(form.summary.label),
   [form.visualFieldAcuity.name]: Yup.string().label(
     form.visualFieldAcuity.label
   ),
   [form.eyeMovementsNystagmus.name]: Yup.string().label(
     form.eyeMovementsNystagmus.label
   ),
-  [form.eyeMovementsSensation.name]: Yup.string().label(
-    form.eyeMovementsSensation.label
+  [form.facialSensation.name]: Yup.string().label(
+    form.facialSensation.label
   ),
   [form.hearing.name]: Yup.string().label(form.hearing.label),
   [form.tongueMovementsTastes.name]: Yup.string().label(
@@ -284,9 +320,17 @@ const conjunctivaOptions = [
   { value: concepts.PINK, label: "Pink" },
 ];
 const tracheaOptions = [
-  { value: concepts.ABSENT, label: "Absent" },
-  { value: concepts.PRESENT, label: "Present" },
+  // { value: concepts.ABSENT, label: "Absent" },
+  // { value: concepts.PRESENT, label: "Present" },
+  { value: concepts.TRACHEA_DEVIATED, label: "Deviated" },
+  { value: concepts.IS_TRACHEA_CENTRAL, label: "Central" },
 ];
+
+const normalAbnormalOptions = [
+  { value: concepts.NORMAL, label: "Normal" },
+  { value: concepts.ABNORMAL, label: "Abnormal" },
+];
+
 const apexBeatOptions = [
   { value: concepts.DISPLACED, label: "Displaced" },
   { value: concepts.NOT_DISPLACED, label: "Not Displaced" },
@@ -321,14 +365,19 @@ const verbalResponses = [
   { label: "None", value: "None", weight: 1 },
 ];
 
-export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
+export const PhysicalExamination = ({
+  onSubmit,
+}: {
+  onSubmit: (values: any) => void;
+}) => {
   const [formValues, setFormValues] = useState<any>({});
   const { gender } = getActivePatientDetails();
   const [percussionImageEnc, setPercussionImageEnc] = useState([]);
   const [abdomenImageEnc, setAbdomenImageEnc] = useState([]);
   const { ServerTime } = useServerTime();
 
-  const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] = useState([]);
+  const [percussionPosteriorImageEnc, setPercussionPosteriorImagesEnc] =
+    useState([]);
 
   const getWeight = (value: string, lists: any) => {
     const found = lists.find((l: any) => l.value == value);
@@ -342,36 +391,33 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
     eyeOpeningResponses
   );
 
-  const handleSubmit = (values: any) => {
-    const formValues = { ...values }
+  const handleSubmit = async (values: any) => {
+    const formValues = { ...values };
     const obsDatetime = ServerTime.getServerTimeString();
-
 
     const obs = [
       {
         concept: concepts.SITE,
-        values: 'Lung Anterior',
-        groupMembers: flattenImagesObs(percussionImageEnc),
-        obsDatetime
+        values: "Lung Anterior",
+        groupMembers: await flattenImagesObs(percussionImageEnc),
+        obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: 'Lung Posterior',
-        groupMembers: flattenImagesObs(percussionPosteriorImageEnc),
-        obsDatetime
+        values: "Lung Posterior",
+        groupMembers: await flattenImagesObs(percussionPosteriorImageEnc),
+        obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: 'Abdomen',
-        groupMembers: flattenImagesObs(abdomenImageEnc),
-        obsDatetime
-      }
-    ]
+        values: "Abdomen",
+        groupMembers: await flattenImagesObs(abdomenImageEnc),
+        obsDatetime,
+      },
+    ];
 
-
-    onSubmit([...getObservations(formValues, obsDatetime), ...obs])
-
-  }
+    onSubmit([...getObservations(formValues, obsDatetime), ...obs]);
+  };
 
   return (
     <FormikInit
@@ -391,24 +437,20 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
           sx={{ width: "100%" }}
         />
       </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Vitals">
+      <FormFieldContainerLayout title="Vital Signs">
         <FormFieldContainerMultiple>
           <TextInputField
             name={form.systolic.name}
             label={form.systolic.label}
             id={form.systolic.name}
             unitOfMeasure="mmHg"
-
-
           />
           <TextInputField
             name={form.diastolic.name}
             label={form.diastolic.label}
             id={form.diastolic.name}
             unitOfMeasure="mmHg"
-
           />
-
         </FormFieldContainerMultiple>
         <FormFieldContainerMultiple>
           <TextInputField
@@ -462,12 +504,20 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
             options={yesNoOptions}
             row
           />
-          <RadioGroupInput
+          {/* <RadioGroupInput
             name={form.jvpRaised.name}
             label={form.jvpRaised.label}
             options={yesNoOptions}
             row
+          /> */}
+          <TextInputField
+            name={form.jvpRaised.name}
+            label={form.jvpRaised.label}
+            id={form.jvpRaised.name}
+            unitOfMeasure="cm"
+            sx={{ width: "100%" }}
           />
+
           <RadioGroupInput
             name={form.lymphadenopathy.name}
             label={form.lymphadenopathy.label}
@@ -498,7 +548,19 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
           row
           options={yesNoOptions}
         />
+
+        {formValues[form.symmetricalExpansion.name] === concepts.NO && (
+          <TextInputField
+            rows={4}
+            multiline
+            sx={{ width: "100%", marginTop: 2 }}
+            name={form.description.name}
+            label={form.description.label}
+            id={form.description.name}
+          />
+        )}
       </FormFieldContainerLayout>
+
       <FormFieldContainerLayout title="Heart">
         <RadioGroupInput
           name={form.apexBeat.name}
@@ -522,7 +584,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
           row
           options={thrillOptions}
         />
-        {formValues[form.thrillHeaves.name] == concepts.ABSENT && (
+        {formValues[form.thrillHeaves.name] == concepts.PRESENT && (
           <TextInputField
             rows={5}
             multiline
@@ -543,39 +605,51 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
       </FormFieldContainerLayout>
       <FormFieldContainerLayout title="Lungs">
-        {gender == "Male" && (
-          <FormFieldContainerMultiple>
-            <LungFrontMaleImage
-              onValueChange={setPercussionImageEnc}
-              form="medicalInpatient"
-            />
-            <LungBackMaleImage
-              onValueChange={setPercussionPosteriorImagesEnc}
-              form="medicalInpatient"
-            />
-          </FormFieldContainerMultiple>
-        )}
-        {gender == "Female" && (
-          <Box>
-            <LungFrontFemaleImage
-              onValueChange={setPercussionImageEnc}
-              form="medicalInpatient"
-            />
-            <LungBackFemaleImage
-              onValueChange={setPercussionPosteriorImagesEnc}
-              form="medicalInpatient"
-            />
-          </Box>
-        )}
-        <TextInputField
-          multiline
-          rows={5}
-          name={form.auscultationLung.name}
-          label={form.auscultationLung.label}
-          id={form.auscultationLung.name}
-          sx={{ width: "100%" }}
+        <RadioGroupInput
+          name={form.lungCondition.name}
+          label={form.lungCondition.label}
+          options={normalAbnormalOptions}
+          row
         />
+
+        {formValues[form.lungCondition.name] === concepts.ABNORMAL && (
+          <>
+            {gender == "Male" && (
+              <FormFieldContainerMultiple>
+                <LungFrontMaleImage
+                  onValueChange={setPercussionImageEnc}
+                  form="medicalInpatient"
+                />
+                <LungBackMaleImage
+                  onValueChange={setPercussionPosteriorImagesEnc}
+                  form="medicalInpatient"
+                />
+              </FormFieldContainerMultiple>
+            )}
+            {gender == "Female" && (
+              <Box>
+                <LungFrontFemaleImage
+                  onValueChange={setPercussionImageEnc}
+                  form="medicalInpatient"
+                />
+                <LungBackFemaleImage
+                  onValueChange={setPercussionPosteriorImagesEnc}
+                  form="medicalInpatient"
+                />
+              </Box>
+            )}
+            <TextInputField
+              multiline
+              rows={5}
+              name={form.auscultationLung.name}
+              label={form.auscultationLung.label}
+              id={form.auscultationLung.name}
+              sx={{ width: "100%" }}
+            />
+          </>
+        )}
       </FormFieldContainerLayout>
+
       <FormFieldContainerLayout title="Abdomen">
         {gender == "Male" && (
           <NewAbdomenImage
@@ -618,12 +692,19 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
       </FormFieldContainerLayout>
 
       <FormFieldContainerLayout title="Neurological">
+        {/* Neck stiffness separate */}
         <RadioGroupInput
           name={form.neckStiffness.name}
           label={form.neckStiffness.label}
           options={yesNoOptions}
           row
         />
+
+        {/* Sub-header for GCS */}
+        <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2, mb: 1 }}>
+          Glasgow Coma Scale (GCS)
+        </Typography>
+
         <FormFieldContainerMultiple>
           <RadioGroupInput
             name={form.motorResponse.name}
@@ -631,26 +712,30 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
             options={motorResponses}
             row={false}
           />
-          <RadioGroupInput
-            name={form.eyeOpeningResponse.name}
-            label={form.eyeOpeningResponse.label}
-            options={eyeOpeningResponses}
-          />
         </FormFieldContainerMultiple>
+        <RadioGroupInput
+          name={form.eyeOpeningResponse.name}
+          label={form.eyeOpeningResponse.label}
+          options={eyeOpeningResponses}
+        />
+
         <RadioGroupInput
           name={form.verbalResponse.name}
           label={form.verbalResponse.label}
           options={verbalResponses}
           row={false}
         />
-        <Typography fontWeight={"800"} variant="body2">
-          ({v}V {e} E {m} M ) {m + v + e}/15
+
+        {/* Score display */}
+        <Typography fontWeight={"800"} variant="body2" sx={{ mt: 1 }}>
+          (V {v} + E {e} + M {m}) = {m + v + e}/15
         </Typography>
       </FormFieldContainerLayout>
+
       <FormFieldContainerLayout title="Cranial Nerves">
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.pupil.name}
           label={form.pupil.label}
           id={form.pupil.name}
@@ -658,7 +743,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.visualFieldAcuity.name}
           label={form.visualFieldAcuity.label}
           id={form.visualFieldAcuity.name}
@@ -666,7 +751,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.eyeMovementsNystagmus.name}
           label={form.eyeMovementsNystagmus.label}
           id={form.eyeMovementsNystagmus.name}
@@ -674,15 +759,15 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
-          name={form.eyeMovementsSensation.name}
-          label={form.eyeMovementsSensation.label}
-          id={form.eyeMovementsSensation.name}
+          // rows={5}
+          name={form.facialSensation.name}
+          label={form.facialSensation.label}
+          id={form.facialSensation.name}
           sx={{ width: "100%" }}
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.hearing.name}
           label={form.hearing.label}
           id={form.hearing.name}
@@ -690,7 +775,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.tongueMovementsTastes.name}
           label={form.tongueMovementsTastes.label}
           id={form.tongueMovementsTastes.name}
@@ -698,7 +783,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.coughGagReflex.name}
           label={form.coughGagReflex.label}
           id={form.coughGagReflex.name}
@@ -708,7 +793,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
       <FormFieldContainerLayout title="Peripherals nerves">
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.power.name}
           label={form.power.label}
           id={form.power.name}
@@ -716,7 +801,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.tone.name}
           label={form.tone.label}
           id={form.tone.name}
@@ -724,7 +809,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.reflexes.name}
           label={form.reflexes.label}
           id={form.reflexes.name}
@@ -732,7 +817,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.plantars.name}
           label={form.plantars.label}
           id={form.plantars.name}
@@ -740,7 +825,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.sensation.name}
           label={form.sensation.label}
           id={form.sensation.name}
@@ -748,7 +833,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.coordination.name}
           label={form.coordination.label}
           id={form.coordination.name}
@@ -756,14 +841,20 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
         />
         <TextInputField
           multiline
-          rows={5}
+          // rows={5}
           name={form.gait.name}
           label={form.gait.label}
           id={form.gait.name}
           sx={{ width: "100%" }}
         />
+        {/* <TextInputField
+          name={form.facialSensation.name}
+          label={form.facialSensation.label}
+          id={form.facialSensation.name}
+          sx={{ width: "100%" }}
+        /> */}
       </FormFieldContainerLayout>
-      <FormFieldContainerLayout title="Summary">
+      {/* <FormFieldContainerLayout title="Summary">
         <TextInputField
           name={form.summary.name}
           id={form.summary.name}
@@ -772,7 +863,7 @@ export const PhysicalExamination = ({ onSubmit }: { onSubmit: (values: any) => v
           rows={5}
           sx={{ width: "100%" }}
         />
-      </FormFieldContainerLayout>
+      </FormFieldContainerLayout> */}
     </FormikInit>
   );
 };

@@ -1,10 +1,16 @@
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { findByNPID } from "@/services/patient";
-import { createRelationship, createPerson, searchPerson, searchRegistrationPerson } from "@/services/people";
+import {
+  createRelationship,
+  createPerson,
+  searchPerson,
+  searchRegistrationPerson,
+} from "@/services/people";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { getConcept } from "./encounter";
 
 export const addPerson = () => {
+  const { ServerTime } = useServerTime();
   const queryClient = useQueryClient();
   const addData = (person: any) => {
     const mappedPerson = {
@@ -14,7 +20,7 @@ export const addPerson = () => {
           familyName: person.nextOfKinLastName,
         },
       ],
-      birthdate: getDateTime(),
+      birthdate: ServerTime.getServerTimeString(),
     };
     return createPerson(mappedPerson).then((response) => response.data);
   };
@@ -29,7 +35,6 @@ export const addPerson = () => {
 };
 export const addRelationship = () => {
   const addData = async (data: any) => {
-
     // const concept= await getConcept(data.nextOfKinRelationship)
     const mappedData = {
       person_a: data.patient,
@@ -44,23 +49,26 @@ export const addRelationship = () => {
   });
 };
 
-
 export const searchPatients = (patient: any) => {
   const getall = (patient: any) => {
     const givenName = patient.firstName;
-    const familyName = patient.lastName
-    const gender = patient.gender
-    return searchPerson(`given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`).then((response) => response.data.map((person: any) => {
-      return {
-        person_id: person.person_id,
-        uuid: person.uuid,
-        given_name: person.names[0].given_name,
-        family_name: person.names[0].family_name,
-        gender: person.gender,
-        birthdate: person.birthdate
-      }
-    }));
-  }
+    const familyName = patient.lastName;
+    const gender = patient.gender;
+    return searchPerson(
+      `given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`
+    ).then((response) =>
+      response.data.map((person: any) => {
+        return {
+          person_id: person.person_id,
+          uuid: person.uuid,
+          given_name: person.names[0].given_name,
+          family_name: person.names[0].family_name,
+          gender: person.gender,
+          birthdate: person.birthdate,
+        };
+      })
+    );
+  };
 
   return useQuery({
     queryKey: ["search"],
@@ -69,30 +77,32 @@ export const searchPatients = (patient: any) => {
   });
 };
 
-
 export const searchRegPatients = (patient: any) => {
-
-
   const getall = (patient: any) => {
     const givenName = patient.firstName;
     const familyName = patient.lastName;
-    const gender = patient.gender
-    return searchRegistrationPerson(`given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`).then((response) => response.data.map(d => d.patient));
-  }
+    const gender = patient.gender;
+    return searchRegistrationPerson(
+      `given_name=${givenName}&family_name=${familyName}&gender=${gender}&middle_name&paginate=false`
+    ).then((response) => response.data.map((d) => d.patient));
+  };
   return useQuery({
-    queryKey: ["search", `given_name=${patient.givenName}&family_name=${patient.familyName}&gender=${patient.gender}`],
+    queryKey: [
+      "search",
+      `given_name=${patient.givenName}&family_name=${patient.familyName}&gender=${patient.gender}`,
+    ],
     queryFn: () => getall(patient),
     enabled: false,
   });
-}
+};
 
-export const searchNPID = (npid:string)=>{
-  const getOne = (npid:string)=>{
-    return findByNPID(npid).then((response) => response.data)
-  }
+export const searchNPID = (npid: string) => {
+  const getOne = (npid: string) => {
+    return findByNPID(npid).then((response) => response.data);
+  };
   return useQuery({
     queryKey: ["search_npid", npid],
     queryFn: () => getOne(npid),
     enabled: false,
-  });  
-}
+  });
+};

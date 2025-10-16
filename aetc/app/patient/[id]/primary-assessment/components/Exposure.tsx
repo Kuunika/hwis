@@ -33,11 +33,11 @@ const form = {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
-  image:{
+  image: {
     name: concepts.IMAGE_PART_NAME,
     label: "Image",
     image: true,
-  }
+  },
 
   // abnormalities: {
   //   name: concepts.ABNORMALITIES,
@@ -49,7 +49,7 @@ const form = {
   // },
 };
 
-export const exposureFormConfig=form;
+export const exposureFormConfig = form;
 
 const schema = yup.object({
   [form.temperatureInfo.name]: yup
@@ -80,7 +80,7 @@ export const Exposure = ({ onSubmit }: Props) => {
     onSubmit
   );
 
-  const handleFormSubmit = (values: any) => {
+  const handleFormSubmit = async (values: any) => {
     const formValues = { ...values };
 
     const obsDatetime = ServerTime.getServerTimeString();
@@ -90,13 +90,13 @@ export const Exposure = ({ onSubmit }: Props) => {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body anterior",
         obsDatetime,
-        groupMembers: [...flattenImagesObs(fullImageFront)],
+        groupMembers: [...(await flattenImagesObs(fullImageFront))],
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body posterior",
         obsDatetime,
-        groupMembers: [...flattenImagesObs(fullImageBack)],
+        groupMembers: [...(await flattenImagesObs(fullImageBack))],
       },
       {
         concept: concepts.NOTES,

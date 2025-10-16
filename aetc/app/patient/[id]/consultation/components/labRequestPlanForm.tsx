@@ -18,7 +18,6 @@ import {
 } from "@/hooks/labOrder";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getOnePatient } from "@/hooks/patientReg";
-import { getDateTime } from "@/helpers/dateTime";
 import * as Yup from "yup";
 import { Typography } from "@mui/material";
 import { concepts, encounters } from "@/constants";

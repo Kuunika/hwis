@@ -76,6 +76,8 @@ export const AwaitingSpecialtyList = () => {
     const { gender } = getActivePatientDetails();
 
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
+    const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+
     const {
         paginationModel,
         patients: data,
@@ -85,7 +87,7 @@ export const AwaitingSpecialtyList = () => {
         loading,
         totalPages,
         refetch,
-    } = fetchPatientsTablePaginate("awaiting_speciality");
+    } = fetchPatientsTablePaginate("awaiting_speciality", patientCareFilter);
 
     const [inputText, setInputText] = useState("");
     const debouncedSearch = useDebounce(inputText, 500);
@@ -246,21 +248,21 @@ export const AwaitingSpecialtyList = () => {
                         patient={cell.row}
                         onVisitClosed={refetch}
                     />
-                    {cell.row.triage_result == "red" && (
-                        <Tooltip title="Initiate CPR" arrow>
-                            <IconButton
-                                onClick={() => {
-                                    setPatientId(cell.row.id);
-                                    setCpr(true);
-                                    setVisitUUID(cell.row.visit_uuid);
-                                }}
-                                aria-label="initiate CPR"
-                                color="error"
-                            >
-                                <FaHeartbeat />
-                            </IconButton>
-                        </Tooltip>
-                    )}
+                    {/* {cell.row.triage_result == "red" && ( */}
+                    <Tooltip title="Initiate CPR" arrow>
+                        <IconButton
+                            onClick={() => {
+                                setPatientId(cell.row.id);
+                                setCpr(true);
+                                setVisitUUID(cell.row.visit_uuid);
+                            }}
+                            aria-label="initiate CPR"
+                            color="error"
+                        >
+                            <FaHeartbeat />
+                        </IconButton>
+                    </Tooltip>
+                    {/* )} */}
                 </Box>
             ),
         },
@@ -311,8 +313,15 @@ export const AwaitingSpecialtyList = () => {
         <>
             {/* Filter Section */}
             <Paper sx={{ p: 2, mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        mb: 2,
+                    }}
+                >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <FaFilter />
                         <Typography variant="h6">Filters</Typography>
                         {hasActiveFilters && (
@@ -323,7 +332,7 @@ export const AwaitingSpecialtyList = () => {
                             />
                         )}
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Box sx={{ display: "flex", gap: 1 }}>
                         {hasActiveFilters && (
                             <Button
                                 startIcon={<FaTimes />}
@@ -341,29 +350,29 @@ export const AwaitingSpecialtyList = () => {
                             size="small"
                             variant="outlined"
                         >
-                            {showFilters ? 'Hide' : 'Show'} Filters
+                            {showFilters ? "Hide" : "Show"} Filters
                         </Button>
                     </Box>
                 </Box>
 
                 <Collapse in={showFilters}>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
                         {/* Specialty Filter */}
                         <FormControl sx={{ minWidth: 200 }}>
                             <InputLabel>Specialty</InputLabel>
                             <Select
                                 multiple
                                 value={filters.specialty}
-                                onChange={handleFilterChange('specialty')}
+                                onChange={handleFilterChange("specialty")}
                                 input={<OutlinedInput label="Specialty" />}
                                 renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                                         {selected.map((value) => (
                                             <Chip
                                                 key={value}
                                                 label={value}
                                                 size="small"
-                                                onDelete={() => clearFilter('specialty', value)}
+                                                onDelete={() => clearFilter("specialty", value)}
                                                 onMouseDown={(event) => {
                                                     event.stopPropagation();
                                                 }}
@@ -386,16 +395,16 @@ export const AwaitingSpecialtyList = () => {
                             <Select
                                 multiple
                                 value={filters.patientCareArea}
-                                onChange={handleFilterChange('patientCareArea')}
+                                onChange={handleFilterChange("patientCareArea")}
                                 input={<OutlinedInput label="Patient Care Area" />}
                                 renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                                         {selected.map((value) => (
                                             <Chip
                                                 key={value}
                                                 label={value}
                                                 size="small"
-                                                onDelete={() => clearFilter('patientCareArea', value)}
+                                                onDelete={() => clearFilter("patientCareArea", value)}
                                                 onMouseDown={(event) => {
                                                     event.stopPropagation();
                                                 }}
@@ -418,16 +427,16 @@ export const AwaitingSpecialtyList = () => {
                             <Select
                                 multiple
                                 value={filters.recordedBy}
-                                onChange={handleFilterChange('recordedBy')}
+                                onChange={handleFilterChange("recordedBy")}
                                 input={<OutlinedInput label="Recorded By" />}
                                 renderValue={(selected) => (
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                                         {selected.map((value) => (
                                             <Chip
                                                 key={value}
                                                 label={value}
                                                 size="small"
-                                                onDelete={() => clearFilter('recordedBy', value)}
+                                                onDelete={() => clearFilter("recordedBy", value)}
                                                 onMouseDown={(event) => {
                                                     event.stopPropagation();
                                                 }}
@@ -448,15 +457,15 @@ export const AwaitingSpecialtyList = () => {
 
                 {/* Active Filters Display */}
                 {hasActiveFilters && (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                        <Typography variant="body2" sx={{ mr: 1, alignSelf: "center" }}>
                             Active filters:
                         </Typography>
                         {filters.specialty.map((filter) => (
                             <Chip
                                 key={`specialty-${filter}`}
                                 label={`Specialty: ${filter}`}
-                                onDelete={() => clearFilter('specialty', filter)}
+                                onDelete={() => clearFilter("specialty", filter)}
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -466,7 +475,7 @@ export const AwaitingSpecialtyList = () => {
                             <Chip
                                 key={`area-${filter}`}
                                 label={`Care Area: ${filter}`}
-                                onDelete={() => clearFilter('patientCareArea', filter)}
+                                onDelete={() => clearFilter("patientCareArea", filter)}
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -476,7 +485,7 @@ export const AwaitingSpecialtyList = () => {
                             <Chip
                                 key={`recorded-${filter}`}
                                 label={`Recorded By: ${filter}`}
-                                onDelete={() => clearFilter('recordedBy', filter)}
+                                onDelete={() => clearFilter("recordedBy", filter)}
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -491,12 +500,16 @@ export const AwaitingSpecialtyList = () => {
                 data={
                     filteredData?.length
                         ? {
-                            data: filteredData.map((row: any) => ({ id: row.uuid, ...row })),
+                            data: filteredData.map((row: any) => ({
+                                id: row.uuid,
+                                ...row,
+                            })),
                             page: paginationModel.page,
                             per_page: paginationModel.pageSize,
                             total_pages: totalPages,
+                            totalEntries: filteredData.length,
                         }
-                        : { data: [], page: 1, per_page: 10, total_pages: 0 }
+                        : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
                 }
                 searchText={inputText}
                 setSearchString={setInputText}

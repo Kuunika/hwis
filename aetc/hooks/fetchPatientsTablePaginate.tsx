@@ -18,7 +18,7 @@ interface PaginationModel {
   pageSize: number;
 }
 
-export const fetchPatientsTablePaginate = (category: Category) => {
+export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string) => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({
     page: 0,
     pageSize: 10,
@@ -27,6 +27,7 @@ export const fetchPatientsTablePaginate = (category: Category) => {
   const [patients, setPatients] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalEntries, setTotalEntries] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
   const fetchData = useCallback(async () => {
@@ -43,11 +44,13 @@ export const fetchPatientsTablePaginate = (category: Category) => {
         paginationModel.pageSize,
         searchText,
         paginationModel.page + 1,
-        date || ""
+        date || "",
+        patientCareArea
       );
 
       setPatients(response.data.data);
       setTotalPages(response.data.total_pages);
+      setTotalEntries(response.data.totalEntries);
     } catch (error) {
       console.error("Error fetching patients:", error);
       // Optionally set error state here
@@ -79,6 +82,7 @@ export const fetchPatientsTablePaginate = (category: Category) => {
     searchText,
     setSearchText,
     totalPages,
+    totalEntries,
     setOnSwitch,
     refetch, // Add refetch to the returned object
   };
@@ -89,7 +93,8 @@ export const getPatientsFromCacheOrFetch = async (
   pageSize: number,
   searchString: string,
   page: number,
-  date: string
+  date: string,
+  patientCareArea?: string
 ): Promise<any> => {
   const cacheKey = [category, pageSize, searchString, page];
   // const cachedPatientList =
@@ -99,9 +104,15 @@ export const getPatientsFromCacheOrFetch = async (
   //   console.log("using cached data", cachedPatientList);
   //   return cachedPatientList;
   // } else {
-  const patientList = await getDailyVisitsPaginated(
-    `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`
-  );
+    let query = `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`;
+
+    if (patientCareArea) {
+      // use the backend endpoint for filtering
+      query = `category=${category}&paginate=false&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+    }
+    
+    const patientList = await getDailyVisitsPaginated(query);
+    
   // queryClient.setQueryData(cacheKey, patientList);
 
   // setTimeout(() => {

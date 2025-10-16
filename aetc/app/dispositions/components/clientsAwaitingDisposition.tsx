@@ -48,6 +48,7 @@ export const ClientsAwaitingDisposition = () => {
     loading,
     totalPages,
     refetch, // Add refetch function from your hook
+    totalEntries
   } = fetchPatientsTablePaginate("disposition");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -211,12 +212,13 @@ export const ClientsAwaitingDisposition = () => {
         data={
           data?.length
             ? {
-              data: data.map((row: any) => ({ id: row.uuid, ...row })),
-              page: paginationModel.page,
-              per_page: paginationModel.pageSize,
-              total_pages: totalPages,
-            }
-            : { data: [], page: 1, per_page: 10, total_pages: 0 }
+                data: data.map((row: any) => ({ id: row.uuid, ...row })),
+                page: paginationModel.page,
+                per_page: paginationModel.pageSize,
+                total_pages: totalPages,
+                totalEntries,
+              }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0}
         }
         searchText={inputText}
         setSearchString={setInputText}
@@ -311,7 +313,7 @@ const DispositionActions = ({
         <MenuItem
           onClick={() => navigateTo(`/patient/${patient.id}/medicalInpatient`)}
         >
-          Medical Inpatient
+          Medical Inpatient Admission Sheet
         </MenuItem>
         <MenuItem
           onClick={() => navigateTo(`/patient/${patient.id}/surgicalNotes`)}
@@ -453,8 +455,7 @@ const CardAction = ({
             handleClose();
           }}
         >
-          Medical Inpatient
-        </MenuItem>
+          Medical Inpatient Admission Sheet</MenuItem>
         <MenuItem
           onClick={() => {
             navigateTo(`/patient/${id}/surgicalNotes`);

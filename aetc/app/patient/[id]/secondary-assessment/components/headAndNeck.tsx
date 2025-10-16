@@ -20,7 +20,6 @@ import ComponentSlider from "@/components/slider/slider";
 import { HeadNeckLeftFemaleImage } from "@/components/svgImages/headNeckLeftFemale";
 import { HeadNeckFrontFemaleImage } from "@/components/svgImages/headNeckFrontFemale";
 import { HeadNeckRightFemaleImage } from "@/components/svgImages/headNeckRightFemale";
-import { getDateTime } from "@/helpers/dateTime";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
@@ -29,19 +28,17 @@ type Props = {
 };
 const form = {
   generalInformation: {
-      name: "Notes",
+    name: "Notes",
     label: "Notes",
-      type: "string",
-
+    type: "string",
   },
-    image:{
-        name: concepts.IMAGE_PART_NAME,
-        label: "Image",
-        image: true,
-    }
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
+  },
 };
 export const headAndNeckFormConfig: any = form;
-
 
 const schema = yup.object({
   [form.generalInformation.name]: yup
@@ -82,25 +79,25 @@ export const HeadAndNeck = ({ onSubmit }: Props) => {
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
-        groupMembers: flattenImagesObs(headNeckImageEncounter),
+        groupMembers: await flattenImagesObs(headNeckImageEncounter),
         value: "anterior",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
-        groupMembers: flattenImagesObs(leftHeadNeckImageEncounter),
+        groupMembers: await flattenImagesObs(leftHeadNeckImageEncounter),
         value: "left lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
-        groupMembers: flattenImagesObs(rightHeadNeckImageEncounter),
+        groupMembers: await flattenImagesObs(rightHeadNeckImageEncounter),
         value: "right lateral",
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         obsDatetime,
-        groupMembers: flattenImagesObs(backHeadNeckImageEncounter),
+        groupMembers: await flattenImagesObs(backHeadNeckImageEncounter),
         value: "posterior",
       },
       {

@@ -10,10 +10,10 @@ import {
   PatientTableListServer,
 } from "@/components";
 
-import Image from "next/image";
+
 import { AbscondButton } from "@/components/abscondButton";
 import { useContext, useEffect, useState } from "react";
-import { Identifier } from "@/interfaces";
+
 import {
   SearchRegistrationContext,
   SearchRegistrationContextType,
@@ -22,11 +22,16 @@ import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
+import { FaHeartbeat } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
 import { deletePatient } from "@/hooks/patientReg";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 export const WaitingRegistrationList = () => {
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const { navigateTo } = useNavigation();
   const {
@@ -38,6 +43,7 @@ export const WaitingRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("registration");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -129,6 +135,19 @@ export const WaitingRegistrationList = () => {
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -186,6 +205,7 @@ export const WaitingRegistrationList = () => {
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
+          totalEntries
         }}
         searchText={inputText}
         setSearchString={setInputText}
@@ -196,6 +216,12 @@ export const WaitingRegistrationList = () => {
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}
         onRowClick={(row: any) => navigateTo(`/registration/${row.id}/search`)}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
       />
     </>
   );

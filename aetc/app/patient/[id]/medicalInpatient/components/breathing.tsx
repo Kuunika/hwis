@@ -23,7 +23,7 @@ import {
   mapSubmissionToCodedArray,
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import ComponentSlider from "@/components/slider/slider";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
@@ -289,59 +289,60 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const [lungBack, setLungBack] = useState<Array<any>>([]);
 
   const handleSubmitForm = async (values: any) => {
+    const { ServerTime } = useServerTime();
     const formValues = { ...values };
 
     const obs = [
       {
         concept: form.chestWallAbnormality.name,
         value: formValues[form.chestWallAbnormality.name],
-        obsDatetime: getDateTime(),
+        obsDatetime: ServerTime.getServerTimeString(),
         coded: true,
-        groupMembers: flattenImagesObs(chestAbnormalitiesImage),
+        groupMembers: await flattenImagesObs(chestAbnormalitiesImage),
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
-        obsDatetime: getDateTime(),
+        obsDatetime: ServerTime.getServerTimeString(),
         coded: true,
-        groupMembers: flattenImagesObs(percussionImage),
+        groupMembers: await flattenImagesObs(percussionImage),
       },
       {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         coded: true,
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: concepts.SITE,
         value: "Lung Left",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungLeft),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(lungLeft),
       },
       {
         concept: concepts.SITE,
         value: "Lung Right",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungRight),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(lungRight),
       },
       {
         concept: concepts.SITE,
         value: "Lung Front",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungFront),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(lungFront),
       },
       {
         concept: concepts.SITE,
         value: "Lung Back",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungBack),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(lungBack),
       },
       {
         concept: concepts.SITE,
         value: "Lung Front",
-        obsDatetime: getDateTime(),
-        groupMembers: flattenImagesObs(lungFront),
+        obsDatetime: ServerTime.getServerTimeString(),
+        groupMembers: await flattenImagesObs(lungFront),
       },
     ];
 
@@ -353,7 +354,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.deviceForIntervention.name,
           value: device.id,
-          obsDateTime: getDateTime(),
+          obsDateTime: ServerTime.getServerTimeString(),
           coded: true,
         };
       });
@@ -365,7 +366,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
     delete formValues[form.chestExpansion.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...(await mapSubmissionToCodedArray(form, formValues)),
       ...obs,
       ...devicesObs,
     ]);

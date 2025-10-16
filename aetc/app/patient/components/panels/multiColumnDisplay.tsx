@@ -3,6 +3,7 @@ import React from "react";
 // Types
 interface Child {
   item: string | { [key: string]: string } | null | undefined;
+  bold?: boolean;
   children?: Child | Child[] | null | undefined;
 }
 
@@ -28,13 +29,23 @@ const RenderChildren: React.FC<{
   return (
     <div style={{ paddingLeft: `${level * 16}px` }}>
       {normalizedChildren.map((child, index) => {
-        const itemText = !child?.item
-          ? ""
-          : typeof child.item === "string"
-            ? child.item
-            : Object.entries(child.item)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(", ");
+        let itemText: React.ReactNode = null;
+
+        if (typeof child?.item === "string") {
+          itemText = child.bold ? <strong>{child.item}</strong> : child.item;
+        } else if (child?.item && typeof child.item === "object") {
+          // ✅ TypeScript now knows it's an object
+          itemText = (
+            <>
+              {Object.entries(child.item).map(([key, value], i, arr) => (
+                <span key={i}>
+                  {child.bold ? <strong>{key}</strong> : key}: {value}
+                  {i < arr.length - 1 && ", "}
+                </span>
+              ))}
+            </>
+          );
+        }
 
         return (
           <div key={index} style={{ marginBottom: "4px" }}>
@@ -106,23 +117,21 @@ export const MultiColumnNotes: React.FC<MultiColumnNotesProps> = ({
                               borderRadius: "6px",
                             }}
                           >
-                            <strong>
+                          { section?.heading && <strong>
                               - {section?.heading || "Untitled Section"}
-                            </strong>
+                            </strong>}
                             <RenderChildren children={section?.children} />
-                            {section.user && (
-                              <div
-                                style={{
-                                  color: "#7f8c8d",
-                                  fontSize: "14px",
-                                  letterSpacing: "0.2px",
-                                  marginTop: "8px",
-                                  fontStyle: "italic",
-                                }}
-                              >
-                                ~ {section.user}
-                              </div>
-                            )}
+                            <div
+                              style={{
+                                color: "#7f8c8d",
+                                fontSize: "14px",
+                                letterSpacing: "0.2px",
+                                marginTop: "8px",
+                                fontStyle: "italic",
+                              }}
+                            >
+                              {section.user}
+                            </div>
                           </div>
                         ))
                       ) : (

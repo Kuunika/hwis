@@ -50,6 +50,14 @@ const dispositionOptions = [
 
 function DispositionFeature() {
   const { navigateTo } = useNavigation();
+  const [initialNotes, setInitialNotes] = useState<any>({
+    dischargeNotes: "",
+    dischargePlan: "",
+    followUpDetails: "",
+    followUpPlan: "",
+    clinic: "",
+    homeCareInstructions: "",
+  });
   const [openPatientSummary, setOpenPatientSummary] = useState(false)
   const [selectedDisposition, setSelectedDisposition] = useState<string | null>(
     null
@@ -64,7 +72,12 @@ function DispositionFeature() {
   const renderForm = () => {
     switch (selectedDisposition) {
       case concepts.DISCHARGE_HOME:
-        return <DischargeHomeForm openPatientSummary={openPatientSummaryDialog} />;
+        return (
+          <DischargeHomeForm
+            setInitialNotes={setInitialNotes}
+            openPatientSummary={openPatientSummaryDialog}
+          />
+        );
       case concepts.AWAITING_SPECIALITY_REVIEW:
         return <AwaitingSpecialityReviewForm openPatientSummary={openPatientSummaryDialog} />;
       case concepts.ADMISSION:
@@ -89,7 +102,7 @@ function DispositionFeature() {
       <PatientInfoTab />
       <BackButton />
       <MainGrid container spacing={2} mt={"2ch"} sx={{ ml: 16 }}>
-        <PatientInfoPrintDialog onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
+        <PatientInfoPrintDialog initialNotes={initialNotes}  onClose={() => navigateTo("/dispositions")} open={openPatientSummary} />
         {/* Main Content */}
         <MainGrid item xs={12} lg={9}>
           <MainPaper elevation={0} sx={{ p: "1ch" }}>

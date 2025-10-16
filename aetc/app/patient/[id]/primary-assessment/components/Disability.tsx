@@ -13,11 +13,7 @@ import {
 import * as yup from "yup";
 import { Box, Typography } from "@mui/material";
 import { NO, YES, concepts, encounters } from "@/constants";
-import {
-  getInitialValues,
-  getObservations,
-  mapSubmissionToCodedArray,
-} from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { useServerTime } from "@/contexts/serverTimeContext";
@@ -38,6 +34,10 @@ const form = {
   motorResponse: {
     name: concepts.MOTOR_RESPONSE,
     label: "Best Motor Response",
+  },
+  gcs: {
+    name: concepts.GCS,
+    label: "GCS",
   },
   focalNeurology: {
     name: concepts.FOCAL_NEUROLOGY,
@@ -239,7 +239,15 @@ export const Disability = ({ onSubmit }: Props) => {
     delete values[form.rightPupilSize.name];
     delete values[form.rightPupilReaction.name];
 
-    const obs = getObservations(values, obsDateTime);
+    const gcs =
+      Number(eyeOpeningValue || 0) +
+      Number(verbalResponseValue || 0) +
+      Number(motorResponseValue || 0);
+
+    const obs = getObservations(
+      { ...values, [concepts.GCS]: gcs },
+      obsDateTime
+    );
 
     const obsWithEyes = [...obs, ...eyes];
     handleSubmit(obsWithEyes);
