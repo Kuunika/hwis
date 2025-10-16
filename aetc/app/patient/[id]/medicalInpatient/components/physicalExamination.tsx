@@ -46,6 +46,10 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature",
   },
+  oxygenSaturation: {
+    name: concepts.OXYGEN_SATURATION,
+    label: "Oxygen Saturation",
+  },
   pupilSymmetrical: {
     name: concepts.PUPIL_SYMMETRICAL,
     label: "Pupils symmetrical ",
@@ -239,6 +243,11 @@ const schema = Yup.object().shape({
     .min(20)
     .max(45)
     .label(form.temperature.label)
+    .required(),
+  [form.oxygenSaturation.name]: Yup.number()
+    .min(0)
+    .max(100)
+    .label(form.oxygenSaturation.label)
     .required(),
   [form.pupilSymmetrical.name]: Yup.string()
     .label(form.pupilSymmetrical.label)
@@ -466,13 +475,20 @@ export const PhysicalExamination = ({
             unitOfMeasure="bs/m"
           />
         </FormFieldContainerMultiple>
-        <TextInputField
-          name={form.temperature.name}
-          label={form.temperature.label}
-          id={form.temperature.name}
-          sx={{ width: "100%" }}
-          unitOfMeasure="°C"
-        />
+        <FormFieldContainerMultiple>
+          <TextInputField
+            name={form.temperature.name}
+            label={form.temperature.label}
+            id={form.temperature.name}
+            unitOfMeasure="°C"
+          />
+          <TextInputField
+            name={form.oxygenSaturation.name}
+            label={form.oxygenSaturation.label}
+            id={form.oxygenSaturation.name}
+            unitOfMeasure="%"
+          />
+        </FormFieldContainerMultiple>
       </FormFieldContainerLayout>
 
       <FormFieldContainerLayout title="Head and Neck">
