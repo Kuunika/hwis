@@ -37,8 +37,14 @@ const form = {
 };
 const sites = [
   { label: "Rescitation", value: concepts.RESUSCITATION },
+  { label: "Short Stay", value: concepts.SHORT_STAY },
+  { label: "Gynae Bench", value: concepts.GYNAE_BENCH },
+  { label: "Isolation Room", value: concepts.ISOLATION },
+  { label: "Trauma", value: concepts.TRAUMA },
+  { label: "Medical Bench", value: concepts.MEDICAL_BENCH },
+  { label: "Surgical Bench", value: concepts.SURGICAL_BENCH  },
   { label: "SSW", value: concepts.SSW },
-  { label: "Priority", value: concepts.PRIORITY },
+  { label: "Priority Area", value: concepts.PRIORITY },
   { label: "Other", value: concepts.OTHER },
 ];
 
