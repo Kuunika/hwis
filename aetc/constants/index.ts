@@ -1515,6 +1515,7 @@ export const concepts = {
   ROUNDED: "Rounded",
   PROTUBERANT: "Protuberant",
   SCAPHOID: "Scaphoid",
+  OUTCOME: "Outcome",
 };
 
 export const conceptNames = {
