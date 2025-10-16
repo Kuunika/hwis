@@ -130,8 +130,8 @@ const endCPRValidationSchema = Yup.object().shape({
     .required()
     .label(form.temperature.label),
   [form.pulseRate.name]: Yup.number()
-    .min(60)
-    .max(100)
+    .min(0)
+    .max(220)
     .label(form.pulseRate.label),
   [form.eyeOpeningResponse.name]: Yup.string()
     .required()
