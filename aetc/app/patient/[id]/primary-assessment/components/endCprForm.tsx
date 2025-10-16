@@ -26,6 +26,10 @@ const form = {
     name: concepts.DISPOSITION_AFTER_CPR,
     label: "Disposition After CPR",
   },
+  outcome: {
+    name: concepts.OUTCOME,
+    label: "Outcome",
+  },
   spo: {
     name: concepts.SPO2,
     label: "SPO2",
@@ -108,6 +112,7 @@ const endCPRValidationSchema = Yup.object().shape({
     .required()
     .label(form.spo.label),
   [form.oxygen.name]: Yup.string().required().label(form.oxygen.label),
+  [form.outcome.name]: Yup.string().label(form.outcome.label),
   [form.respiratoryRate.name]: Yup.number()
     .min(0)
     .max(90)
@@ -206,6 +211,11 @@ const verbalResponses = [
   },
   { label: "None", value: "None", weight: 1 },
 ];
+
+const outcomes = [
+  {label:"Death", id: concepts.DEATH},
+  {label:"ROSC", id: concepts.ROSC},
+]
 
 export const EndCPRForm = ({
   onSubmit,
@@ -353,6 +363,13 @@ export const EndCPRForm = ({
             label={form.timeStopped.label}
           />
           <br />
+
+          <SearchComboBox
+            name={form.outcome.name}
+            label={form.outcome.label}
+            options={outcomes}
+            multiple={false}
+          />
           <br />
           <FormFieldContainerMultiple>
             <SearchComboBox
@@ -364,7 +381,14 @@ export const EndCPRForm = ({
             <SearchComboBox
               name={form.dispositionAfterCpr.name}
               label={form.dispositionAfterCpr.label}
-              options={dispositionAfterCpr}
+              options={dispositionAfterCpr.filter(disposition=>{
+                if(values[form.outcome.name] == concepts.DEATH){
+                  return disposition.id == concepts.MORTUARY
+                }
+                if(values[form.outcome.name] == concepts.ROSC){
+                  return disposition.id != concepts.MORTUARY
+                }
+              })}
               multiple={false}
             />
           </FormFieldContainerMultiple>
@@ -379,6 +403,7 @@ export const EndCPRForm = ({
               id={form.otherReason.name}
             />
           )}
+
           <br />
           <Typography variant="h6">Resuscitation Team</Typography>
           <br />
