@@ -30,6 +30,7 @@ const initialValues = getInitialValues(form);
 const schema = Yup.object().shape({});
 
 const intoxications = [
+    { id: "none", label: "None" },
     { id: "ethanol", label: "Ethanol (Beer, Wine, Spirits)" },
     { id: "methanol", label: "Methanol" },
     { id: "isopropanol", label: "Isopropanol (Rubbing alcohol)" },
@@ -54,7 +55,7 @@ const intoxications = [
         id: "antidepressants",
         label: "Antidepressants (Amitriptyline, Fluoxetine, Sertraline)",
     },
-    { id: "antipsychotics", label: "Antipsychotics (Haloperidol, Olanzepine)" },
+    { id: "antipsychotics", label: "Antipsychotics (Haloperidol, Olanzapine)" },
     { id: "acetaminophen", label: "Acetaminophen (Paracetamol)" },
     { id: "nsaids", label: "NSAIDs (Ibuprofen, Diclofenac)" },
     { id: "carbon_monoxide", label: "Carbon Monoxide" },
@@ -81,38 +82,24 @@ export const IntoxicationHistory = ({
     const { ServerTime } = useServerTime();
     const [formValues, setFormValues] = useState<any>({});
 
-    // const handleSubmit = (values: any) => {
-    //     const formValues = { ...values };
-    //     const obsDatetime = ServerTime.getServerTimeString();
-
-    //     const intoxicationObs = mapSearchComboOptionsToConcepts(
-    //         formValues[form.intoxication.name],
-    //         form.intoxication.name,
-    //         obsDatetime
-    //     );
-
-    //     delete formValues[form.intoxication.name];
-
-    //     const obsFormatted = [
-    //         {
-    //             concept: form.intoxication.name,
-    //             value: form.intoxication.name,
-    //             groupMembers: intoxicationObs,
-    //             obsDatetime: obsDatetime,
-    //         },
-    //     ];
-
-    //     const obs = getObservations(formValues, obsDatetime);
-
-    //     onSubmit([...obs, ...obsFormatted]);
-    // };
     const handleSubmit = (values: any) => {
         const formValues = { ...values };
         const obsDatetime = ServerTime.getServerTimeString();
 
         const selectedIntoxications = formValues[form.intoxication.name] || [];
 
-        const intoxicationObs = selectedIntoxications.map((intoxication: any) => {
+        // Filter out "None" option if selected with other options
+        const filteredIntoxications = selectedIntoxications.filter(
+            (intoxication: any) => intoxication.id !== "none"
+        );
+
+        // If only "None" was selected or no selection, submit empty observations
+        if (filteredIntoxications.length === 0) {
+            onSubmit([]);
+            return;
+        }
+
+        const intoxicationObs = filteredIntoxications.map((intoxication: any) => {
             if (intoxication.id === concepts.OTHER) {
                 return {
                     concept: concepts.INTOXICATION,
@@ -123,7 +110,7 @@ export const IntoxicationHistory = ({
 
             return {
                 concept: concepts.INTOXICATION,
-                value: intoxication.label, // human-readable intoxication name
+                value: intoxication.label,
                 obsDatetime,
             };
         });
