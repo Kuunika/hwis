@@ -91,12 +91,17 @@ const form = {
     name: concepts.CPR_TIME_STOPPED,
     label: "CPR Time Stopped",
   },
+  specify: {
+    name: concepts.SPECIFY,
+    label: "Specify Disposition",
+  },
 };
 
 const endCPRValidationSchema = Yup.object().shape({
   [form.reasonsCprStopped.name]: Yup.string()
     .required()
     .label(form.reasonsCprStopped.label),
+  [form.specify.name]: Yup.string().label(form.specify.label),
   [form.otherReason.name]: Yup.string()
     .when(form.reasonsCprStopped.name, {
       is: (value: any) => value === concepts.OTHER,
@@ -106,20 +111,14 @@ const endCPRValidationSchema = Yup.object().shape({
   [form.dispositionAfterCpr.name]: Yup.string()
     .required()
     .label(form.dispositionAfterCpr.label),
-  [form.spo.name]: Yup.number()
-    .min(0)
-    .max(100)
-    .label(form.spo.label),
+  [form.spo.name]: Yup.number().min(0).max(100).label(form.spo.label),
   [form.oxygen.name]: Yup.string().label(form.oxygen.label),
   [form.outcome.name]: Yup.string().label(form.outcome.label),
   [form.respiratoryRate.name]: Yup.number()
     .min(0)
     .max(90)
     .label(form.respiratoryRate.label),
-  [form.systolic.name]: Yup.number()
-    .min(0)
-    .max(300)
-    .label(form.systolic.label),
+  [form.systolic.name]: Yup.number().min(0).max(300).label(form.systolic.label),
   [form.diastolic.name]: Yup.number()
     .min(0)
     .max(300)
@@ -133,12 +132,11 @@ const endCPRValidationSchema = Yup.object().shape({
     .min(0)
     .max(220)
     .label(form.pulseRate.label),
-  [form.eyeOpeningResponse.name]: Yup.string()
-    .label(form.eyeOpeningResponse.label),
-  [form.motorResponse.name]: Yup.string()
-    .label(form.motorResponse.label),
-  [form.verbalResponse.name]: Yup.string()
-    .label(form.verbalResponse.label),
+  [form.eyeOpeningResponse.name]: Yup.string().label(
+    form.eyeOpeningResponse.label
+  ),
+  [form.motorResponse.name]: Yup.string().label(form.motorResponse.label),
+  [form.verbalResponse.name]: Yup.string().label(form.verbalResponse.label),
   [form.teamLeader.name]: Yup.string().required().label(form.teamLeader.label),
   [form.teamMembers.name]: Yup.array().required().label(form.teamMembers.label),
   [form.cause.name]: Yup.string().required().label(form.cause.label),
@@ -205,9 +203,9 @@ const verbalResponses = [
 ];
 
 const outcomes = [
-  {label:"Death", id: concepts.DEATH},
-  {label:"ROSC", id: concepts.ROSC},
-]
+  { label: "Death", id: concepts.DEATH },
+  { label: "ROSC", id: concepts.ROSC },
+];
 
 export const EndCPRForm = ({
   onSubmit,
@@ -251,6 +249,30 @@ export const EndCPRForm = ({
             rows={4}
             sx={{ width: "100%" }}
           />
+
+          <FormTimePicker
+            name={form.timeStopped.name}
+            label={form.timeStopped.label}
+          />
+          <br />
+          <SearchComboBox
+            name={form.reasonsCprStopped.name}
+            label={form.reasonsCprStopped.label}
+            options={reasonsCprStopped}
+            multiple={false}
+          />
+          <br />
+          {values[form.reasonsCprStopped.name] == concepts.OTHER && (
+            <TextInputField
+              multiline
+              rows={5}
+              name={form.otherReason.name}
+              label={form.otherReason.label}
+              sx={{ width: "100%" }}
+              id={form.otherReason.name}
+            />
+          )}
+          <br />
 
           <Typography variant="h6">Vital signs after ROSC</Typography>
           <br />
@@ -350,12 +372,6 @@ export const EndCPRForm = ({
           </Typography>
           <br />
 
-          <FormTimePicker
-            name={form.timeStopped.name}
-            label={form.timeStopped.label}
-          />
-          <br />
-
           <SearchComboBox
             name={form.outcome.name}
             label={form.outcome.label}
@@ -365,37 +381,34 @@ export const EndCPRForm = ({
           <br />
           <FormFieldContainerMultiple>
             <SearchComboBox
-              name={form.reasonsCprStopped.name}
-              label={form.reasonsCprStopped.label}
-              options={reasonsCprStopped}
-              multiple={false}
-            />
-            <SearchComboBox
               name={form.dispositionAfterCpr.name}
               label={form.dispositionAfterCpr.label}
-              options={dispositionAfterCpr.filter(disposition=>{
-                if(values[form.outcome.name] == concepts.DEATH){
-                  return disposition.id == concepts.MORTUARY
+              options={dispositionAfterCpr.filter((disposition) => {
+                if (values[form.outcome.name] == concepts.DEATH) {
+                  return disposition.id == concepts.MORTUARY;
                 }
-                if(values[form.outcome.name] == concepts.ROSC){
-                  return disposition.id != concepts.MORTUARY
+                if (values[form.outcome.name] == concepts.ROSC) {
+                  return disposition.id != concepts.MORTUARY;
                 }
               })}
               multiple={false}
             />
           </FormFieldContainerMultiple>
-          <br />
-          {values[form.reasonsCprStopped.name] == concepts.OTHER && (
-            <TextInputField
-              multiline
-              rows={5}
-              name={form.otherReason.name}
-              label={form.otherReason.label}
-              sx={{ width: "100%" }}
-              id={form.otherReason.name}
-            />
+          {[
+            concepts.HDU_SPECIFY,
+            concepts.GENERAL_WARD_SPECIFY,
+            concepts.MORTUARY,
+          ].includes(values[form.dispositionAfterCpr.name]) && (
+            <>
+              <br />
+              <TextInputField
+                name={form.specify.name}
+                label={form.specify.label}
+                id={form.specify.name}
+                sx={{ width: "100%" }}
+              />
+            </>
           )}
-
           <br />
           <Typography variant="h6">Resuscitation Team</Typography>
           <br />
