@@ -13,6 +13,9 @@ import { AbscondButton } from "@/components/abscondButton";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
 import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
+import { FaHeartbeat } from "react-icons/fa";
+
 import {
   Tooltip,
   IconButton,
@@ -46,6 +49,9 @@ interface FilterState {
 }
 
 export const ClientsWaitingForTestResults = () => {
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
@@ -88,16 +94,32 @@ export const ClientsWaitingForTestResults = () => {
 
   // Extract unique filter options from data
   useEffect(() => {
-    if (rows && rows.length > 0) {
-      const plannedByOptions = Array.from(new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))) as string[];
-      const patientCareAreas = Array.from(new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))) as string[];
+    if (!rows || rows.length === 0) return;
 
-      setAvailableFilters({
-        plannedByOptions: plannedByOptions.sort(),
-        patientCareAreas: patientCareAreas.sort(),
-      });
-    }
+    const plannedByOptions = Array.from(
+      new Set(rows.map((item: any) => item.last_encounter_creator).filter(Boolean))
+    ).sort();
+
+    const patientCareAreas = Array.from(
+      new Set(rows.map((item: any) => item.patient_care_area).filter(Boolean))
+    ).sort();
+
+    // Only update if filters actually changed
+    setAvailableFilters((prev) => {
+      const samePlannedBy =
+        JSON.stringify(prev.plannedByOptions) === JSON.stringify(plannedByOptions);
+      const sameAreas =
+        JSON.stringify(prev.patientCareAreas) === JSON.stringify(patientCareAreas);
+
+      if (samePlannedBy && sameAreas) return prev;
+
+      return {
+        plannedByOptions,
+        patientCareAreas,
+      };
+    });
   }, [rows]);
+
 
   // Filter the data based on active filters
   const filteredData = React.useMemo(() => {
@@ -243,6 +265,19 @@ export const ClientsWaitingForTestResults = () => {
               </IconButton>
             </Tooltip>
             <PrinterBarcodeButton icon={true} uuid={cell.row.uuid} />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -453,6 +488,12 @@ export const ClientsWaitingForTestResults = () => {
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
         onSwitchChange={setOnSwitch}
         onRowClick={(row: any) => navigateTo(`/patient/${row.id}/profile`)}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
       />
     </>
   );

@@ -28,30 +28,33 @@ type Prop = {
 
 // Define options for radio group fields
 const physicalExaminationOptions = {
-  general: [
-    { value: concepts.SEVERE_PAIN, label: "In Pain" },
-    { value: concepts.COMFORTABLE, label: "Comfortable" },
-    { value: concepts.ILL, label: "Ill" },
-    { value: concepts.FIT_FOR_AGE, label: "Fit for age" },
-  ],
-  eyes: [
-    { value: concepts.PALLOR, label: "Pallor" },
-    { value: concepts.JAUNDICE, label: "Jaundice" },
-  ],
-  mouth: [
-    { value: concepts.CANDIDA, label: "Candida" },
-    { value: concepts.KAPOSI_SARCOMA, label: "Kaposi's Sarcoma (KS)" },
-    { value: concepts.HYDRATION, label: "Hydration" },
-  ],
-  neck: [
-    { value: concepts.NODES, label: "Nodes" },
-    { value: concepts.SUBMENTAL, label: "Submental" },
-    { value: concepts.EPITHROCHLEAR, label: "Epithrochlear" },
-  ],
-  endocrine: [
-    { value: concepts.BREAST, label: "Breast" },
-    { value: concepts.THYROID, label: "Thyroid" },
-  ],
+    general: [
+        { value: concepts.SEVERE_PAIN, label: "In Pain" },
+        { value: concepts.COMFORTABLE, label: "Comfortable" },
+        { value: concepts.ILL, label: "Ill" },
+        { value: concepts.FIT_FOR_AGE, label: "Fit for age" },
+    ],
+    eyes: [
+        { value: concepts.PALLOR, label: "Pallor" },
+        { value: concepts.JAUNDICE, label: "Jaundice" },
+        { value: concepts.NONE, label: "None" },
+
+    ],
+    mouth: [
+        { value: concepts.CANDIDA, label: "Candida" },
+        { value: concepts.KAPOSI_SARCOMA, label: "Kaposi's Sarcoma (KS)" },
+        { value: concepts.HYDRATION, label: "Hydration" },
+    ],
+    neck: [
+        { value: concepts.NODES, label: "Nodes" },
+        { value: concepts.SUBMENTAL, label: "Submental" },
+        { value: concepts.EPITHROCHLEAR, label: "Epithrochlear" },
+    ],
+    endocrine: [
+        { value: concepts.BREAST, label: "Breast" },
+        { value: concepts.THYROID, label: "Thyroid" },
+
+    ]
 };
 
 // Glasgow Coma Scale (GCS) options

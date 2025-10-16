@@ -86,10 +86,10 @@ const form = {
     name: concepts.CONDITION,
     label: "Lung Condition",
   },
-  facialSensation: {
-    name: concepts.SENSATION,
-    label: "Facial Movements / Sensation:",
-  },
+  // facialSensation: {
+  //   name: concepts.SENSATION,
+  //   label: "Facial Movements / Sensation:",
+  // },
 
   apexBeat: {
     name: concepts.APEX_BEAT,
@@ -160,10 +160,17 @@ const form = {
     name: concepts.EYE_MOVEMENTS_NYSTAGMUS,
     label: "Eye Movements/Nystagmus:",
   },
-  eyeMovementsSensation: {
-    name: concepts.EYE_MOVEMENTS_SENSATION,
-    label: "Eye Movements/Sensation:",
+  // eyeMovementsSensation: {
+  //   name: concepts.EYE_MOVEMENTS_SENSATION,
+  //   label: "Eye Movements/Sensation:",
+  // },
+
+  facialSensation: {
+    name: concepts.SENSATION,
+    label: "Facial Movements / Sensation:",
   },
+
+
   hearing: {
     name: concepts.HEARING,
     label: "Hearing:",
@@ -262,7 +269,7 @@ const schema = Yup.object().shape({
   [form.lungCondition.name]: Yup.string()
     .label(form.lungCondition.label)
     .required(),
-  [form.facialSensation.name]: Yup.string().label(form.facialSensation.label),
+  // [form.facialSensation.name]: Yup.string().label(form.facialSensation.label),
 
   [form.apexBeat.name]: Yup.string().label(form.apexBeat.label).required(),
   [form.oedema.name]: Yup.string().label(form.oedema.label).required(),
@@ -283,8 +290,8 @@ const schema = Yup.object().shape({
   [form.eyeMovementsNystagmus.name]: Yup.string().label(
     form.eyeMovementsNystagmus.label
   ),
-  [form.eyeMovementsSensation.name]: Yup.string().label(
-    form.eyeMovementsSensation.label
+  [form.facialSensation.name]: Yup.string().label(
+    form.facialSensation.label
   ),
   [form.hearing.name]: Yup.string().label(form.hearing.label),
   [form.tongueMovementsTastes.name]: Yup.string().label(
@@ -753,9 +760,9 @@ export const PhysicalExamination = ({
         <TextInputField
           multiline
           // rows={5}
-          name={form.eyeMovementsSensation.name}
-          label={form.eyeMovementsSensation.label}
-          id={form.eyeMovementsSensation.name}
+          name={form.facialSensation.name}
+          label={form.facialSensation.label}
+          id={form.facialSensation.name}
           sx={{ width: "100%" }}
         />
         <TextInputField
@@ -840,12 +847,12 @@ export const PhysicalExamination = ({
           id={form.gait.name}
           sx={{ width: "100%" }}
         />
-        <TextInputField
+        {/* <TextInputField
           name={form.facialSensation.name}
           label={form.facialSensation.label}
           id={form.facialSensation.name}
           sx={{ width: "100%" }}
-        />
+        /> */}
       </FormFieldContainerLayout>
       {/* <FormFieldContainerLayout title="Summary">
         <TextInputField

@@ -46,7 +46,7 @@ const form = {
   },
   other: {
     name: concepts.OTHER,
-    label: "Other",
+    label: "Other (Past Medical History)",
   },
 };
 
@@ -139,6 +139,12 @@ export const PastMedicalHistory = ({
                 }
               />
               <br />
+              <FormDatePicker
+                name={form.sinceWhen.name}
+                label={form.sinceWhen.label}
+                width={"100%"}
+              />
+              <br />
               <TextInputField
                 multiline
                 rows={4}
@@ -148,14 +154,9 @@ export const PastMedicalHistory = ({
                 sx={{ width: "100%" }}
               />
               <br />
-              <FormDatePicker
-                name={form.sinceWhen.name}
-                label={form.sinceWhen.label}
-                width={"100%"}
-              />
-              <br />
+
               <SearchComboBox
-                label="Referral Medical Facility"
+                label="Which Clinic"
                 name={form.clinic.name}
                 multiple={false}
                 options={
@@ -171,6 +172,8 @@ export const PastMedicalHistory = ({
           )}
         </>
       )}
+      <br />
+
       <TextInputField
         multiline
         rows={5}
