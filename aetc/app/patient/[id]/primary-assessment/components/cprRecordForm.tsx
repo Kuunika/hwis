@@ -134,12 +134,14 @@ const reversibleCauses = [
 
 const recordValidationSchema = Yup.object().shape({
   [form.rhythm.name]: Yup.array().required().label(form.rhythm.label),
-  [form.shockEnergy.name]: Yup.string()
+  [form.shockEnergy.name]: Yup.number()
     .required()
+    .min(0)
+    .max(360)
     .label(form.shockEnergy.label),
   [form.medication.name]: Yup.string().required().label(form.medication.label),
   [form.dose.name]: Yup.string().required().label(form.dose.label),
-  [form.route.name]: Yup.string().required().label(form.route.label),
+  [form.route.name]: Yup.string().label(form.route.label),
   [form.doseUnit.name]: Yup.string().required().label(form.doseUnit.label),
   [form.interventions.name]: Yup.array()
     .required()
@@ -162,6 +164,7 @@ export const RecordForm = ({
   visitUuid?: string;
   onSubmitRecord: (state: any) => void;
 }) => {
+  const { ServerTime } = useServerTime();
   const [formInputValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.CPR,
@@ -172,7 +175,6 @@ export const RecordForm = ({
   const { medicationOptions } = useFetchMedications();
 
   const handleSubmitForm = (values: any, formik: any) => {
-    const { ServerTime } = useServerTime();
     const formValues = { ...values };
 
     const dateTime = ServerTime.getServerTimeString();
