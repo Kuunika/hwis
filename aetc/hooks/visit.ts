@@ -18,6 +18,7 @@ export const addVisit = () => {
 };
 export const closeCurrentVisit = () => {
   const { ServerTime } = useServerTime();
+  
   const updateVisit = async (visitUuid: string) =>
     closeVisit(visitUuid, {
       stopDatetime: ServerTime.getServerTimeString(),

@@ -56,6 +56,7 @@ const initialValues = getInitialValues(form);
 
 export const Exposure = ({ onSubmit }: Props) => {
   const { params } = useParameters();
+   const { ServerTime } = useServerTime();
 
   const { data: patient, isLoading: patientLoading } = getOnePatient(
     params?.id as string
@@ -70,7 +71,7 @@ export const Exposure = ({ onSubmit }: Props) => {
   );
 
   const handleFormSubmit = async (values: any) => {
-    const { ServerTime } = useServerTime();
+   
     const formValues = { ...values };
 
     const obs = [

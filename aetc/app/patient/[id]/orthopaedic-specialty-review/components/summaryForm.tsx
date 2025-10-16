@@ -11,13 +11,14 @@ const validationSchema = Yup.object().shape({
 });
 
 export const SummaryForm = () => {
+   const { ServerTime } = useServerTime();
   const { handleSubmit } = useSubmitEncounter(
     encounters.TEMPLATE_NOTES,
     () => {}
   );
 
   const handleSubmitNotes = (values: any) => {
-    const { ServerTime } = useServerTime();
+   
     const obsDateTime = ServerTime.getServerTimeString();
     const obs = [
       {

@@ -366,6 +366,7 @@ const CPRForm = ({
   const { data: users, isLoading } = getAllUsers();
   const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
   const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
+   const { ServerTime } = useServerTime();
 
   const userOptions = users?.map((user) => {
     return {
@@ -383,7 +384,6 @@ const CPRForm = ({
   };
 
   const handleSubmit = (values: any) => {
-    const { ServerTime } = useServerTime();
     const obsDatetime = ServerTime.getServerTimeString();
     const formValues = { ...values };
 
