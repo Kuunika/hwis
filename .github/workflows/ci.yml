@@ -24,6 +24,17 @@ jobs:
 
       - name: Build Next.js app for Production
         working-directory: ./aetc
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_METABASE: ${{ secrets.NEXT_PUBLIC_METABASE }}
+          NEXT_PUBLIC_DDEPROGRAMID: ${{ secrets.NEXT_PUBLIC_DDEPROGRAMID }}
+          NEXT_PUBLIC_SUPER_USER_ROLE: ${{ secrets.NEXT_PUBLIC_SUPER_USER_ROLE }}
+          NEXT_PUBLIC_NURSE_USER_ROLE: ${{ secrets.NEXT_PUBLIC_NURSE_USER_ROLE }}
+          NEXT_PUBLIC_CLINICIAN_USER_ROLE: ${{ secrets.NEXT_PUBLIC_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE: ${{ secrets.NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE }}
+          NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE: ${{ secrets.NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE }}
+          NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE: ${{ secrets.NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.NEXT_PUBLIC_ICD11_API_URL }}
         run: |
           # Clean old build
           rm -rf .next
