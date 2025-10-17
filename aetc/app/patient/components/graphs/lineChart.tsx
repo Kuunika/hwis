@@ -6,6 +6,7 @@ import { Box, BoxProps } from "@mui/material";
 interface SeriesData {
   name: string;
   data: number[];
+  dashStyle?: "Solid" | "Dash" | "Dot";
 }
 
 interface ChartConfig {
@@ -27,17 +28,32 @@ export const LineChart: React.FC<LineChartProps> = ({
   ...boxProps
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+    const effectiveHeight =
+        chartConfig.series.some((s) => s.data?.length > 0)
+            ? chartConfig.height || 350
+            : 120;
 
-  useEffect(() => {
-    // Default configuration with ability to override
+    useEffect(() => {
+      const dashArray = chartConfig.series.map((s) => {
+          switch (s.dashStyle) {
+              case "Dash":
+                  return 5;
+              case "Dot":
+                  return 2;
+              default:
+                  return 0;
+          }
+      });
     const defaultOptions = {
       chart: {
         type: "line",
         height: chartConfig.height || 350,
       },
       stroke: {
-        curve: "straight",
+        curve: "smooth",
         width: 3,
+          dashArray: [0, 5],
+
       },
       dataLabels: {
         enabled: true,

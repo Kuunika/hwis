@@ -12,12 +12,13 @@ export function BP() {
       chartConfig={{
         series: [
           {
-            name: "Systolic",
+              name: "Systolic (In solid line)",
             data: systolic,
           },
           {
-            name: "Diastolic",
+              name: "Diastolic (In dashed line)",
             data: diastolic,
+
           },
         ],
         xAxisCategories: systolicDates,

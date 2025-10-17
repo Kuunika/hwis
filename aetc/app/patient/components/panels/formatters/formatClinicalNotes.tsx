@@ -18,6 +18,7 @@ import {
 } from "../../clinicalNotes/updated-clinical-notes/genericNotes";
 import ResultsTable from "../tabularDisplayInformation";
 import { ContinuationNotes } from "../continuationNotes";
+import {MonitoringCharts} from "@/app/patient/components/clinicalNotes/monitoringCharts";
 
 
 export const formatClinicalNotesData = (
@@ -41,6 +42,10 @@ export const formatClinicalNotesData = (
         ...formatVitals([...getEncountersByType(encounters.VITALS), ...getEncountersByType(encounters.TRIAGE_RESULT)]),
       ],
     },
+      {
+          title: "Monitoring Charts",
+          content: <MonitoringCharts />,
+      },
     {
       title: "Soapier Notes",
       content: formatSoapierNotes(

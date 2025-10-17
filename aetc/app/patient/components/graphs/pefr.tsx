@@ -1,13 +1,13 @@
 import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-export function Glucose() {
-  const { values, dateTimes } = getObsGraphData("Serum glucose");
+export function Pefr() {
+  const { values, dateTimes } = getObsGraphData("Peak Expiratory Flow Rate");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
-            name: "Glucose",
+            name: "Peak Expiratory Flow Rate",
             data: values,
           },
         ],
@@ -15,7 +15,7 @@ export function Glucose() {
         title: "",
         height: 350,
         yAxisMin: 0,
-        colors: ["#247BA0"],
+        colors: ["#70C1B3"],
       }}
     />
   );
