@@ -51,6 +51,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             pulseRate: "",
             respiratoryRate: "",
             temperature: "",
+            oxygen_saturation: "",
             pupilsSymmetrical: "",
             conjunctiva: "",
             oralKS: "",
@@ -83,6 +84,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             plantars: "",
             sensation: "",
             coordination: "",
+            gait: "",
             summary: "",
             generalReview: [] as string[],
             ent: [] as string[],
@@ -98,6 +100,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             differentialDiagnosis: [] as string[],
             additionalNotes: "",
             admittingOfficer: "", // Default value
+            completedDateTime: "", // ADD THIS LINE
+
 
 
         });
@@ -134,6 +138,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
             if (medicalInpatientEncounter && medicalInpatientEncounter.obs) {
                 const admittingOfficer = medicalInpatientEncounter.created_by || "";
+                const completedDateTime = medicalInpatientEncounter.encounter_datetime || ""; // ADD THIS LINE
+
 
                 const inpatientInfo = {
                     presentingComplaint: [] as Array<{ complaint: string, duration: string }>,
@@ -155,6 +161,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     pulseRate: "",
                     respiratoryRate: "",
                     temperature: "",
+                    oxygen_saturation: "",
                     pupilsSymmetrical: "",
                     conjunctiva: "",
                     oralKS: "",
@@ -187,6 +194,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     plantars: "",
                     sensation: "",
                     coordination: "",
+                    gait: "",
                     summary: "",
                     generalReview: [] as string[],
                     ent: [] as string[],
@@ -202,6 +210,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     differentialDiagnosis: [] as string[],
                     additionalNotes: "",
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
+                    completedDateTime: completedDateTime, // ADD THIS LINE
+
 
 
                 };
@@ -293,7 +303,10 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.respiratoryRate = obs.value || obs.value_text || "";
                     } else if (conceptName === "Temperature (c)") {
                         inpatientInfo.temperature = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Pupils symmetrical") {
+                    } else if (conceptName === "Oxygen Saturation") {
+                        inpatientInfo.oxygen_saturation = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Pupils symmetrical") {
                         inpatientInfo.pupilsSymmetrical = obs.value || obs.value_text || "";
                     } else if (conceptName === "Conjunctiva") {
                         inpatientInfo.conjunctiva = obs.value || obs.value_text || "";
@@ -358,6 +371,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.sensation = obs.value || obs.value_text || "";
                     } else if (conceptName === "Coordination") {
                         inpatientInfo.coordination = obs.value || obs.value_text || "";
+                    } else if (conceptName === "gait") {
+                        inpatientInfo.gait = obs.value || obs.value_text || "";
                     } else if (conceptName === "Summary") {
                         inpatientInfo.summary = obs.value || obs.value_text || "";
                     } else if (conceptName === "Additional Notes") {
@@ -495,13 +510,54 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 });
                 setMedicalInpatientInfo(inpatientInfo);
             }
+            // 3. Add a helper function to format the date (add this before the return statement)
+            // const formatDateTime = (dateTimeString: string) => {
+            //     if (!dateTimeString) return "";
+            //     const date = new Date(dateTimeString);
+            //     return date.toLocaleString('en-US', {
+            //         year: 'numeric',
+            //         month: 'long',
+            //         day: 'numeric',
+            //         hour: '2-digit',
+            //         minute: '2-digit',
+            //         hour12: true
+            //     });
+            // };
 
         }, [encountersData]);
 
+        const formatDateTime = (dateTimeString: string) => {
+            if (!dateTimeString) return "";
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        };
         return (
             <div ref={contentRef} className="printable-content">
                 <div className={showPreview ? "print-preview" : "print-only"}>
                     <PatientInfoTab />
+                    <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f5f5f5", borderRadius: "4px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "20px" }}>
+                            {medicalInpatientInfo.admittingOfficer && (
+                                <p style={{ margin: "5px 0" }}>
+                                    <strong>Admitting Officer: </strong>
+                                    {medicalInpatientInfo.admittingOfficer}
+                                </p>
+                            )}
+                            {medicalInpatientInfo.completedDateTime && (
+                                <p style={{ margin: "5px 0" }}>
+                                    <strong>Date & Time Completed: </strong>
+                                    {formatDateTime(medicalInpatientInfo.completedDateTime)}
+                                </p>
+                            )}
+                        </div>
+                    </div>
                     <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
                         Medical Inpatient Admission Sheet                    </h1>
 
@@ -759,6 +815,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.pulseRate ||
                                 medicalInpatientInfo.respiratoryRate ||
                                 medicalInpatientInfo.temperature ||
+                                medicalInpatientInfo.oxygen_saturation ||
                                 medicalInpatientInfo.pupilsSymmetrical ||
                                 medicalInpatientInfo.conjunctiva ||
                                 medicalInpatientInfo.oralKS ||
@@ -790,6 +847,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.plantars ||
                                 medicalInpatientInfo.sensation ||
                                 medicalInpatientInfo.coordination ||
+                                medicalInpatientInfo.gait ||
                                 medicalInpatientInfo.summary ||
                                 medicalInpatientInfo.differentialDiagnosis ||
                                 medicalInpatientInfo.additionalNotes ||
@@ -842,6 +900,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     {medicalInpatientInfo.temperature} °C
                                                 </p>
                                             )}
+                                            {medicalInpatientInfo.oxygen_saturation && (
+                                                <p>
+                                                    <strong>Oxygen Saturation: </strong>
+                                                    {medicalInpatientInfo.oxygen_saturation} °C
+                                                </p>
+                                            )}
+
                                         </div>
 
 
@@ -915,7 +980,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                                         {medicalInpatientInfo.auscultation && (
                                             <p>
-                                                <strong>Auscultation: </strong>
+                                                <strong>Auscultation (Heart): </strong>
                                                 {medicalInpatientInfo.auscultation}
                                             </p>
                                         )}
@@ -982,141 +1047,126 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         <h3>Cranial and Peripheral Nerves</h3>
 
                                         <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ border: "1px solid #ddd", padding: "8px", backgroundColor: "#f2f2f2", textAlign: "left" }}>
+                                                        Cranial Nerves
+                                                    </th>
+                                                    <th style={{ border: "1px solid #ddd", padding: "8px", backgroundColor: "#f2f2f2", textAlign: "left" }}>
+                                                        Peripheral Nerves
+                                                    </th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px", verticalAlign: "top" }}>
+                                                        {/* Cranial Nerves Column */}
+                                                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                                            {medicalInpatientInfo.pupil && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Pupil: </strong>
+                                                                    {medicalInpatientInfo.pupil}
+                                                                </p>
+                                                            )}
 
-                                                        {medicalInpatientInfo.pupil && (
-                                                            <p>
-                                                                <strong>Pupil: </strong>
-                                                                {medicalInpatientInfo.pupil}
-                                                            </p>
-                                                        )}
+                                                            {medicalInpatientInfo.visualFieldAcuity && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Visual Field/Acuity: </strong>
+                                                                    {medicalInpatientInfo.visualFieldAcuity}
+                                                                </p>
+                                                            )}
+
+                                                            {medicalInpatientInfo.eyeMovementsNystagmus && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Eye Movements/Nystagmus: </strong>
+                                                                    {medicalInpatientInfo.eyeMovementsNystagmus}
+                                                                </p>
+                                                            )}
+
+                                                            {medicalInpatientInfo.eyeMovementsSensation && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Facial Movements/Sensation: </strong>
+                                                                    {medicalInpatientInfo.eyeMovementsSensation}
+                                                                </p>
+                                                            )}
+
+                                                            {medicalInpatientInfo.hearing && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Hearing: </strong>
+                                                                    {medicalInpatientInfo.hearing}
+                                                                </p>
+                                                            )}
+
+                                                            {medicalInpatientInfo.tongueMovementTastes && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Tongue Movement/Tastes: </strong>
+                                                                    {medicalInpatientInfo.tongueMovementTastes}
+                                                                </p>
+                                                            )}
+
+                                                            {medicalInpatientInfo.coughGagReflex && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Cough/Gag Reflex: </strong>
+                                                                    {medicalInpatientInfo.coughGagReflex}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </td>
 
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.visualFieldAcuity && (
-                                                            <p>
-                                                                <strong>Visual Field Acuity: </strong>
-                                                                {medicalInpatientInfo.visualFieldAcuity}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                </tr>
+                                                    <td style={{ border: "1px solid #ddd", padding: "8px", verticalAlign: "top" }}>
+                                                        {/* Peripheral Nerves Column */}
+                                                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                                            {medicalInpatientInfo.power && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Power: </strong>
+                                                                    {medicalInpatientInfo.power}
+                                                                </p>
+                                                            )}
 
+                                                            {medicalInpatientInfo.tone && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Tone: </strong>
+                                                                    {medicalInpatientInfo.tone}
+                                                                </p>
+                                                            )}
 
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.eyeMovementsNystagmus && (
-                                                            <p>
-                                                                <strong>Eye Movements Nystagmus: </strong>
-                                                                {medicalInpatientInfo.eyeMovementsNystagmus}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.eyeMovementsSensation && (
-                                                            <p>
-                                                                <strong>Eye Movements Sensation: </strong>
-                                                                {medicalInpatientInfo.eyeMovementsSensation}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                </tr>
+                                                            {medicalInpatientInfo.reflexes && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Reflexes: </strong>
+                                                                    {medicalInpatientInfo.reflexes}
+                                                                </p>
+                                                            )}
 
+                                                            {medicalInpatientInfo.plantars && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Plantars: </strong>
+                                                                    {medicalInpatientInfo.plantars}
+                                                                </p>
+                                                            )}
 
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.hearing && (
-                                                            <p>
-                                                                <strong>Hearing: </strong>
-                                                                {medicalInpatientInfo.hearing}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.tongueMovementTastes && (
-                                                            <p>
-                                                                <strong>Tongue Movement Tastes: </strong>
-                                                                {medicalInpatientInfo.tongueMovementTastes}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                </tr>
+                                                            {medicalInpatientInfo.sensation && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Sensation: </strong>
+                                                                    {medicalInpatientInfo.sensation}
+                                                                </p>
+                                                            )}
 
+                                                            {medicalInpatientInfo.coordination && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Coordination: </strong>
+                                                                    {medicalInpatientInfo.coordination}
+                                                                </p>
+                                                            )}
 
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.coughGagReflex && (
-                                                            <p>
-                                                                <strong>Cough Gag Reflex: </strong>
-                                                                {medicalInpatientInfo.coughGagReflex}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.power && (
-                                                            <p>
-                                                                <strong>Power: </strong>
-                                                                {medicalInpatientInfo.power}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                </tr>
-
-
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.tone && (
-                                                            <p>
-                                                                <strong>Tone: </strong>
-                                                                {medicalInpatientInfo.tone}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.reflexes && (
-                                                            <p>
-                                                                <strong>Reflexes: </strong>
-                                                                {medicalInpatientInfo.reflexes}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                </tr>
-
-
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.plantars && (
-                                                            <p>
-                                                                <strong>Plantars: </strong>
-                                                                {medicalInpatientInfo.plantars}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.sensation && (
-                                                            <p>
-                                                                <strong>Sensation: </strong>
-                                                                {medicalInpatientInfo.sensation}
-                                                            </p>
-                                                        )}
+                                                            {medicalInpatientInfo.gait && (
+                                                                <p style={{ margin: 0 }}>
+                                                                    <strong>Gait: </strong>
+                                                                    {medicalInpatientInfo.gait}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                 </tr>
-
-                                                <tr>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                        {medicalInpatientInfo.coordination && (
-                                                            <p>
-                                                                <strong>Coordination: </strong>
-                                                                {medicalInpatientInfo.coordination}
-                                                            </p>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                                                    </td>
-                                                </tr>
-
                                             </tbody>
                                         </table>
                                         {medicalInpatientInfo.summary && (
@@ -1156,12 +1206,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
 
 
-                                        {medicalInpatientInfo.admittingOfficer && (
+                                        {/* {medicalInpatientInfo.admittingOfficer && (
                                             <p>
                                                 <strong>Admitting Officer: </strong>
                                                 {medicalInpatientInfo.admittingOfficer}
                                             </p>
-                                        )}
+                                        )} */}
 
                                     </>
                                 )}
