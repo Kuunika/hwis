@@ -28,9 +28,12 @@ export const LineChart: React.FC<LineChartProps> = ({
   ...boxProps
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
+    const effectiveHeight =
+        chartConfig.series.some((s) => s.data?.length > 0)
+            ? chartConfig.height || 350
+            : 120;
 
-  useEffect(() => {
-    // Default configuration with ability to override
+    useEffect(() => {
       const dashArray = chartConfig.series.map((s) => {
           switch (s.dashStyle) {
               case "Dash":

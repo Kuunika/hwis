@@ -1,6 +1,5 @@
-// components/clinicalNotes/MonitoringCharts.tsx
 import React from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import {
     BP,
     HeartRate,
@@ -9,81 +8,96 @@ import {
     O_2Sat,
     Glucose,
 } from "../graphs";
-import {Pefr} from "@/app/patient/components/graphs/pefr";
-import {Urine} from "@/app/patient/components/graphs/urine";
+import { Pefr } from "@/app/patient/components/graphs/pefr";
+import { Urine } from "@/app/patient/components/graphs/urine";
 
 export const MonitoringCharts = () => {
+    const charts = [
+        { title: "Blood Pressure (BP)", Component: BP },
+        { title: "Temperature (°C)", Component: Temp },
+        { title: "Heart Rate (bpm)", Component: HeartRate },
+        { title: "Respiratory Rate (breaths/min)", Component: RespiratoryRate },
+        { title: "Oxygen Saturation (O₂ Sat)", Component: O_2Sat },
+        { title: "Glucose (mmol/L)", Component: Glucose },
+        { title: "Peak Expiratory Flow Rate (L/min)", Component: Pefr },
+        { title: "Urine Dipstick Ketones", Component: Urine },
+    ];
+
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Blood Pressure (BP)
-                    </Typography>
-                    <BP />
-                </Paper>
-            </Grid>
+        <>
+            <style>
+                {`
+          @media print {
 
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Temperature (°C)
-                    </Typography>
-                    <Temp />
-                </Paper>
-            </Grid>
+            /* Compact layout */
+            .MuiGrid-item {
+              padding: 2mm !important;
+              margin: 0 !important;
+            }
 
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Heart Rate (bpm)
-                    </Typography>
-                    <HeartRate />
-                </Paper>
-            </Grid>
+            .MuiPaper-root {
+              padding: 3mm !important;
+              margin: 0 0 4mm 0 !important;
+              border: 0.3pt solid #ccc !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              display: block !important;
+            }
 
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Respiratory Rate (breaths/min)
-                    </Typography>
-                    <RespiratoryRate />
-                </Paper>
-            </Grid>
+            /* Ensure title and chart stay together */
+            .chart-section {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              display: block !important;
+              position: relative;
+            }
 
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Oxygen Saturation (O₂ Sat)
-                    </Typography>
-                    <O_2Sat />
-                </Paper>
-            </Grid>
+            /* Typography smaller for print */
+            .chart-section-title {
+              font-size: 11px !important;
+              font-weight: 600 !important;
+              margin-bottom: 2mm !important;
+              color: #000 !important;
+              page-break-after: avoid !important;
+              break-after: avoid !important;
+            }
 
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Glucose (mmol/L)
-                    </Typography>
-                    <Glucose />
-                </Paper>
+            /* Charts adapt height */
+            .apexcharts-canvas {
+              height: auto !important;
+              max-height: 60mm !important;
+            }
+
+            /* Prevent splitting charts */
+            .apexcharts-graphical {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+
+            /* Reduce margins for print */
+            @page {
+              margin: 10mm !important;
+            }
+          }
+        `}
+            </style>
+
+            <Grid container spacing={2}>
+                {charts.map(({ title, Component }) => (
+                    <Grid item xs={12} md={6} key={title} className="chart-section">
+                        <Paper elevation={2} sx={{ p: 2 }}>
+                            <Typography
+                                variant="subtitle1"
+                                className="chart-section-title"
+                                sx={{ mb: 1 }}
+                            >
+                                {title}
+                            </Typography>
+                            <Component />
+                        </Paper>
+                    </Grid>
+                ))}
             </Grid>
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Peak Expiratory Flow Rate(L/min)
-                    </Typography>
-                    <Pefr />
-                </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Paper elevation={2} sx={{ p: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Urine Dipstick Ketones
-                    </Typography>
-                    <Urine/>
-                </Paper>
-            </Grid>
-        </Grid>
+        </>
     );
 };
