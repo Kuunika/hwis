@@ -9,6 +9,7 @@ import {
     O_2Sat,
     Glucose,
 } from "../graphs";
+import {Pefr} from "@/app/patient/components/graphs/pefr";
 
 export const MonitoringCharts = () => {
     return (
@@ -64,6 +65,14 @@ export const MonitoringCharts = () => {
                         Glucose (mmol/L)
                     </Typography>
                     <Glucose />
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                        Peak Expiratory Flow Rate(L/min)
+                    </Typography>
+                    <Pefr />
                 </Paper>
             </Grid>
         </Grid>
