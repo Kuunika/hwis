@@ -98,7 +98,7 @@ jobs:
       - name: Deploy to aetc-production
         working-directory: ./aetc
         env:
-          PRODUCTION_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           echo "Deploying to aetc-production..."
           git clone https://github.com/Kuunika/aetc-production.git
@@ -115,5 +115,5 @@ jobs:
             echo "No changes to commit in aetc-production."
           else
             git commit -m "Automated Next.js build and deployment (Production)"
-            git push https://petroskayange:${{ secrets.PRODUCTION_TOKEN }}@github.com/Kuunika/aetc-production.git
+            git push https://petroskayange:${{ secrets.RELEASE_TOKEN }}@github.com/Kuunika/aetc-production.git
           fi
