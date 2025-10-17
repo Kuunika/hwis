@@ -1,13 +1,13 @@
 import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-export function Pefr() {
-  const { values, dateTimes } = getObsGraphData("Peak Expiratory Flow Rate");
+export function Urine() {
+  const { values, dateTimes } = getObsGraphData("Urine Dipstick Ketones");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
-            name: "Peak Expiratory Flow Rate",
+            name: "Urine Dipstick Ketones",
             data: values,
           },
         ],

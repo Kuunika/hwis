@@ -10,6 +10,7 @@ import {
     Glucose,
 } from "../graphs";
 import {Pefr} from "@/app/patient/components/graphs/pefr";
+import {Urine} from "@/app/patient/components/graphs/urine";
 
 export const MonitoringCharts = () => {
     return (
@@ -73,6 +74,14 @@ export const MonitoringCharts = () => {
                         Peak Expiratory Flow Rate(L/min)
                     </Typography>
                     <Pefr />
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                        Urine Dipstick Ketones
+                    </Typography>
+                    <Urine/>
                 </Paper>
             </Grid>
         </Grid>
