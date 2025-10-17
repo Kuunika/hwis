@@ -27,7 +27,7 @@ jobs:
           rm -rf .next
 
           # Build app
-          NODE_OPTIONS="--max-old-space-size=4096" next build
+          NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
           # Remove cache to reduce size
           rm -rf .next/cache
