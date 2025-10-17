@@ -22,48 +22,98 @@ jobs:
         working-directory: ./aetc
         run: npm install --legacy-peer-deps
 
-      - name: Build Next.js app for Production
+      - name: Build Next.js app (Release configuration)
         working-directory: ./aetc
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.RELEASE_NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_METABASE: ${{ secrets.RELEASE_NEXT_PUBLIC_METABASE }}
+          NEXT_PUBLIC_DDEPROGRAMID: ${{ secrets.RELEASE_NEXT_PUBLIC_DDEPROGRAMID }}
+          NEXT_PUBLIC_SUPER_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_SUPER_USER_ROLE }}
+          NEXT_PUBLIC_NURSE_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_NURSE_USER_ROLE }}
+          NEXT_PUBLIC_CLINICIAN_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE }}
+          NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE }}
+          NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.RELEASE_NEXT_PUBLIC_ICD11_API_URL }}
         run: |
-          # Clean old build
+          echo "Cleaning previous build..."
           rm -rf .next
 
-          # Build app
+          echo "Building Next.js app (Release)..."
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-          # Remove cache to reduce size
+          echo "Removing build cache to reduce size..."
           rm -rf .next/cache
 
-          # Copy required static and public files into standalone folder
+          echo "Preparing standalone output..."
+          mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/public
 
-      - name: Deploy to Production
+      - name: Deploy to aetc-release
         working-directory: ./aetc
-        continue-on-error: false
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
-          # Clone the production repository
+          echo "Deploying to aetc-release..."
           git clone https://github.com/Kuunika/aetc-release.git
 
-          # Remove old files
           rm -rf aetc-release/*
-
-          # Copy standalone build into repository
           cp -R .next/standalone/* aetc-release/
 
-          # Navigate to the repository
           cd aetc-release
-
-          # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Stage and commit changes
           git add .
+
           if git diff --staged --quiet; then
-            echo "No changes to commit in Production repository"
-            exit 0
+            echo "No changes to commit in aetc-release."
           else
-            git commit -m "Automated Next.js build and deployment"
+            git commit -m "Automated Next.js build and deployment (Release)"
             git push https://petroskayange:${{ secrets.RELEASE_TOKEN }}@github.com/Kuunika/aetc-release.git
+          fi
+
+      - name: Build Next.js app (Production configuration)
+        working-directory: ./aetc
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.PRODUCTION_NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_METABASE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_METABASE }}
+          NEXT_PUBLIC_DDEPROGRAMID: ${{ secrets.PRODUCTION_NEXT_PUBLIC_DDEPROGRAMID }}
+          NEXT_PUBLIC_SUPER_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_SUPER_USER_ROLE }}
+          NEXT_PUBLIC_NURSE_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_NURSE_USER_ROLE }}
+          NEXT_PUBLIC_CLINICIAN_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_REGISTRATIONCLERK_USER_ROLE }}
+          NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_HOSPITALATTENDANT_USER_ROLE }}
+          NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE: ${{ secrets.PRODUCTION_NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE }}
+          NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.PRODUCTION_NEXT_PUBLIC_ICD11_API_URL }}
+        run: |
+          echo "Building Next.js app (Production)..."
+          rm -rf .next
+          NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          rm -rf .next/cache
+          mkdir -p .next/standalone/.next
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+
+      - name: Deploy to aetc-production
+        working-directory: ./aetc
+        env:
+          PRODUCTION_TOKEN: ${{ secrets.PRODUCTION_TOKEN }}
+        run: |
+          echo "Deploying to aetc-production..."
+          git clone https://github.com/Kuunika/aetc-production.git
+
+          rm -rf aetc-production/*
+          cp -R .next/standalone/* aetc-production/
+
+          cd aetc-production
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit in aetc-production."
+          else
+            git commit -m "Automated Next.js build and deployment (Production)"
+            git push https://petroskayange:${{ secrets.PRODUCTION_TOKEN }}@github.com/Kuunika/aetc-production.git
           fi
