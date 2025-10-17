@@ -1,0 +1,68 @@
+name: Build and Deploy Next.js App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.18.3"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Next.js app for Production
+        run: |
+          # Clean old build
+          rm -rf .next
+
+          # Build app
+          NODE_OPTIONS="--max-old-space-size=4096" next build
+
+          # Remove cache to reduce size
+          rm -rf .next/cache
+
+          # Copy required static and public files into standalone folder
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+
+      - name: Deploy to Production
+        continue-on-error: false
+        run: |
+          # Clone the production repository
+          git clone https://github.com/Kuunika/aetc-release.git
+
+          # Remove old files
+          rm -rf aetc-release/*
+
+          # Copy standalone build into repository
+          cp -R .next/standalone/* aetc-release/
+
+          # Navigate to the repository
+          cd aetc-release
+
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage changes
+          git add .
+
+          # Commit only if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit in Production repository"
+            exit 0
+          else
+            git commit -m "Automated Next.js build and deployment"
+            git push https://petroskayange:${{ secrets.RELEASE_TOKEN }}@github.com/Kuunika/aetc-release.git
+          fi
