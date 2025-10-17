@@ -15,17 +15,17 @@
 // const nextConfig = withPWA({
 //   output: 'standalone',
 // })
+const path = require("path");
+
 const nextConfig = {
   output: "standalone",
-  // images: {
-  //   unoptimized: true, // Disable the image optimization API
-  // },
+  outputFileTracingRoot: path.join(__dirname), // 👈 Force correct root path
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
-
     return config;
   },
 };
