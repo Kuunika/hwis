@@ -19,9 +19,11 @@ jobs:
           node-version: "20.18.3"
 
       - name: Install dependencies
+        working-directory: ./aetc
         run: npm install --legacy-peer-deps
 
       - name: Build Next.js app for Production
+        working-directory: ./aetc
         run: |
           # Clean old build
           rm -rf .next
@@ -37,6 +39,7 @@ jobs:
           cp -r public .next/standalone/public
 
       - name: Deploy to Production
+        working-directory: ./aetc
         continue-on-error: false
         run: |
           # Clone the production repository
@@ -55,10 +58,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Stage changes
+          # Stage and commit changes
           git add .
-
-          # Commit only if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit in Production repository"
             exit 0
