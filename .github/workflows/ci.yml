@@ -51,7 +51,7 @@ jobs:
           git clone https://github.com/Kuunika/aetc-release.git
 
           rm -rf aetc-release/*
-          cp -R .next/standalone/* aetc-release/
+          cp -R .next/* aetc-release/
 
           cd aetc-release
           git config user.name "github-actions[bot]"
@@ -94,7 +94,7 @@ jobs:
           git clone https://github.com/Kuunika/aetc-production.git
 
           rm -rf aetc-production/*
-          cp -R .next/standalone/* aetc-production/
+          cp -R .next/* aetc-production/
 
           cd aetc-production
           git config user.name "github-actions[bot]"
