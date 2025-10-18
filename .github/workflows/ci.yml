@@ -36,19 +36,11 @@ jobs:
           NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE: ${{ secrets.RELEASE_NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE }}
           NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.RELEASE_NEXT_PUBLIC_ICD11_API_URL }}
         run: |
-          echo "Cleaning previous build..."
-          rm -rf .next
-
           echo "Building Next.js app (Release)..."
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
-
-          echo "Removing build cache to reduce size..."
           rm -rf .next/cache
-
-          echo "Preparing standalone output..."
-          mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/static
-          cp -r public .next/standalone/public
+          cp -r public .next/standalone/
 
       - name: Deploy to aetc-release
         working-directory: ./aetc
@@ -88,12 +80,10 @@ jobs:
           NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.PRODUCTION_NEXT_PUBLIC_ICD11_API_URL }}
         run: |
           echo "Building Next.js app (Production)..."
-          rm -rf .next
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
           rm -rf .next/cache
-          mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/static
-          cp -r public .next/standalone/public
+          cp -r public .next/standalone/
 
       - name: Deploy to aetc-production
         working-directory: ./aetc
