@@ -18,7 +18,7 @@ interface PaginationModel {
   pageSize: number;
 }
 
-export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string) => {
+export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string, creator?:string) => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({
     page: 0,
     pageSize: 10,
@@ -30,7 +30,11 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
   const [totalEntries, setTotalEntries] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
-  const fetchData = useCallback(async () => {
+  useEffect(() => {
+    fetchData();
+  }, [patientCareArea, paginationModel, searchText, onSwitch, creator]);
+
+  const fetchData = async () => {
     setLoading(true);
     let date;
 
@@ -45,7 +49,8 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
         searchText,
         paginationModel.page + 1,
         date || "",
-        patientCareArea
+        patientCareArea,
+        creator
       );
 
       setPatients(response.data.data);
@@ -57,22 +62,8 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
     } finally {
       setLoading(false);
     }
-  }, [
-    category,
-    paginationModel.pageSize,
-    searchText,
-    paginationModel.page,
-    onSwitch,
-  ]);
+  }
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Create a refetch function that can be called manually
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
 
   return {
     loading,
@@ -84,7 +75,7 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
     totalPages,
     totalEntries,
     setOnSwitch,
-    refetch, // Add refetch to the returned object
+    refetch: fetchData, // Add refetch to the returned object
   };
 };
 
@@ -94,33 +85,22 @@ export const getPatientsFromCacheOrFetch = async (
   searchString: string,
   page: number,
   date: string,
-  patientCareArea?: string
-): Promise<any> => {
-  const cacheKey = [category, pageSize, searchString, page];
-  // const cachedPatientList =
-  //   queryClient.getQueryData<DailyVisitPaginated>(cacheKey);
+  patientCareArea?: string,
+  creator?: string
 
-  // if (cachedPatientList) {
-  //   console.log("using cached data", cachedPatientList);
-  //   return cachedPatientList;
-  // } else {
+): Promise<any> => {
+ 
     let query = `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`;
 
     if (patientCareArea) {
-      // use the backend endpoint for filtering
-      query = `category=${category}&paginate=false&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+      query = query +`&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+    }
+    
+    if (creator) {
+      query = query + `&last_encounter_creator=${encodeURIComponent(creator)}`;
     }
     
     const patientList = await getDailyVisitsPaginated(query);
-    
-  // queryClient.setQueryData(cacheKey, patientList);
-
-  // setTimeout(() => {
-  //   //   console.log("object");
-  //   //   queryClient.invalidateQueries(cacheKey);
-  //   //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
-  //   queryClient.removeQueries({ queryKey: cacheKey, exact: true });
-  // }, 5000);
 
   return patientList;
   // }

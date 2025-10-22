@@ -425,7 +425,6 @@ export const PhysicalExamination = ({
         obsDatetime,
       },
     ];
-
     onSubmit([...getObservations(formValues, obsDatetime), ...obs]);
   };
 

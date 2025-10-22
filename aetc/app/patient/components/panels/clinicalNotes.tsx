@@ -181,6 +181,7 @@ export const ClinicalNotes = () => {
     encounters.CLINICAL_NOTES,
     () => ""
   );
+   const { ServerTime } = useServerTime();
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -628,7 +629,7 @@ export const ClinicalNotes = () => {
   ]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
-    const { ServerTime } = useServerTime();
+   
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
       () => refresh()

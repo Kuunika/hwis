@@ -321,6 +321,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const [legImage, setLegImage] = useState<Array<any>>([]);
   const [abdomenImage, setAbdomenImage] = useState<Array<any>>([]);
   const [cprDialog, setCprDialog] = useState(false);
+   const { ServerTime } = useServerTime();
   // const [bloodNotDoneOther, setBloodNotDoneOther] = useState(false);
 
   const { handleSubmit, isLoading, isSuccess } = useSubmitEncounter(
@@ -329,7 +330,6 @@ export const Circulation = ({ onSubmit }: Prop) => {
   );
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
-    const { ServerTime } = useServerTime();
 
     const obs = [
       {
