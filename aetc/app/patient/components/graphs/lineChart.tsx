@@ -106,7 +106,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           padding: 4,
           opacity: 0.9,
         },
-        offsetY: -8,
+        offsetY: 0,
       },
       colors: chartConfig.colors || ["#FF1654", "#247BA0"],
       xaxis: {
