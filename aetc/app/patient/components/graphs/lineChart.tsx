@@ -120,7 +120,7 @@ export const LineChart: React.FC<LineChartProps> = ({
       series: chartConfig.series,
       legend: {
         show: true,
-        position: "top",
+        position: "bottom",
       },
       tooltip: {
         enabled: true,
