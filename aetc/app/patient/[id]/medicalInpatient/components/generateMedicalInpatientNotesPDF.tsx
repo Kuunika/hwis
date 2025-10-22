@@ -37,12 +37,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             medication: [] as string[],        // 👈 was string
             hivProgram: "",
             onARV: "",
+            drugGiven: "",
+            date: "",
             healthCenter: "",
             other: "",
             surgicalHistory: "",
             socialHistory: "",
             familyHistory: "",
-            // drugGiven: "",
             allergicReaction: [] as string[],  // 👈 was string
             intoxication: [] as string[],
             general: "",
@@ -60,9 +61,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             lymphadenopathy: "",
             // ✅ New Fields
             symmetricalExpansion: "",
+            description: "",
             apexBeat: "",
+            position: "",
             thrillHeaves: "",
+            specify: "",
             auscultation: "",
+            lungCondition: "",
             auscultationLung: "",
             edema: "",
             skinRash: "",
@@ -98,9 +103,20 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
             psychiatric: [] as string[],
             integumentary: [] as string[],
             differentialDiagnosis: [] as string[],
+            radiological: "",
             additionalNotes: "",
+            managementPlan: "",
             admittingOfficer: "", // Default value
             completedDateTime: "", // ADD THIS LINE
+            // ✅ New Abdomen Fields
+            abdomenInspection: "",
+            abdomenLightPalpation: "",
+            abdomenDeepPalpation: "",
+            abdomenAuscultation: "",
+            abdomenShiftingDullness: "",
+            abdomenFluidThrill: "",
+            abdomenRegion: "",
+            lungRegion: "",
 
 
 
@@ -148,11 +164,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     hivProgram: "",
                     healthCenter: "",
                     onARV: "",
+                    drugGiven: "",
+                    date: "",
                     other: "",
                     surgicalHistory: "",
                     socialHistory: "",
                     familyHistory: "",
-                    // drugGiven: "",
                     allergicReaction: [] as string[],
                     intoxication: [] as string[],
                     general: "",
@@ -170,9 +187,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     lymphadenopathy: "",
                     // ✅ New Fields
                     symmetricalExpansion: "",
+                    description: "",
                     apexBeat: "",
+                    position: "",
                     thrillHeaves: "",
+                    specify: "",
                     auscultation: "",
+                    lungCondition: "",
                     auscultationLung: "",
                     edema: "",
                     skinRash: "",
@@ -208,9 +229,20 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                     psychiatric: [] as string[],
                     integumentary: [] as string[],
                     differentialDiagnosis: [] as string[],
+                    radiological: "",
                     additionalNotes: "",
+                    managementPlan: "",
                     admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
                     completedDateTime: completedDateTime, // ADD THIS LINE
+                    // ✅ New Abdomen Fields
+                    abdomenInspection: "",
+                    abdomenLightPalpation: "",
+                    abdomenDeepPalpation: "",
+                    abdomenAuscultation: "",
+                    abdomenShiftingDullness: "",
+                    abdomenFluidThrill: "",
+                    abdomenRegion: "",
+                    lungRegion: "",
 
 
 
@@ -242,7 +274,58 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 }
                             });
                         }
-                    } else if (conceptName === "Presenting history") {
+                    }
+                    // ✅ New: Extract Abdomen Data
+                    else if (conceptName === "Site") {
+                        const siteValue = obs.value || obs.value_text || "";
+
+                        // Check if the site is "Abdomen"
+                        if (siteValue === "Abdomen" && obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childConceptName = child.names && child.names.length > 0 ? child.names[0].name : null;
+
+                                // Check if this child has nested "Image Part Name" (region)
+                                if (childConceptName === "Image Part Name") {
+                                    inpatientInfo.abdomenRegion = child.value || child.value_text || "";
+
+                                    // Now extract the abdomen examination details from this child's children
+                                    if (child.children && child.children.length > 0) {
+                                        child.children.forEach(grandChild => {
+                                            const grandChildName = grandChild.names && grandChild.names.length > 0 ? grandChild.names[0].name : null;
+
+                                            if (grandChildName === "General inspection") {
+                                                inpatientInfo.abdomenInspection = grandChild.value || grandChild.value_text || "";
+                                            } else if (grandChildName === "Light palpation") {
+                                                inpatientInfo.abdomenLightPalpation = grandChild.value || grandChild.value_text || "";
+                                            } else if (grandChildName === "Deep palpation") {
+                                                inpatientInfo.abdomenDeepPalpation = grandChild.value || grandChild.value_text || "";
+                                            } else if (grandChildName === "Auscultation Lung") {
+                                                inpatientInfo.abdomenAuscultation = grandChild.value || grandChild.value_text || "";
+                                            } else if (grandChildName === "Shifting dullness") {
+                                                inpatientInfo.abdomenShiftingDullness = grandChild.value || grandChild.value_text || "";
+                                            } else if (grandChildName === "Fluid thrill") {
+                                                inpatientInfo.abdomenFluidThrill = grandChild.value || grandChild.value_text || "";
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        } else if (siteValue === "Lung Posterior" && obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childConceptName = child.names && child.names.length > 0 ? child.names[0].name : null;
+
+                                // Check if this child has nested "Image Part Name" (region)
+                                if (childConceptName === "Image Part Name") {
+                                    inpatientInfo.lungRegion = child.value || child.value_text || "";
+
+
+                                }
+                            });
+
+                        }
+                    }
+
+                    else if (conceptName === "Presenting history") {
                         inpatientInfo.presentingHistory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Medication") {
                         if (obs.children && obs.children.length > 0) {
@@ -257,9 +340,13 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.hivProgram = obs.value || obs.value_text || "";
                     } else if (conceptName === "On arv") {
                         inpatientInfo.onARV = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Drug Administration") {
+                        inpatientInfo.drugGiven = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Historical drug start date") {
+                        inpatientInfo.date = obs.value || obs.value_text || "";
                     } else if (conceptName === "Health center") {
                         inpatientInfo.healthCenter = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Other") {
+                    } else if (conceptName === "Other Medication") {
                         inpatientInfo.other = obs.value || obs.value_text || "";
                     } else if (conceptName === "Surgical History") {
                         inpatientInfo.surgicalHistory = obs.value || obs.value_text || "";
@@ -320,15 +407,25 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.lymphadenopathy = obs.value || obs.value_text || "";
                     }
                     // ✅ New Fields
-                    else if (conceptName === "symmetrical expansion") {
+                    else if (conceptName === "Description") {
+                        inpatientInfo.description = obs.value || obs.value_text || "";
+                    } else if (conceptName === "symmetrical expansion") {
                         inpatientInfo.symmetricalExpansion = obs.value || obs.value_text || "";
                     } else if (conceptName === "Apex beat") {
                         inpatientInfo.apexBeat = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Thrill heaves") {
+                    } else if (conceptName === "Positioning") {
+                        inpatientInfo.position = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "thrill heaves") {
                         inpatientInfo.thrillHeaves = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Specify") {
+                        inpatientInfo.specify = obs.value || obs.value_text || "";
                     } else if (conceptName === "Auscultation") {
                         inpatientInfo.auscultation = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Auscultation Lung") {
+                    } else if (conceptName === "Condition") {
+                        inpatientInfo.lungCondition = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Auscultation Lung") {
                         inpatientInfo.auscultationLung = obs.value || obs.value_text || "";
                     } else if (conceptName === "Edema") {
                         inpatientInfo.edema = obs.value || obs.value_text || "";
@@ -340,7 +437,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.nuchalRigidity = obs.value || obs.value_text || "";
                     } else if (conceptName === "Motor response") {
                         inpatientInfo.motorResponse = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Verbal response") {
+                    } else if (conceptName === "Verbal Response") {
                         inpatientInfo.verbalResponse = obs.value || obs.value_text || "";
                     } else if (conceptName === "Eye Opening response") {
                         inpatientInfo.eyeOpeningResponse = obs.value || obs.value_text || "";
@@ -375,8 +472,12 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         inpatientInfo.gait = obs.value || obs.value_text || "";
                     } else if (conceptName === "Summary") {
                         inpatientInfo.summary = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Assessment") {
+                        inpatientInfo.radiological = obs.value || obs.value_text || "";
                     } else if (conceptName === "Additional Notes") {
                         inpatientInfo.additionalNotes = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Plan") {
+                        inpatientInfo.managementPlan = obs.value || obs.value_text || "";
                     }
                     // Review of Systems mapping
                     else if (conceptName === "Review of systems, general") {
@@ -529,7 +630,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
         const formatDateTime = (dateTimeString: string) => {
             if (!dateTimeString) return "";
             const date = new Date(dateTimeString);
-            return date.toLocaleString('en-US', {
+            return date.toLocaleString('en-GB', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -538,6 +639,66 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                 hour12: true
             });
         };
+        const formatDate = (dateString: string) => {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }); // e.g., "20 Oct 2025"
+        };
+
+        const getGCSWeight = (value: string, responseType: 'motor' | 'verbal' | 'eye') => {
+            const eyeOpeningResponses = [
+                { label: "Spontaneous", value: "Spontaneous", weight: 4 },
+                { label: "To Speech", value: "To Speech", weight: 3 },
+                { label: "To Pain", value: "To Pain", weight: 2 },
+                { label: "No Response", value: "No Response", weight: 1 },
+            ];
+
+            const motorResponses = [
+                { label: "Obeying Commands", value: "Obeying Commands", weight: 6 },
+                { label: "Localising", value: "Localising", weight: 5 },
+                { label: "Withdraw", value: "Withdraw", weight: 4 },
+                { label: "Normal Flexion", value: "Normal Flexion", weight: 3 },
+                { label: "Extension", value: "Extension", weight: 2 },
+                { label: "None", value: "None", weight: 1 },
+            ];
+
+            const verbalResponses = [
+                { label: "Oriented", value: "Oriented", weight: 5 },
+                { label: "Confused", value: "Confused", weight: 4 },
+                { label: "Inappropriate Words", value: "Inappropriate Words", weight: 3 },
+                { label: "Incomprehensible sounds", value: "Incomprehensible sounds", weight: 2 },
+                { label: "None", value: "None", weight: 1 },
+            ];
+
+            let responseList;
+            switch (responseType) {
+                case 'motor':
+                    responseList = motorResponses;
+                    break;
+                case 'verbal':
+                    responseList = verbalResponses;
+                    break;
+                case 'eye':
+                    responseList = eyeOpeningResponses;
+                    break;
+                default:
+                    return 0;
+            }
+
+            const found = responseList.find((r) => r.value === value);
+            return found ? found.weight : 0;
+        };
+
+        // Calculate GCS Total
+        const motorScore = getGCSWeight(medicalInpatientInfo.motorResponse, 'motor');
+        const verbalScore = getGCSWeight(medicalInpatientInfo.verbalResponse, 'verbal');
+        const eyeScore = getGCSWeight(medicalInpatientInfo.eyeOpeningResponse, 'eye');
+        const gcsTotal = motorScore + verbalScore + eyeScore;
+
         return (
             <div ref={contentRef} className="printable-content">
                 <div className={showPreview ? "print-preview" : "print-only"}>
@@ -570,22 +731,20 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                         <div className="patient-examination-data">
                             {medicalInpatientInfo.presentingComplaint && (
                                 <>
-                                    <h2>Complaints</h2>
+                                    <h2>Presenting Complaints</h2>
                                     <p>
-                                        <strong>Presenting Complaints: </strong>
-                                        {medicalInpatientInfo.presentingComplaint.map((item, index) => `(${index + 1}) ${item.complaint}${item.duration ? ` - Duration: ${item.duration}` : ''}`
-                                        ).join(", ")
-                                        }
+                                        {medicalInpatientInfo.presentingComplaint.map((item, index) =>
+                                            `(${index + 1}) ${item.complaint}${item.duration ? ` - Duration: ${item.duration}` : ''}`
+                                        ).join(", ")}
                                     </p>
                                 </>
                             )}
 
                             {medicalInpatientInfo.presentingHistory && (
-                                <p>
-                                    <strong>History of Presenting Complaints: </strong>
-                                    {medicalInpatientInfo.presentingHistory}
-                                </p>
-
+                                <>
+                                    <h2>History of Presenting Complaints</h2>
+                                    <p>{medicalInpatientInfo.presentingHistory}</p>
+                                </>
                             )}
                             <hr />
 
@@ -593,6 +752,8 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                             {(medicalInpatientInfo.medication ||
                                 medicalInpatientInfo.hivProgram ||
                                 medicalInpatientInfo.onARV ||
+                                medicalInpatientInfo.drugGiven ||
+                                medicalInpatientInfo.date ||
                                 medicalInpatientInfo.healthCenter ||
                                 medicalInpatientInfo.other ||
                                 medicalInpatientInfo.surgicalHistory ||
@@ -601,13 +762,16 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.allergicReaction ||
                                 medicalInpatientInfo.intoxication) && (
                                     <>
-                                        <h2>Medical History</h2>
+                                        <h2>Drug History</h2>
                                         {medicalInpatientInfo.medication.length > 0 && (
                                             <p>
                                                 <strong>Drug: </strong>
                                                 {medicalInpatientInfo.medication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
                                             </p>
                                         )}
+                                        <hr />
+                                        <h2>Past Medical History</h2>
+
                                         {medicalInpatientInfo.hivProgram && (
                                             <p>
                                                 <strong>HIV Status: </strong>
@@ -620,47 +784,83 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.onARV}
                                             </p>
                                         )}
+                                        {medicalInpatientInfo.drugGiven && (
+                                            <p>
+                                                <strong>ARV Given: </strong>
+                                                {medicalInpatientInfo.drugGiven}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.date && (
+                                            <p>
+                                                <strong>Since When: </strong>
+                                                {/* {medicalInpatientInfo.date} */}
+                                                {formatDate(medicalInpatientInfo.date)}
+
+                                            </p>
+                                        )}
                                         {medicalInpatientInfo.healthCenter && (
                                             <p>
-                                                <strong>Referral Medical Facility: </strong>
+                                                <strong>Clinic: </strong>
                                                 {medicalInpatientInfo.healthCenter}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.other && (
                                             <p>
-                                                <strong>Other: </strong>
+                                                <strong>Other (Past Medical History): </strong>
                                                 {medicalInpatientInfo.other}
                                             </p>
                                         )}
+                                        <hr />
+
                                         {medicalInpatientInfo.surgicalHistory && (
-                                            <p>
-                                                <strong>Surgical History: </strong>
-                                                {medicalInpatientInfo.surgicalHistory}
-                                            </p>
+                                            <>
+                                                <h2>Surgical History</h2>
+                                                <p>{medicalInpatientInfo.surgicalHistory}</p>
+                                                <hr />
+                                            </>
                                         )}
+                                        <hr />
+
                                         {medicalInpatientInfo.socialHistory && (
-                                            <p>
-                                                <strong>Social History: </strong>
-                                                {medicalInpatientInfo.socialHistory}
-                                            </p>
+                                            <>
+                                                <h2>Social History</h2>
+                                                <p>{medicalInpatientInfo.socialHistory}</p>
+                                                <hr />
+                                            </>
                                         )}
+                                        <hr />
+
                                         {medicalInpatientInfo.familyHistory && (
-                                            <p>
-                                                <strong>Family History: </strong>
-                                                {medicalInpatientInfo.familyHistory}
-                                            </p>
+                                            <>
+                                                <h2>Family History</h2>
+                                                <p>{medicalInpatientInfo.familyHistory}</p>
+                                                <hr />
+                                            </>
                                         )}
+                                        <hr />
+
                                         {medicalInpatientInfo.allergicReaction.length > 0 && (
-                                            <p>
-                                                <strong>Allergy: </strong>
-                                                {medicalInpatientInfo.allergicReaction.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
-                                            </p>
+                                            <>
+                                                <h2>Allergy</h2>
+                                                <p>
+                                                    {medicalInpatientInfo.allergicReaction.map((item, index) =>
+                                                        `(${index + 1}) ${item}`
+                                                    ).join(", ")}
+                                                </p>
+                                                <hr />
+                                            </>
                                         )}
+                                        <hr />
+
                                         {medicalInpatientInfo.intoxication.length > 0 && (
-                                            <p>
-                                                <strong>Intoxication: </strong>
-                                                {medicalInpatientInfo.intoxication.map((item, index) => `(${index + 1}) ${item}`).join(", ")}
-                                            </p>
+                                            <>
+                                                <h2>Intoxication</h2>
+                                                <p>
+                                                    {medicalInpatientInfo.intoxication.map((item, index) =>
+                                                        `(${index + 1}) ${item}`
+                                                    ).join(", ")}
+                                                </p>
+                                            </>
                                         )}
                                     </>
                                 )}
@@ -823,10 +1023,22 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.jvpRaised ||
                                 medicalInpatientInfo.lymphadenopathy ||
                                 medicalInpatientInfo.symmetricalExpansion ||
+                                medicalInpatientInfo.description ||
                                 medicalInpatientInfo.apexBeat ||
+                                medicalInpatientInfo.position ||
                                 medicalInpatientInfo.thrillHeaves ||
+                                medicalInpatientInfo.specify ||
                                 medicalInpatientInfo.auscultation ||
+                                medicalInpatientInfo.lungCondition ||
+                                medicalInpatientInfo.lungRegion ||
                                 medicalInpatientInfo.auscultationLung ||
+                                medicalInpatientInfo.abdomenAuscultation ||
+                                medicalInpatientInfo.abdomenDeepPalpation ||
+                                medicalInpatientInfo.abdomenFluidThrill ||
+                                medicalInpatientInfo.abdomenInspection ||
+                                medicalInpatientInfo.abdomenLightPalpation ||
+                                medicalInpatientInfo.abdomenRegion ||
+                                medicalInpatientInfo.abdomenShiftingDullness ||
                                 medicalInpatientInfo.edema ||
                                 medicalInpatientInfo.skinRash ||
                                 medicalInpatientInfo.herpesZosterScar ||
@@ -850,7 +1062,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                 medicalInpatientInfo.gait ||
                                 medicalInpatientInfo.summary ||
                                 medicalInpatientInfo.differentialDiagnosis ||
+                                medicalInpatientInfo.radiological ||
                                 medicalInpatientInfo.additionalNotes ||
+                                medicalInpatientInfo.managementPlan ||
                                 medicalInpatientInfo.admittingOfficer
 
                             )
@@ -858,12 +1072,14 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                     <>
                                         <h2>Physical Examination</h2>
                                         {medicalInpatientInfo.general && (
-                                            <p>
-                                                <strong>General Impression: </strong>
-                                                {medicalInpatientInfo.general}
-                                            </p>
+                                            <>
+                                                <h3>General Impression</h3>
+                                                <p>{medicalInpatientInfo.general}</p>
+                                                <hr />
+                                            </>
                                         )}
 
+                                        <hr />
 
                                         <h3>Vital Signs</h3>
 
@@ -908,6 +1124,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                             )}
 
                                         </div>
+                                        <hr />
 
 
                                         <h3>Head and Neck</h3>
@@ -954,7 +1171,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                             )}
 
                                         </div>
-                                        <h3>Chest and Lungs</h3>
+                                        <hr />
+
+                                        <h3>Chest</h3>
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
 
                                             {medicalInpatientInfo.symmetricalExpansion && (
@@ -963,25 +1182,63 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                     {medicalInpatientInfo.symmetricalExpansion}
                                                 </p>
                                             )}
-                                            {medicalInpatientInfo.apexBeat && (
+                                            {medicalInpatientInfo.description && (
                                                 <p>
-                                                    <strong>Apex Beat: </strong>
-                                                    {medicalInpatientInfo.apexBeat}
+                                                    <strong>Symmetrical Expansion Description: </strong>
+                                                    {medicalInpatientInfo.description}
                                                 </p>
                                             )}
-                                            {medicalInpatientInfo.thrillHeaves && (
-                                                <p>
-                                                    <strong>Thrill Heaves: </strong>
-                                                    {medicalInpatientInfo.thrillHeaves}
-                                                </p>
-                                            )}
+
                                         </div>
 
+                                        <hr />
+
+                                        <h3>Heart</h3>
+
+                                        {medicalInpatientInfo.apexBeat && (
+                                            <p>
+                                                <strong>Apex Beat: </strong>
+                                                {medicalInpatientInfo.apexBeat}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.position && (
+                                            <p>
+                                                <strong>Displaced Position: </strong>
+                                                {medicalInpatientInfo.position}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.thrillHeaves && (
+                                            <p>
+                                                <strong>Thrill Heaves: </strong>
+                                                {medicalInpatientInfo.thrillHeaves}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.specify && (
+                                            <p>
+                                                <strong>Specify Thrill Heaves: </strong>
+                                                {medicalInpatientInfo.specify}
+                                            </p>
+                                        )}
 
                                         {medicalInpatientInfo.auscultation && (
                                             <p>
                                                 <strong>Auscultation (Heart): </strong>
                                                 {medicalInpatientInfo.auscultation}
+                                            </p>
+                                        )}
+                                        <hr />
+
+                                        <h3>Lungs</h3>
+                                        {medicalInpatientInfo.lungCondition && (
+                                            <p>
+                                                <strong>Lung Condition: </strong>
+                                                {medicalInpatientInfo.lungCondition}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.lungRegion && (
+                                            <p>
+                                                <strong>Lung Region: </strong>
+                                                {medicalInpatientInfo.lungRegion}
                                             </p>
                                         )}
                                         {medicalInpatientInfo.auscultationLung && (
@@ -990,14 +1247,64 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.auscultationLung}
                                             </p>
                                         )}
+                                        <hr />
+                                        <h3>Abdomen</h3>
+                                        {medicalInpatientInfo.abdomenRegion && (
+                                            <p>
+                                                <strong>Region: </strong>
+                                                {medicalInpatientInfo.abdomenRegion}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.abdomenInspection && (
+                                            <p>
+                                                <strong>Inspection: </strong>
+                                                {medicalInpatientInfo.abdomenInspection}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.abdomenLightPalpation && (
+                                            <p>
+                                                <strong>Light Palpation: </strong>
+                                                {medicalInpatientInfo.abdomenLightPalpation}
+                                            </p>
+                                        )}
+
+                                        {medicalInpatientInfo.abdomenDeepPalpation && (
+                                            <p>
+                                                <strong>Deep Palpation: </strong>
+                                                {medicalInpatientInfo.abdomenDeepPalpation}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.abdomenAuscultation && (
+                                            <p>
+                                                <strong>Auscultation: </strong>
+                                                {medicalInpatientInfo.abdomenAuscultation}
+                                            </p>
+                                        )}
+                                        {medicalInpatientInfo.abdomenShiftingDullness && (
+                                            <p>
+                                                <strong>Shifting Dullness: </strong>
+                                                {medicalInpatientInfo.abdomenShiftingDullness}
+                                            </p>
+                                        )}
+
+                                        {medicalInpatientInfo.abdomenFluidThrill && (
+                                            <p>
+                                                <strong>Fluid Thrill: </strong>
+                                                {medicalInpatientInfo.abdomenFluidThrill}
+                                            </p>
+                                        )}
+                                        <hr />
+
+                                        <h2>Extremities</h2>
+
                                         {medicalInpatientInfo.edema && (
                                             <p>
                                                 <strong>Oedema: </strong>
                                                 {medicalInpatientInfo.edema}
                                             </p>
                                         )}
-
-                                        <h3>Skin</h3>
+                                        <hr />
+                                        <h2>Skin</h2>
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
 
                                             {medicalInpatientInfo.skinRash && (
@@ -1013,36 +1320,61 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 </p>
                                             )}
                                         </div>
-                                        <h3>Neurological Examination</h3>
+                                        <hr />
+
+                                        <h2>Neurological Examination</h2>
+                                        {medicalInpatientInfo.nuchalRigidity && (
+                                            <p>
+                                                <strong>Neck Stiffness: </strong>
+                                                {medicalInpatientInfo.nuchalRigidity}
+                                            </p>
+                                        )}
+                                        <h3>Glasgow Coma Scale (GCS)</h3>
+
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
-
-
-                                            {medicalInpatientInfo.nuchalRigidity && (
-                                                <p>
-                                                    <strong>Nuchal Rigidity: </strong>
-                                                    {medicalInpatientInfo.nuchalRigidity}
-                                                </p>
-                                            )}
-                                            {medicalInpatientInfo.motorResponse && (
-                                                <p>
-                                                    <strong>Motor Response: </strong>
-                                                    {medicalInpatientInfo.motorResponse}
-                                                </p>
-                                            )}
-                                            {medicalInpatientInfo.verbalResponse && (
-                                                <p>
-                                                    <strong>Verbal Response: </strong>
-                                                    {medicalInpatientInfo.verbalResponse}
-                                                </p>
-                                            )}
                                             {medicalInpatientInfo.eyeOpeningResponse && (
                                                 <p>
                                                     <strong>Eye Opening Response: </strong>
-                                                    {medicalInpatientInfo.eyeOpeningResponse}
+                                                    {medicalInpatientInfo.eyeOpeningResponse} ({eyeScore})
                                                 </p>
                                             )}
 
+                                            {medicalInpatientInfo.verbalResponse && (
+                                                <p>
+                                                    <strong>Verbal Response: </strong>
+                                                    {medicalInpatientInfo.verbalResponse} ({verbalScore})
+                                                </p>
+                                            )}
+
+                                            {medicalInpatientInfo.motorResponse && (
+                                                <p>
+                                                    <strong>Motor Response: </strong>
+                                                    {medicalInpatientInfo.motorResponse} ({motorScore})
+                                                </p>
+                                            )}
                                         </div>
+
+                                        {/* Display GCS Total if any component is present */}
+                                        {(medicalInpatientInfo.motorResponse ||
+                                            medicalInpatientInfo.verbalResponse ||
+                                            medicalInpatientInfo.eyeOpeningResponse) && (
+                                                <div style={{
+                                                    marginTop: "10px",
+                                                    padding: "10px",
+                                                    backgroundColor: "#f0f8ff",
+                                                    borderLeft: "4px solid #2196F3",
+                                                    marginBottom: "15px"
+                                                }}>
+                                                    <p style={{ margin: 0, fontSize: "16px" }}>
+                                                        <strong>GCS Total Score: {gcsTotal}/15</strong>
+                                                        {gcsTotal > 0 && (
+                                                            <span style={{ marginLeft: "15px", fontSize: "14px", color: "#666" }}>
+                                                                ({gcsTotal >= 13 ? "Minor" : gcsTotal >= 9 ? "Moderate" : "Severe"} injury)
+                                                            </span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            )}
                                         <br />
                                         <h3>Cranial and Peripheral Nerves</h3>
 
@@ -1169,20 +1501,27 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <hr />
+
                                         {medicalInpatientInfo.summary && (
-                                            <p>
-                                                <strong>Summary: </strong>
-                                                {medicalInpatientInfo.summary}
-                                            </p>
+                                            <>
+                                                <h2>Summary</h2>
+                                                <p>{medicalInpatientInfo.summary}</p>
+                                                <hr />
+                                            </>
                                         )}
                                         <hr />
 
                                         {medicalInpatientInfo.differentialDiagnosis.length > 0 && (
-
-                                            <p>
-                                                <strong>Differential Diagnosis: </strong>
-                                                {medicalInpatientInfo.differentialDiagnosis.map((item, index) => ` ${item}`).join(", ")}
-                                            </p>
+                                            <>
+                                                <h2>Differential Diagnosis</h2>
+                                                <p>
+                                                    {medicalInpatientInfo.differentialDiagnosis.map((item, index) =>
+                                                        ` ${item}`
+                                                    ).join(", ")}
+                                                </p>
+                                                <hr />
+                                            </>
                                         )}
 
                                         <hr />
@@ -1194,24 +1533,33 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
 
                                         <h3>Lab results</h3>
                                         <LabOrderPlanTable />
+                                        {medicalInpatientInfo.radiological && (
+                                            <p>
+                                                <strong>Radiological: </strong>
+                                                {medicalInpatientInfo.radiological}
+                                            </p>
+                                        )}
                                         {medicalInpatientInfo.additionalNotes && (
                                             <p>
-                                                <strong>Additional Notes: </strong>
+                                                <strong>Other Tests: </strong>
                                                 {medicalInpatientInfo.additionalNotes}
                                             </p>
                                         )}
 
+                                        {medicalInpatientInfo.managementPlan && (
+                                            <p>
+                                                <strong>Management Plan: </strong>
+                                                {medicalInpatientInfo.managementPlan}
+                                            </p>
+                                        )}
+
                                         <hr />
-
-
-
-
-                                        {/* {medicalInpatientInfo.admittingOfficer && (
+                                        {medicalInpatientInfo.admittingOfficer && (
                                             <p>
                                                 <strong>Admitting Officer: </strong>
                                                 {medicalInpatientInfo.admittingOfficer}
                                             </p>
-                                        )} */}
+                                        )}
 
                                     </>
                                 )}

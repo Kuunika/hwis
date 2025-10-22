@@ -167,6 +167,7 @@ export const MedicalInPatientFlow = () => {
     <>
       <NewStepperContainer
         setActive={setActiveStep}
+        allowPanelActiveOnClick={false}
         title="Medical Inpatient Admission Sheet"
         steps={steps}
         active={activeStep}
