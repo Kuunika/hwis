@@ -42,9 +42,9 @@ export const PatientChart = () => {
       <Grid item xs={12} md={4}>
         <Paper elevation={2} sx={{ p: 2 }}>
           <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
-            Respiratory Rate
+            Blood Pressure
           </Typography>
-          <RespiratoryRate />
+          <BP />
         </Paper>
       </Grid>
 
@@ -60,18 +60,9 @@ export const PatientChart = () => {
       <Grid item xs={12} md={4}>
         <Paper elevation={2} sx={{ p: 2 }}>
           <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
-            Glucose
+            O₂ Saturation
           </Typography>
-          <Glucose />
-        </Paper>
-      </Grid>
-
-      <Grid item xs={12} md={4}>
-        <Paper elevation={2} sx={{ p: 2 }}>
-          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
-            Blood Pressure
-          </Typography>
-          <BP />
+          <O_2Sat />
         </Paper>
       </Grid>
 
@@ -87,9 +78,18 @@ export const PatientChart = () => {
       <Grid item xs={12} md={4}>
         <Paper elevation={2} sx={{ p: 2 }}>
           <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
-            O₂ Saturation
+            Respiratory Rate
           </Typography>
-          <O_2Sat />
+          <RespiratoryRate />
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <Paper elevation={2} sx={{ p: 2 }}>
+          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+            Glucose
+          </Typography>
+          <Glucose />
         </Paper>
       </Grid>
     </Grid>
