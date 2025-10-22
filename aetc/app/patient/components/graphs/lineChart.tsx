@@ -66,27 +66,36 @@ export const LineChart: React.FC<LineChartProps> = ({
             ? chartConfig.series.map((_, index) => index)
             : undefined,
         formatter: function (val: number, opts: any) {
-          if (chartConfig.showValuesOnPoints) {
-            // Show both series name and value at every point
-            const seriesIndex = opts.seriesIndex;
-            const seriesName = chartConfig.series[seriesIndex].name;
-            return val !== null && val !== undefined
-              ? `${seriesName}: ${val.toFixed(1)}`
-              : "";
+          const seriesIndex = opts.seriesIndex;
+          const dataPointIndex = opts.dataPointIndex;
+          const series = chartConfig.series[seriesIndex];
+          const seriesName = series.name;
+
+          // Check if it's the last point
+          const isLastPoint = dataPointIndex === series.data.length - 1;
+
+          if (chartConfig.showValuesOnPoints && chartConfig.showLabelsOnLines) {
+            // Show value at every point, and add series name at the last point
+            if (val !== null && val !== undefined) {
+              if (isLastPoint) {
+                return `${seriesName}\n${val.toFixed(1)}`;
+              }
+              return val.toFixed(1);
+            }
+            return "";
+          } else if (chartConfig.showValuesOnPoints) {
+            // Show only value at every point
+            return val !== null && val !== undefined ? val.toFixed(1) : "";
           } else if (chartConfig.showLabelsOnLines) {
             // Show series name only at the last point
-            const seriesIndex = opts.seriesIndex;
-            const dataPointIndex = opts.dataPointIndex;
-            const series = chartConfig.series[seriesIndex];
-
-            if (dataPointIndex === series.data.length - 1) {
-              return series.name;
+            if (isLastPoint) {
+              return seriesName;
             }
           }
           return "";
         },
         style: {
-          fontSize: "9px",
+          fontSize: "10px",
           fontWeight: "bold",
           colors: chartConfig.colors || ["#FF1654", "#247BA0"],
         },
