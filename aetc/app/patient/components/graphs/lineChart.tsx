@@ -17,7 +17,7 @@ interface ChartConfig {
   colors?: string[];
   yAxisMin?: number;
   yAxisMax?: number;
-  showLabelsOnLines?: boolean; // New option to show labels on lines
+  showLabelsOnLines?: boolean;
 }
 
 interface LineChartProps extends BoxProps {
@@ -61,7 +61,6 @@ export const LineChart: React.FC<LineChartProps> = ({
           ? chartConfig.series.map((_, index) => index)
           : undefined,
         formatter: function (val: number, opts: any) {
-          // Show series name on the last data point of each line
           const seriesIndex = opts.seriesIndex;
           const dataPointIndex = opts.dataPointIndex;
           const series = chartConfig.series[seriesIndex];
@@ -96,7 +95,23 @@ export const LineChart: React.FC<LineChartProps> = ({
       series: chartConfig.series,
       legend: {
         show: true,
-        position: "bottom",
+        position: "top",
+      },
+      tooltip: {
+        enabled: true,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: function (value: number, { seriesIndex }: any) {
+            if (value !== null && value !== undefined) {
+              return value.toFixed(2);
+            }
+            return "N/A";
+          },
+        },
+        x: {
+          show: true,
+        },
       },
     };
 

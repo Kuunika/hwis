@@ -18,12 +18,24 @@ export function CombinedVitals() {
     "Blood oxygen saturation"
   );
 
-  // Use the first available dateTimes array
-  const xAxisCategories = rrDates.length
-    ? rrDates
-    : hrDates.length
-      ? hrDates
-      : bpDates;
+  // Merge all unique dates and sort them
+  const allDates = [
+    ...rrDates,
+    ...hrDates,
+    ...glucoseDates,
+    ...bpDates,
+    ...tempDates,
+    ...o2Dates,
+  ];
+  const uniqueDates = Array.from(new Set(allDates)).sort();
+
+  // Function to align data with the unified date array
+  const alignData = (values: number[], dates: string[]) => {
+    return uniqueDates.map((date) => {
+      const index = dates.indexOf(date);
+      return index !== -1 ? values[index] : null;
+    });
+  };
 
   return (
     <LineChart
@@ -31,38 +43,38 @@ export function CombinedVitals() {
         series: [
           {
             name: "Respiratory Rate",
-            data: respiratoryRate,
+            data: alignData(respiratoryRate, rrDates) as number[],
           },
           {
             name: "Heart Rate",
-            data: heartRate,
+            data: alignData(heartRate, hrDates) as number[],
           },
           {
             name: "Glucose",
-            data: glucose,
+            data: alignData(glucose, glucoseDates) as number[],
           },
           {
             name: "Systolic BP",
-            data: systolic,
+            data: alignData(systolic, bpDates) as number[],
           },
           {
             name: "Diastolic BP",
-            data: diastolic,
+            data: alignData(diastolic, bpDates) as number[],
           },
           {
             name: "Temperature",
-            data: temp,
+            data: alignData(temp, tempDates) as number[],
           },
           {
             name: "O₂ Sat",
-            data: o2Sat,
+            data: alignData(o2Sat, o2Dates) as number[],
           },
         ],
-        xAxisCategories: xAxisCategories,
+        xAxisCategories: uniqueDates,
         title: "All Vital Signs",
         height: 450,
         yAxisMin: 0,
-        showLabelsOnLines: true, // Enable labels on lines
+        showLabelsOnLines: true,
         colors: [
           "#d815a7", // Respiratory Rate
           "#70C1B3", // Heart Rate
