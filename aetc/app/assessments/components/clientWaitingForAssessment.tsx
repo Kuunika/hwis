@@ -75,6 +75,8 @@ export const ClientWaitingForAssessment = () => {
     loading,
     totalPages,
     setOnSwitch,
+    totalEntries,
+    refetch
   } = fetchPatientsTablePaginate("assessment", patientCareFilter);
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -104,20 +106,25 @@ export const ClientWaitingForAssessment = () => {
     }
   }, [patientsData]);
 
+
+  // useEffect(() => {
+  //   refetch();
+  // }, [filters]);
+
   // Filter the data based on active filters
-  const filteredData = React.useMemo(() => {
-    if (!patientsData) return [];
+  // const filteredData = React.useMemo(() => {
+  //   if (!patientsData) return [];
 
-    return patientsData.filter((item: any) => {
-      const matchesTriageBy = filters.triageBy.length === 0 ||
-        filters.triageBy.includes(item.last_encounter_creator);
+  //   return patientsData.filter((item: any) => {
+  //     const matchesTriageBy = filters.triageBy.length === 0 ||
+  //       filters.triageBy.includes(item.last_encounter_creator);
 
-      const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
-        filters.patientCareArea.includes(item.patient_care_area);
+  //     const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+  //       filters.patientCareArea.includes(item.patient_care_area);
 
-      return matchesTriageBy && matchesPatientCareArea;
-    });
-  }, [patientsData, filters]);
+  //     return matchesTriageBy && matchesPatientCareArea;
+  //   });
+  // }, [patientsData, filters]);
 
   const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value;
@@ -275,7 +282,7 @@ export const ClientWaitingForAssessment = () => {
     },
   ];
 
-  const formatForMobileView = filteredData?.map((row: any) => {
+  const formatForMobileView = patientsData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -313,8 +320,15 @@ export const ClientWaitingForAssessment = () => {
     <>
       {/* Filter Section */}
       <Paper sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <FaFilter />
             <Typography variant="h6">Filters</Typography>
             {hasActiveFilters && (
@@ -325,7 +339,7 @@ export const ClientWaitingForAssessment = () => {
               />
             )}
           </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             {hasActiveFilters && (
               <Button
                 startIcon={<FaTimes />}
@@ -343,29 +357,29 @@ export const ClientWaitingForAssessment = () => {
               size="small"
               variant="outlined"
             >
-              {showFilters ? 'Hide' : 'Show'} Filters
+              {showFilters ? "Hide" : "Show"} Filters
             </Button>
           </Box>
         </Box>
 
         <Collapse in={showFilters}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
             {/* Triaged By Filter */}
             <FormControl sx={{ minWidth: 200 }}>
               <InputLabel>Triaged By</InputLabel>
               <Select
                 multiple
                 value={filters.triageBy}
-                onChange={handleFilterChange('triageBy')}
+                onChange={handleFilterChange("triageBy")}
                 input={<OutlinedInput label="Triaged By" />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
                       <Chip
                         key={value}
                         label={value}
                         size="small"
-                        onDelete={() => clearFilter('triageBy', value)}
+                        onDelete={() => clearFilter("triageBy", value)}
                         onMouseDown={(event) => {
                           event.stopPropagation();
                         }}
@@ -388,16 +402,16 @@ export const ClientWaitingForAssessment = () => {
               <Select
                 multiple
                 value={filters.patientCareArea}
-                onChange={handleFilterChange('patientCareArea')}
+                onChange={handleFilterChange("patientCareArea")}
                 input={<OutlinedInput label="Patient Care Area" />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
                       <Chip
                         key={value}
                         label={value}
                         size="small"
-                        onDelete={() => clearFilter('patientCareArea', value)}
+                        onDelete={() => clearFilter("patientCareArea", value)}
                         onMouseDown={(event) => {
                           event.stopPropagation();
                         }}
@@ -418,15 +432,15 @@ export const ClientWaitingForAssessment = () => {
 
         {/* Active Filters Display */}
         {hasActiveFilters && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Typography variant="body2" sx={{ mr: 1, alignSelf: "center" }}>
               Active filters:
             </Typography>
             {filters.triageBy.map((filter) => (
               <Chip
                 key={`triageBy-${filter}`}
                 label={`Triaged By: ${filter}`}
-                onDelete={() => clearFilter('triageBy', filter)}
+                onDelete={() => clearFilter("triageBy", filter)}
                 size="small"
                 color="primary"
                 variant="outlined"
@@ -436,7 +450,7 @@ export const ClientWaitingForAssessment = () => {
               <Chip
                 key={`area-${filter}`}
                 label={`Care Area: ${filter}`}
-                onDelete={() => clearFilter('patientCareArea', filter)}
+                onDelete={() => clearFilter("patientCareArea", filter)}
                 size="small"
                 color="primary"
                 variant="outlined"
@@ -448,20 +462,13 @@ export const ClientWaitingForAssessment = () => {
 
       <PatientTableListServer
         columns={columns}
-        data={
-          filteredData?.length
-            ? {
-              data: filteredData.map((row: any) => ({
-                id: row.uuid || row.id, // Ensure proper ID mapping
-                ...row,
-              })),
-              page: paginationModel.page,
-              per_page: paginationModel.pageSize,
-              total_pages: totalPages,
-              totalEntries: filteredData.length,
-            }
-            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
-        }
+        data={{
+          data: patientsData ?? [],
+          page: paginationModel.page,
+          per_page: paginationModel.pageSize,
+          total_pages: totalPages,
+          totalEntries,
+        }}
         searchText={inputText}
         setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
