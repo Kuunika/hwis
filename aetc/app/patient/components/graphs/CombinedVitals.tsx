@@ -18,7 +18,7 @@ export function CombinedVitals() {
     "Blood oxygen saturation"
   );
 
-  // Use the first available dateTimes array (they should all be similar)
+  // Use the first available dateTimes array
   const xAxisCategories = rrDates.length
     ? rrDates
     : hrDates.length
@@ -62,12 +62,13 @@ export function CombinedVitals() {
         title: "All Vital Signs",
         height: 450,
         yAxisMin: 0,
+        showLabelsOnLines: true, // Enable labels on lines
         colors: [
           "#d815a7", // Respiratory Rate
           "#70C1B3", // Heart Rate
           "#247BA0", // Glucose
           "#FF1654", // Systolic BP
-          "#247BA0", // Diastolic BP
+          "#5B8FA3", // Diastolic BP
           "#8C54FF", // Temperature
           "#F3A712", // O₂ Sat
         ],

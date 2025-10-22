@@ -17,6 +17,7 @@ interface ChartConfig {
   colors?: string[];
   yAxisMin?: number;
   yAxisMax?: number;
+  showLabelsOnLines?: boolean; // New option to show labels on lines
 }
 
 interface LineChartProps extends BoxProps {
@@ -28,22 +29,22 @@ export const LineChart: React.FC<LineChartProps> = ({
   ...boxProps
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
-    const effectiveHeight =
-        chartConfig.series.some((s) => s.data?.length > 0)
-            ? chartConfig.height || 350
-            : 120;
+  const effectiveHeight = chartConfig.series.some((s) => s.data?.length > 0)
+    ? chartConfig.height || 350
+    : 120;
 
-    useEffect(() => {
-      const dashArray = chartConfig.series.map((s) => {
-          switch (s.dashStyle) {
-              case "Dash":
-                  return 5;
-              case "Dot":
-                  return 2;
-              default:
-                  return 0;
-          }
-      });
+  useEffect(() => {
+    const dashArray = chartConfig.series.map((s) => {
+      switch (s.dashStyle) {
+        case "Dash":
+          return 5;
+        case "Dot":
+          return 2;
+        default:
+          return 0;
+      }
+    });
+
     const defaultOptions = {
       chart: {
         type: "line",
@@ -52,14 +53,35 @@ export const LineChart: React.FC<LineChartProps> = ({
       stroke: {
         curve: "smooth",
         width: 3,
-          dashArray: [0, 5],
-
+        dashArray: dashArray,
       },
       dataLabels: {
-        enabled: true,
+        enabled: chartConfig.showLabelsOnLines || false,
+        enabledOnSeries: chartConfig.showLabelsOnLines
+          ? chartConfig.series.map((_, index) => index)
+          : undefined,
+        formatter: function (val: number, opts: any) {
+          // Show series name on the last data point of each line
+          const seriesIndex = opts.seriesIndex;
+          const dataPointIndex = opts.dataPointIndex;
+          const series = chartConfig.series[seriesIndex];
+
+          if (dataPointIndex === series.data.length - 1) {
+            return series.name;
+          }
+          return "";
+        },
         style: {
-          fontSize: "10px",
+          fontSize: "11px",
           fontWeight: "bold",
+          colors: chartConfig.colors || ["#FF1654", "#247BA0"],
+        },
+        background: {
+          enabled: true,
+          foreColor: "#fff",
+          borderRadius: 2,
+          padding: 4,
+          opacity: 0.9,
         },
       },
       colors: chartConfig.colors || ["#FF1654", "#247BA0"],
@@ -72,6 +94,10 @@ export const LineChart: React.FC<LineChartProps> = ({
         forceNiceScale: true,
       },
       series: chartConfig.series,
+      legend: {
+        show: true,
+        position: "bottom",
+      },
     };
 
     let chart: ApexCharts;
