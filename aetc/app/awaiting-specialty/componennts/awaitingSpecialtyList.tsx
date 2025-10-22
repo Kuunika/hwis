@@ -77,6 +77,8 @@ export const AwaitingSpecialtyList = () => {
 
     const { mutate: closeVisit, isSuccess: visitClosed } = closeCurrentVisit();
     const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+  const creator =
+    filters.recordedBy.length === 1 ? filters.recordedBy[0] : undefined;
 
     const {
       paginationModel,
@@ -88,7 +90,11 @@ export const AwaitingSpecialtyList = () => {
       totalPages,
       refetch,
       totalEntries,
-    } = fetchPatientsTablePaginate("awaiting_speciality", patientCareFilter);
+    } = fetchPatientsTablePaginate(
+      "awaiting_speciality",
+      patientCareFilter,
+      creator
+    );
 
     const [inputText, setInputText] = useState("");
     const debouncedSearch = useDebounce(inputText, 500);
