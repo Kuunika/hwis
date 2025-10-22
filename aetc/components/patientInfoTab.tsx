@@ -6,6 +6,22 @@ import { getOnePatient } from "@/hooks/patientReg";
 
 import { MainPaper, MainTypography, WrapperBox } from "@/components";
 
+
+  function getNationalIdIdentifiers(data: any) {
+    // Filter the data to only include objects where identifier_type.name is "National id"
+    const nationalIdObjects = data.filter(
+      (item: any) =>
+        item.identifier_type && item.identifier_type.name === "National id"
+    );
+
+    // Extract just the identifier values from the filtered objects
+    const nationalIdValues = nationalIdObjects.map(
+      (item: any) => item.identifier
+    );
+
+    return nationalIdValues[nationalIdValues.length - 1];
+  }
+
 export const PatientInfoTab = () => {
   const { params } = useParameters();
   const { data: patient, isLoading } = getOnePatient(params?.id as string);
@@ -28,7 +44,10 @@ export const PatientInfoTab = () => {
         label="Full Name"
         value={`${patient?.given_name} ${patient?.family_name}`}
       />
-      <LabelValue label="ID" value={patient?.identifiers[0]?.identifier ?? ""} />
+      <LabelValue
+        label="MRN"
+        value={getNationalIdIdentifiers(patient?.identifiers)}
+      />
       <LabelValue
         label="Age"
         value={`${calculateAge(patient?.birthdate)}yr (${patient?.birthdate})`}
