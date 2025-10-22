@@ -74,7 +74,7 @@ export function CombinedVitals() {
         title: "All Vital Signs",
         height: 450,
         yAxisMin: 0,
-        showLabelsOnLines: true,
+        showValuesOnPoints: true, // Enable values on every point
         colors: [
           "#d815a7", // Respiratory Rate
           "#70C1B3", // Heart Rate

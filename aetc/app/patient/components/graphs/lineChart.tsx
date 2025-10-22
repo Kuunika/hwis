@@ -18,6 +18,7 @@ interface ChartConfig {
   yAxisMin?: number;
   yAxisMax?: number;
   showLabelsOnLines?: boolean;
+  showValuesOnPoints?: boolean;
 }
 
 interface LineChartProps extends BoxProps {
@@ -56,22 +57,36 @@ export const LineChart: React.FC<LineChartProps> = ({
         dashArray: dashArray,
       },
       dataLabels: {
-        enabled: chartConfig.showLabelsOnLines || false,
-        enabledOnSeries: chartConfig.showLabelsOnLines
-          ? chartConfig.series.map((_, index) => index)
-          : undefined,
+        enabled:
+          chartConfig.showValuesOnPoints ||
+          chartConfig.showLabelsOnLines ||
+          false,
+        enabledOnSeries:
+          chartConfig.showValuesOnPoints || chartConfig.showLabelsOnLines
+            ? chartConfig.series.map((_, index) => index)
+            : undefined,
         formatter: function (val: number, opts: any) {
-          const seriesIndex = opts.seriesIndex;
-          const dataPointIndex = opts.dataPointIndex;
-          const series = chartConfig.series[seriesIndex];
+          if (chartConfig.showValuesOnPoints) {
+            // Show both series name and value at every point
+            const seriesIndex = opts.seriesIndex;
+            const seriesName = chartConfig.series[seriesIndex].name;
+            return val !== null && val !== undefined
+              ? `${seriesName}: ${val.toFixed(1)}`
+              : "";
+          } else if (chartConfig.showLabelsOnLines) {
+            // Show series name only at the last point
+            const seriesIndex = opts.seriesIndex;
+            const dataPointIndex = opts.dataPointIndex;
+            const series = chartConfig.series[seriesIndex];
 
-          if (dataPointIndex === series.data.length - 1) {
-            return series.name;
+            if (dataPointIndex === series.data.length - 1) {
+              return series.name;
+            }
           }
           return "";
         },
         style: {
-          fontSize: "11px",
+          fontSize: "9px",
           fontWeight: "bold",
           colors: chartConfig.colors || ["#FF1654", "#247BA0"],
         },
@@ -82,6 +97,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           padding: 4,
           opacity: 0.9,
         },
+        offsetY: -8,
       },
       colors: chartConfig.colors || ["#FF1654", "#247BA0"],
       xaxis: {
