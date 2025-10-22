@@ -65,6 +65,7 @@ export const ClientsWaitingForTestResults = () => {
 
   const { navigateTo } = useNavigation();
   const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+  const creator = filters.plannedBy.length === 1 ? filters.plannedBy[0] : undefined;
 
   const {
     loading,
@@ -76,7 +77,7 @@ export const ClientsWaitingForTestResults = () => {
     totalPages,
     setOnSwitch,
     totalEntries,
-  } = fetchPatientsTablePaginate("investigations", patientCareFilter);
+  } = fetchPatientsTablePaginate("investigations", patientCareFilter, creator);
 
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms

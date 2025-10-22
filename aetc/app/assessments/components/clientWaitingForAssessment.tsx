@@ -65,6 +65,7 @@ export const ClientWaitingForAssessment = () => {
 
   const { navigateTo } = useNavigation();
   const patientCareFilter = filters.patientCareArea.length === 1 ? filters.patientCareArea[0] : undefined;
+  const triageFilter = filters.triageBy.length === 1 ? filters.triageBy[0] : undefined;
 
   const {
     paginationModel,
@@ -76,8 +77,8 @@ export const ClientWaitingForAssessment = () => {
     totalPages,
     setOnSwitch,
     totalEntries,
-    refetch
-  } = fetchPatientsTablePaginate("assessment", patientCareFilter);
+    refetch,
+  } = fetchPatientsTablePaginate("assessment", patientCareFilter, triageFilter);
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
 

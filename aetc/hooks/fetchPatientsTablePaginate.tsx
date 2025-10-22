@@ -18,7 +18,7 @@ interface PaginationModel {
   pageSize: number;
 }
 
-export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string) => {
+export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string, creator?:string) => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({
     page: 0,
     pageSize: 10,
@@ -30,10 +30,9 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
   const [totalEntries, setTotalEntries] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
-
   useEffect(() => {
     fetchData();
-  }, [patientCareArea, paginationModel, searchText, onSwitch,]);
+  }, [patientCareArea, paginationModel, searchText, onSwitch, creator]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -50,7 +49,8 @@ export const fetchPatientsTablePaginate = (category: Category, patientCareArea?:
         searchText,
         paginationModel.page + 1,
         date || "",
-        patientCareArea
+        patientCareArea,
+        creator
       );
 
       setPatients(response.data.data);
@@ -85,14 +85,19 @@ export const getPatientsFromCacheOrFetch = async (
   searchString: string,
   page: number,
   date: string,
-  patientCareArea?: string
+  patientCareArea?: string,
+  creator?: string
+
 ): Promise<any> => {
  
     let query = `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`;
 
     if (patientCareArea) {
-      // use the backend endpoint for filtering
       query = query +`&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+    }
+    
+    if (creator) {
+      query = query + `&last_encounter_creator=${encodeURIComponent(creator)}`;
     }
     
     const patientList = await getDailyVisitsPaginated(query);
