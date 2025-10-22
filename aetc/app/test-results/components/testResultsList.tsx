@@ -123,19 +123,19 @@ export const ClientsWaitingForTestResults = () => {
 
 
   // Filter the data based on active filters
-  const filteredData = React.useMemo(() => {
-    if (!rows) return [];
+  // const filteredData = React.useMemo(() => {
+  //   if (!rows) return [];
 
-    return rows.filter((item: any) => {
-      const matchesPlannedBy = filters.plannedBy.length === 0 ||
-        filters.plannedBy.includes(item.last_encounter_creator);
+  //   return rows.filter((item: any) => {
+  //     const matchesPlannedBy = filters.plannedBy.length === 0 ||
+  //       filters.plannedBy.includes(item.last_encounter_creator);
 
-      const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
-        filters.patientCareArea.includes(item.patient_care_area);
+  //     const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+  //       filters.patientCareArea.includes(item.patient_care_area);
 
-      return matchesPlannedBy && matchesPatientCareArea;
-    });
-  }, [rows, filters]);
+  //     return matchesPlannedBy && matchesPatientCareArea;
+  //   });
+  // }, [rows, filters]);
 
   const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value;
@@ -285,7 +285,7 @@ export const ClientsWaitingForTestResults = () => {
     },
   ];
 
-  const formatForMobileView = filteredData?.map((row) => {
+  const formatForMobileView =rows?.map((row) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -474,7 +474,7 @@ export const ClientsWaitingForTestResults = () => {
       <PatientTableListServer
         columns={columns}
         data={{
-          data: filteredData ?? [],
+          data: rows ?? [],
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,

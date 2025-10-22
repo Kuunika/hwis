@@ -111,22 +111,22 @@ export const AwaitingSpecialtyList = () => {
     }, [data]);
 
     // Filter the data based on active filters
-    const filteredData = React.useMemo(() => {
-        if (!data) return [];
+    // const filteredData = React.useMemo(() => {
+    //     if (!data) return [];
 
-        return data.filter((item: any) => {
-            const matchesSpecialty = filters.specialty.length === 0 ||
-                filters.specialty.includes(item.department);
+    //     return data.filter((item: any) => {
+    //         const matchesSpecialty = filters.specialty.length === 0 ||
+    //             filters.specialty.includes(item.department);
 
-            const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
-                filters.patientCareArea.includes(item.patient_care_area);
+    //         const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+    //             filters.patientCareArea.includes(item.patient_care_area);
 
-            const matchesRecordedBy = filters.recordedBy.length === 0 ||
-                filters.recordedBy.includes(item.last_encounter_creator);
+    //         const matchesRecordedBy = filters.recordedBy.length === 0 ||
+    //             filters.recordedBy.includes(item.last_encounter_creator);
 
-            return matchesSpecialty && matchesPatientCareArea && matchesRecordedBy;
-        });
-    }, [data, filters]);
+    //         return matchesSpecialty && matchesPatientCareArea && matchesRecordedBy;
+    //     });
+    // }, [data, filters]);
 
     const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
         const value = event.target.value;
@@ -269,7 +269,7 @@ export const AwaitingSpecialtyList = () => {
         },
     ];
 
-    const formatForMobileView = filteredData?.map((row: any) => {
+    const formatForMobileView = data?.map((row: any) => {
         return {
             id: row.id,
             visitNumber: row.aetc_visit_number,
@@ -499,7 +499,7 @@ export const AwaitingSpecialtyList = () => {
         <PatientTableListServer
           columns={columns}
           data={{
-            data: filteredData ?? [],
+            data: data ?? [],
             page: paginationModel.page,
             per_page: paginationModel.pageSize,
             total_pages: totalPages,

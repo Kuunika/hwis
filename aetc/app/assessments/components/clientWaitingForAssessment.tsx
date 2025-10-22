@@ -76,12 +76,10 @@ export const ClientWaitingForAssessment = () => {
     totalPages,
     setOnSwitch,
     totalEntries,
+    refetch
   } = fetchPatientsTablePaginate("assessment", patientCareFilter);
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
-
-
-  console.log({ paginationModel, totalPages });
 
   useEffect(() => {
     setSearchText(debouncedSearch);
@@ -108,20 +106,25 @@ export const ClientWaitingForAssessment = () => {
     }
   }, [patientsData]);
 
+
+  // useEffect(() => {
+  //   refetch();
+  // }, [filters]);
+
   // Filter the data based on active filters
-  const filteredData = React.useMemo(() => {
-    if (!patientsData) return [];
+  // const filteredData = React.useMemo(() => {
+  //   if (!patientsData) return [];
 
-    return patientsData.filter((item: any) => {
-      const matchesTriageBy = filters.triageBy.length === 0 ||
-        filters.triageBy.includes(item.last_encounter_creator);
+  //   return patientsData.filter((item: any) => {
+  //     const matchesTriageBy = filters.triageBy.length === 0 ||
+  //       filters.triageBy.includes(item.last_encounter_creator);
 
-      const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
-        filters.patientCareArea.includes(item.patient_care_area);
+  //     const matchesPatientCareArea = filters.patientCareArea.length === 0 ||
+  //       filters.patientCareArea.includes(item.patient_care_area);
 
-      return matchesTriageBy && matchesPatientCareArea;
-    });
-  }, [patientsData, filters]);
+  //     return matchesTriageBy && matchesPatientCareArea;
+  //   });
+  // }, [patientsData, filters]);
 
   const handleFilterChange = (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
     const value = event.target.value;
@@ -279,7 +282,7 @@ export const ClientWaitingForAssessment = () => {
     },
   ];
 
-  const formatForMobileView = filteredData?.map((row: any) => {
+  const formatForMobileView = patientsData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -460,26 +463,12 @@ export const ClientWaitingForAssessment = () => {
       <PatientTableListServer
         columns={columns}
         data={{
-          data: filteredData ?? [],
+          data: patientsData ?? [],
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
           totalEntries,
         }}
-        // data={
-        //   filteredData?.length
-        //     ? {
-        //       data: filteredData.map((row: any) => ({
-        //         id: row.uuid || row.id, // Ensure proper ID mapping
-        //         ...row,
-        //       })),
-        //       page: paginationModel.page,
-        //       per_page: paginationModel.pageSize,
-        //       total_pages: totalPages,
-        //       totalEntries: filteredData.length,
-        //     }
-        //     : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
-        // }
         searchText={inputText}
         setSearchString={setInputText}
         setPaginationModel={setPaginationModel}
