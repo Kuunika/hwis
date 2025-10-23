@@ -1318,7 +1318,7 @@ const AddClinicalNotes = ({
               paddingBottom: "5px",
             }}
           ></span>
-          <Button
+          {/* <Button
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
@@ -1347,8 +1347,8 @@ const AddClinicalNotes = ({
             }}
           >
             SOAPIER Notes
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
@@ -1377,7 +1377,7 @@ const AddClinicalNotes = ({
             }}
           >
             AETC
-          </Button>
+          </Button> */}
           {/* New Surgical Notes Button */}
           <Button
             onClick={() => {
