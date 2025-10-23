@@ -17,6 +17,7 @@ import { ReviewOfSystems } from "./reviewOfSystems";
 import { Summary } from "./summary";
 import { encounters } from "@/constants";
 import { Investigations } from "./investigations";
+import { ManagementPlan } from "./managementPlan";
 import { useParameters } from "@/hooks";
 
 export const MedicalInPatientFlow = () => {
@@ -33,7 +34,7 @@ export const MedicalInPatientFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [obs, setObs] = useState<any[]>([]);
 
-  // Restructured steps array with Summary as separate section
+  // Updated steps array with Management Plan as final step
   const steps = [
     {
       id: 1,
@@ -87,11 +88,15 @@ export const MedicalInPatientFlow = () => {
       id: 13,
       label: "Investigation",
     },
+    {
+      id: 14,
+      label: "Management Plan",
+    },
   ];
 
   useEffect(() => {
     if (isSuccess) {
-      setActiveStep(13); // Updated to final step
+      setActiveStep(14); // Updated to final step
     }
   }, [isSuccess]);
 
@@ -155,10 +160,15 @@ export const MedicalInPatientFlow = () => {
     setActiveStep(12);
   };
 
-  // Final submission happens here after collecting Investigation data
   const handleInvestigationSubmit = (values: any) => {
+    setObs((obs) => [...obs, ...values]);
+    setActiveStep(13);
+  };
+
+  // Final submission happens here after collecting Management Plan data
+  const handleManagementPlanSubmit = (values: any) => {
     const allObservations = [...obs, ...values];
-    console.log("Submitting all observations including investigations:", { allObservations });
+    console.log("Submitting all observations including management plan:", { allObservations });
     handleSubmit(allObservations);
     navigateTo(`/patient/${params.id}/profile`);
   };
@@ -167,6 +177,7 @@ export const MedicalInPatientFlow = () => {
     <>
       <NewStepperContainer
         setActive={setActiveStep}
+        allowPanelActiveOnClick={false}
         title="Medical Inpatient Admission Sheet"
         steps={steps}
         active={activeStep}
@@ -191,6 +202,7 @@ export const MedicalInPatientFlow = () => {
           onSubmit={handleDifferentialSubmit}
         />
         <Investigations onClose={handleInvestigationSubmit} />
+        <ManagementPlan onClose={handleManagementPlanSubmit} />
       </NewStepperContainer>
     </>
   );

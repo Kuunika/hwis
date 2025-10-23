@@ -29,15 +29,16 @@ const form = {
     label: "on antiretrovirals (ARVs)",
   },
   drugList: {
-    name: concepts.DRUG_GIVEN,
+    name: concepts.DRUG_ADMINISTRATION,
     label: "ARVs given",
   },
-  otherArvMedication: {
-    name: concepts.OTHER_MEDICATION,
-    label: "Other Medication",
-  },
+  // otherArvMedication: {
+  //   name: concepts.OTHER_MEDICATION,
+  //   label: "Other Medication",
+  // },
   sinceWhen: {
-    name: concepts.DATE,
+    // name: concepts.DATE,
+    name: concepts.DRUG_START_DATE,
     label: "Since When",
   },
   clinic: {
@@ -45,7 +46,7 @@ const form = {
     label: "Clinic",
   },
   other: {
-    name: concepts.OTHER,
+    name: concepts.OTHER_MEDICATION,
     label: "Other (Past Medical History)",
   },
 };
@@ -145,7 +146,7 @@ export const PastMedicalHistory = ({
                 width={"100%"}
               />
               <br />
-              <TextInputField
+              {/* <TextInputField
                 multiline
                 rows={4}
                 name={form.otherArvMedication.name}
@@ -153,7 +154,7 @@ export const PastMedicalHistory = ({
                 id={form.otherArvMedication.name}
                 sx={{ width: "100%" }}
               />
-              <br />
+              <br /> */}
 
               <SearchComboBox
                 label="Which Clinic"

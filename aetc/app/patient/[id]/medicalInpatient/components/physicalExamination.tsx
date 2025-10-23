@@ -170,7 +170,8 @@ const form = {
   // },
 
   facialSensation: {
-    name: concepts.SENSATION,
+    // name: concepts.SENSATION,
+    name: concepts.EYE_MOVEMENTS_SENSATION,
     label: "Facial Movements / Sensation:",
   },
 
