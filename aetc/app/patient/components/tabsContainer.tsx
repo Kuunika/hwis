@@ -11,6 +11,8 @@ import {
 } from "./panels";
 import { DiagnosisTabDisplay } from "./panels/diagnosis";
 import { ClinicalNotesUpdated } from "./panels/clinicalNotesUpdated";
+import { DrugChart } from "./panels/drugChart";
+import { DrugChartWithData } from "./panels/drugChartWithData";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -223,6 +225,9 @@ export const TabsContainer = () => {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
         <Medications />
+        {/* <DrugChart /> */}
+        {/* <DrugChartDemo /> */}
+        {/* <DrugChartWithData /> */}
       </CustomTabPanel>
       {/* <CustomTabPanel value={value} index={4}>
         <PresentingComplaint />
