@@ -30,7 +30,6 @@ export const Medications = () => {
 
   useEffect(() => {
     if (patientEncounters && patientEncounters.length > 0) {
-      console.log(patientEncounters[0].obs);
       const dataRows = formatDispensedMedicationObs(patientEncounters[0].obs);
       setRows(dataRows);
       return;

@@ -33,15 +33,15 @@ export const formatClinicalNotesData = (
         />
       ),
     },
-    {
-      title: "Triage Information",
-      content: [
-        formatPresentingComplaints(
-          getEncountersByType(encounters.PRESENTING_COMPLAINTS)
-        ),
-        ...formatVitals([...getEncountersByType(encounters.VITALS), ...getEncountersByType(encounters.TRIAGE_RESULT)]),
-      ],
-    },
+    // {
+    //   title: "Triage Information",
+    //   content: [
+    //     formatPresentingComplaints(
+    //       getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+    //     ),
+    //     ...formatVitals([...getEncountersByType(encounters.VITALS), ...getEncountersByType(encounters.TRIAGE_RESULT)]),
+    //   ],
+    // },
       {
           title: "Monitoring Charts",
           content: <MonitoringCharts />,
