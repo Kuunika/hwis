@@ -1329,7 +1329,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.nuchalRigidity}
                                             </p>
                                         )}
-                                        <h3>Glasgow Coma Scale (GCS)</h3>
+                                        <br />
+
+                                        <h3>Glasgow Coma Scale (GCS) : {gcsTotal}/15 </h3>
 
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
                                             {medicalInpatientInfo.eyeOpeningResponse && (
@@ -1355,7 +1357,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         </div>
 
                                         {/* Display GCS Total if any component is present */}
-                                        {(medicalInpatientInfo.motorResponse ||
+                                        {/* {(medicalInpatientInfo.motorResponse ||
                                             medicalInpatientInfo.verbalResponse ||
                                             medicalInpatientInfo.eyeOpeningResponse) && (
                                                 <div style={{
@@ -1367,14 +1369,9 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 }}>
                                                     <p style={{ margin: 0, fontSize: "16px" }}>
                                                         <strong>GCS Total Score: {gcsTotal}/15</strong>
-                                                        {gcsTotal > 0 && (
-                                                            <span style={{ marginLeft: "15px", fontSize: "14px", color: "#666" }}>
-                                                                ({gcsTotal >= 13 ? "Minor" : gcsTotal >= 9 ? "Moderate" : "Severe"} injury)
-                                                            </span>
-                                                        )}
                                                     </p>
                                                 </div>
-                                            )}
+                                            )} */}
                                         <br />
                                         <h3>Cranial and Peripheral Nerves</h3>
 
@@ -1545,12 +1542,19 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                                 {medicalInpatientInfo.additionalNotes}
                                             </p>
                                         )}
+                                        <hr />
+
 
                                         {medicalInpatientInfo.managementPlan && (
-                                            <p>
-                                                <strong>Management Plan: </strong>
-                                                {medicalInpatientInfo.managementPlan}
-                                            </p>
+                                            <>
+                                                <h2>Management Plan</h2>
+
+                                                <p>
+                                                    {/* <strong>Management Plan: </strong> */}
+                                                    {medicalInpatientInfo.managementPlan}
+                                                </p>
+                                            </>
+
                                         )}
 
                                         <hr />
