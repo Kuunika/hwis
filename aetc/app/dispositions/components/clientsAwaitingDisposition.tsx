@@ -13,7 +13,20 @@ import {
 } from "../../../components";
 import { DisplayEncounterCreator } from "@/components";
 import { encounters } from "@/constants";
-import { Box, IconButton } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+  Chip,
+  OutlinedInput,
+  Paper,
+  Typography,
+  Button,
+  Collapse,
+} from "@mui/material";
 import { calculateAge } from "@/helpers/dateTime";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { closeVisit } from "@/services/visit";
@@ -26,15 +39,37 @@ import {
   FaHeartbeat,
   FaUser,
   FaFileAlt,
+  FaFilter,
+  FaTimes,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import { getActivePatientDetails } from "@/hooks";
 import { useDebounce } from "@/hooks/useDebounce";
+
+interface FilterState {
+  disposedBy: string[];
+  patientCareArea: string[];
+  dispositionType: string[];
+}
 
 export const ClientsAwaitingDisposition = () => {
   const [cpr, setCpr] = useState(false);
   const [patientId, setPatientId] = useState("");
   const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    disposedBy: [],
+    patientCareArea: [],
+    dispositionType: [],
+  });
+  const [availableFilters, setAvailableFilters] = useState({
+    disposedByOptions: [] as string[],
+    patientCareAreas: [] as string[],
+    dispositionTypes: [] as string[],
+  });
+
   const { navigateTo } = useNavigation();
   const { gender } = getActivePatientDetails();
 
@@ -47,11 +82,83 @@ export const ClientsAwaitingDisposition = () => {
     setPaginationModel,
     loading,
     totalPages,
-    refetch, // Add refetch function from your hook
-    totalEntries
+    refetch,
+    totalEntries,
   } = fetchPatientsTablePaginate("disposition");
+
   const [inputText, setInputText] = useState("");
-  const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
+  const debouncedSearch = useDebounce(inputText, 500);
+
+  // Extract unique filter options from data
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const disposedByOptions = Array.from(
+        new Set(data.map((item: any) => item.last_encounter_creator).filter(Boolean))
+      );
+      const patientCareAreas = Array.from(
+        new Set(data.map((item: any) => item.patient_care_area).filter(Boolean))
+      );
+      const dispositionTypes = Array.from(
+        new Set(data.map((item: any) => item.disposition_type).filter(Boolean))
+      );
+
+      setAvailableFilters({
+        disposedByOptions: disposedByOptions.sort(),
+        patientCareAreas: patientCareAreas.sort(),
+        dispositionTypes: dispositionTypes.sort(),
+      });
+    }
+  }, [data]);
+
+  // Filter the data based on active filters
+  const filteredData = React.useMemo(() => {
+    if (!data) return [];
+
+    return data.filter((item: any) => {
+      const matchesDisposedBy =
+        filters.disposedBy.length === 0 ||
+        filters.disposedBy.includes(item.last_encounter_creator);
+
+      const matchesPatientCareArea =
+        filters.patientCareArea.length === 0 ||
+        filters.patientCareArea.includes(item.patient_care_area);
+
+      const matchesDispositionType =
+        filters.dispositionType.length === 0 ||
+        filters.dispositionType.includes(item.disposition_type);
+
+      return matchesDisposedBy && matchesPatientCareArea && matchesDispositionType;
+    });
+  }, [data, filters]);
+
+  const handleFilterChange =
+    (filterType: keyof FilterState) => (event: SelectChangeEvent<string[]>) => {
+      const value = event.target.value;
+      setFilters((prev) => ({
+        ...prev,
+        [filterType]: typeof value === "string" ? value.split(",") : value,
+      }));
+    };
+
+  const clearFilter = (filterType: keyof FilterState, valueToRemove: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterType]: prev[filterType].filter((item) => item !== valueToRemove),
+    }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({
+      disposedBy: [],
+      patientCareArea: [],
+      dispositionType: [],
+    });
+  };
+
+  const hasActiveFilters =
+    filters.disposedBy.length > 0 ||
+    filters.patientCareArea.length > 0 ||
+    filters.dispositionType.length > 0;
 
   useEffect(() => {
     setSearchText(debouncedSearch);
@@ -60,47 +167,12 @@ export const ClientsAwaitingDisposition = () => {
   // Handle visit closure success
   useEffect(() => {
     if (visitClosed) {
-      // Refresh the data after successful visit closure
       refetch();
-      // Optional: Show success message
       console.log("Visit closed successfully, refreshing data...");
     }
   }, [visitClosed, refetch]);
 
   const columns = [
-    // {
-    //   field: "triage_result",
-    //   headerName: "Triage Cat",
-    //   renderCell: (cell: any) => {
-    //     return (
-    //       <Box
-    //         sx={{
-    //           display: "flex",
-    //           justifyContent: "center",
-    //           alignItems: "center",
-    //           width: "100%",
-    //           height: "100%",
-    //         }}
-    //       >
-    //         <Box
-    //           sx={{
-    //             width: 20,
-    //             height: 20,
-    //             borderRadius: "50%",
-    //             backgroundColor:
-    //               cell.value == "red" || cell.value == "Emergency"
-    //                 ? "#B42318"
-    //                 : cell.value == "yellow" || cell.value == "Priority"
-    //                   ? "#EDE207"
-    //                   : cell.value == "green" || cell.value == "Queue"
-    //                     ? "#016302"
-    //                     : "transparent",
-    //           }}
-    //         />
-    //       </Box>
-    //     );
-    //   },
-    // },
     { field: "given_name", headerName: "First Name", flex: 1 },
     { field: "family_name", headerName: "Last Name", flex: 1 },
     { field: "gender", headerName: "Gender" },
@@ -132,38 +204,19 @@ export const ClientsAwaitingDisposition = () => {
       headerName: "Destination",
       flex: 1,
     },
-
     {
       field: "action",
       headerName: "Actions",
       flex: 1.2,
       renderCell: (cell: any) => (
         <Box display="flex" gap={1}>
-          <DispositionActions
-            patient={cell.row}
-            onVisitClosed={refetch} // Pass refetch function
-          />
-          {/* {cell.row.triage_result == "red" && (
-            <Tooltip title="Initiate CPR" arrow>
-              <IconButton
-                onClick={() => {
-                  setPatientId(cell.row.id);
-                  setCpr(true);
-                  setVisitUUID(cell.row.visit_uuid);
-                }}
-                aria-label="initiate CPR"
-                color="error"
-              >
-                <FaHeartbeat />
-              </IconButton>
-            </Tooltip>
-          )} */}
+          <DispositionActions patient={cell.row} onVisitClosed={refetch} />
         </Box>
       ),
     },
   ];
 
-  const formatForMobileView = data?.map((row: any) => {
+  const formatForMobileView = filteredData?.map((row: any) => {
     return {
       id: row.id,
       visitNumber: row.aetc_visit_number,
@@ -191,13 +244,7 @@ export const ClientsAwaitingDisposition = () => {
           triage={row.triage_result}
           visitId={row.visit_uuid}
           id={row.uuid}
-          // showCPR={row.triage_result === "red"}
-          // onCPR={() => {
-          //   setPatientId(row.id);
-          //   setCpr(true);
-          //   setVisitUUID(row.visit_uuid);
-          // }}
-          onVisitClosed={refetch} // Pass refetch function
+          onVisitClosed={refetch}
         />
       ),
       age: `${calculateAge(row.birthdate)}yrs`,
@@ -207,18 +254,205 @@ export const ClientsAwaitingDisposition = () => {
 
   return (
     <>
+      {/* Filter Section */}
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <FaFilter />
+            <Typography variant="h6">Filters</Typography>
+            {hasActiveFilters && (
+              <Chip
+                label={`${filters.disposedBy.length +
+                  filters.patientCareArea.length +
+                  filters.dispositionType.length
+                  } active`}
+                size="small"
+                color="primary"
+              />
+            )}
+          </Box>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {hasActiveFilters && (
+              <Button
+                startIcon={<FaTimes />}
+                onClick={clearAllFilters}
+                size="small"
+                variant="outlined"
+                color="secondary"
+              >
+                Clear All
+              </Button>
+            )}
+            <Button
+              startIcon={showFilters ? <FaChevronUp /> : <FaChevronDown />}
+              onClick={() => setShowFilters(!showFilters)}
+              size="small"
+              variant="outlined"
+            >
+              {showFilters ? "Hide" : "Show"} Filters
+            </Button>
+          </Box>
+        </Box>
+
+        <Collapse in={showFilters}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+            {/* Disposed By Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Disposed By</InputLabel>
+              <Select
+                multiple
+                value={filters.disposedBy}
+                onChange={handleFilterChange("disposedBy")}
+                input={<OutlinedInput label="Disposed By" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter("disposedBy", value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.disposedByOptions.map((person) => (
+                  <MenuItem key={person} value={person}>
+                    {person}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Patient Care Area Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Patient Care Area</InputLabel>
+              <Select
+                multiple
+                value={filters.patientCareArea}
+                onChange={handleFilterChange("patientCareArea")}
+                input={<OutlinedInput label="Patient Care Area" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter("patientCareArea", value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.patientCareAreas.map((area) => (
+                  <MenuItem key={area} value={area}>
+                    {area}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {/* Disposition Type Filter */}
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Disposition Type</InputLabel>
+              <Select
+                multiple
+                value={filters.dispositionType}
+                onChange={handleFilterChange("dispositionType")}
+                input={<OutlinedInput label="Disposition Type" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value}
+                        size="small"
+                        onDelete={() => clearFilter("dispositionType", value)}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {availableFilters.dispositionTypes.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Collapse>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            <Typography variant="body2" sx={{ mr: 1, alignSelf: "center" }}>
+              Active filters:
+            </Typography>
+            {filters.disposedBy.map((filter) => (
+              <Chip
+                key={`disposed-${filter}`}
+                label={`Disposed By: ${filter}`}
+                onDelete={() => clearFilter("disposedBy", filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+            {filters.patientCareArea.map((filter) => (
+              <Chip
+                key={`area-${filter}`}
+                label={`Care Area: ${filter}`}
+                onDelete={() => clearFilter("patientCareArea", filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+            {filters.dispositionType.map((filter) => (
+              <Chip
+                key={`type-${filter}`}
+                label={`Type: ${filter}`}
+                onDelete={() => clearFilter("dispositionType", filter)}
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        )}
+      </Paper>
+
       <PatientTableListServer
         columns={columns}
         data={
-          data?.length
+          filteredData?.length
             ? {
-                data: data.map((row: any) => ({ id: row.uuid, ...row })),
-                page: paginationModel.page,
-                per_page: paginationModel.pageSize,
-                total_pages: totalPages,
-                totalEntries,
-              }
-            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0}
+              data: filteredData.map((row: any) => ({ id: row.uuid, ...row })),
+              page: paginationModel.page,
+              per_page: paginationModel.pageSize,
+              total_pages: totalPages,
+              totalEntries,
+            }
+            : { data: [], page: 1, per_page: 10, total_pages: 0, totalEntries: 0 }
         }
         searchText={inputText}
         setSearchString={setInputText}
@@ -227,12 +461,6 @@ export const ClientsAwaitingDisposition = () => {
         loading={loading}
         formatForMobileView={formatForMobileView ? formatForMobileView : []}
       />
-      {/* <CPRDialogForm
-        patientuuid={patientId}
-        visituuid={visitUUID}
-        open={cpr}
-        onClose={() => setCpr(false)}
-      /> */}
     </>
   );
 };
@@ -254,7 +482,6 @@ const DispositionActions = ({
 
   useEffect(() => {
     if (visitClosed) {
-      // Call the refresh function passed from parent
       onVisitClosed();
     }
   }, [visitClosed, onVisitClosed]);
@@ -304,30 +531,20 @@ const DispositionActions = ({
           <FaFileAlt />
         </IconButton>
       </Tooltip>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
+      <Menu id="basic-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
         <MenuItem
           onClick={() => navigateTo(`/patient/${patient.id}/medicalInpatient`)}
         >
           Medical Inpatient Admission Sheet
         </MenuItem>
-        <MenuItem
-          onClick={() => navigateTo(`/patient/${patient.id}/surgicalNotes`)}
-        >
+        <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/surgicalNotes`)}>
           Surgical Notes
         </MenuItem>
         {patient.gender?.toLowerCase() === "female" && (
-          <MenuItem
-            onClick={() => navigateTo(`/patient/${patient.id}/gyneacology`)}
-          >
+          <MenuItem onClick={() => navigateTo(`/patient/${patient.id}/gyneacology`)}>
             Gyneacology Ward Admission
           </MenuItem>
         )}
-
       </Menu>
     </Box>
   );
@@ -355,12 +572,10 @@ const CardAction = ({
   const { navigateTo } = useNavigation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { mutate: closeVisitMutation, isSuccess: visitClosed } =
-    closeCurrentVisit();
+  const { mutate: closeVisitMutation, isSuccess: visitClosed } = closeCurrentVisit();
 
   useEffect(() => {
     if (visitClosed) {
-      // Call the refresh function passed from parent
       onVisitClosed();
     }
   }, [visitClosed, onVisitClosed]);
@@ -443,19 +658,15 @@ const CardAction = ({
           </Tooltip>
         )}
       </Box>
-      <Menu
-        id="card-action-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
+      <Menu id="card-action-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
         <MenuItem
           onClick={() => {
             navigateTo(`/patient/${id}/medicalInpatient`);
             handleClose();
           }}
         >
-          Medical Inpatient Admission Sheet</MenuItem>
+          Medical Inpatient Admission Sheet
+        </MenuItem>
         <MenuItem
           onClick={() => {
             navigateTo(`/patient/${id}/surgicalNotes`);
