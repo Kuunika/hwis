@@ -5,8 +5,9 @@ import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
 import { getObservationValue } from "@/helpers/emr";
 import { concepts, encounters } from "@/constants";
-import { MainPaper, MainTypography } from "@/components";
+import { Paper, Typography, Box } from "@mui/material";
 
+// Helper to get National ID
 function getNationalIdIdentifiers(data: any) {
   if (!data) return "";
   const nationalIdObjects = data.filter(
@@ -41,11 +42,11 @@ export const PatientInfoTab = () => {
       : undefined;
 
   return (
-    <MainPaper
+    <Paper
       sx={{
         display: "flex",
         flexDirection: "row",
-        alignItems: "center", // 👈 centers label-value pairs vertically
+        alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "nowrap",
         overflowX: "auto",
@@ -61,6 +62,19 @@ export const PatientInfoTab = () => {
         "&::-webkit-scrollbar-thumb": {
           backgroundColor: "#d1d5db",
           borderRadius: "4px",
+        },
+        "@media print": {
+          display: "flex !important",
+          flexDirection: "row !important",
+          flexWrap: "nowrap !important",
+          justifyContent: "flex-start !important",
+          alignItems: "center !important",
+          gap: "12px !important",
+          padding: "8px !important",
+          overflow: "visible !important", // remove scroll
+          width: "100% !important",
+          boxShadow: "none !important",
+          border: "none !important",
         },
       }}
     >
@@ -81,15 +95,12 @@ export const PatientInfoTab = () => {
             : "-"
         }
       />
-      {/* 👇 Wider Category field for long referral text */}
       <LabelValue
         label="Category"
-        value={`Referral | ${referredFrom || "Unknown"} | ${
-          diagnosis || other
-        }`}
+        value={`Referral | ${referredFrom || "Unknown"} | ${diagnosis || other}`}
         wide
       />
-    </MainPaper>
+    </Paper>
   );
 };
 
@@ -103,32 +114,40 @@ const LabelValue = ({
   wide?: boolean;
 }) => {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center", // 👈 centers label and value horizontally
-        justifyContent: "center", // 👈 centers both vertically within the card
-        gap: "6px",
-        // minWidth: wide ? "280px" : "160px",
-        // maxWidth: wide ? "420px" : "240px",
+        flexDirection: "column", // stacked on screen
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "4px",
         flexShrink: 0,
-        textAlign: "center", // 👈 aligns label & value text to center
+        textAlign: "center",
+        "@media print": {
+          flexDirection: "row !important", // inline label-value
+          alignItems: "baseline !important",
+          justifyContent: "flex-start !important",
+          textAlign: "left !important",
+          gap: "4px !important",
+          minWidth: "auto !important",
+          maxWidth: "none !important",
+        },
       }}
     >
-      <MainTypography
+      <Typography
         sx={{
           fontFamily: "Inter",
           fontSize: { xs: "12px", md: "13px" },
           fontWeight: 500,
           color: "#6B7280",
           whiteSpace: "nowrap",
+          mr: { print: 1 },
         }}
       >
-        {label}
-      </MainTypography>
+        {label}:
+      </Typography>
 
-      <MainTypography
+      <Typography
         sx={{
           fontFamily: "Inter",
           fontSize: { xs: "14px", md: "16px" },
@@ -138,11 +157,15 @@ const LabelValue = ({
           overflow: "hidden",
           whiteSpace: "nowrap",
           maxWidth: "100%",
+          "@media print": {
+            maxWidth: "none !important",
+            overflow: "visible !important",
+          },
         }}
-        title={value} // show full text on hover
+        title={value}
       >
         {value || "-"}
-      </MainTypography>
-    </div>
+      </Typography>
+    </Box>
   );
 };

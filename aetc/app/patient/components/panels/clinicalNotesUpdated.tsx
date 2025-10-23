@@ -25,6 +25,7 @@ import {
   GenerateSurgicalNotesPDF,
   SurgicalNotesPDFRef,
 } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
+import { TriageNotes } from "./notesComponents/triageNotes";
 
 export const ClinicalNotesUpdated = () => {
   const { ServerTime } = useServerTime();
@@ -179,6 +180,7 @@ export const ClinicalNotesUpdated = () => {
                 </div>
               </div>
             </div>
+            <TriageNotes patientId={patientId} visitId={selectedVisit.uuid} />
             <MultiColumnNotes columns={2} data={filteredNotes} />
           </div>
         )}
