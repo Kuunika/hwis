@@ -12,7 +12,13 @@ export const getActivePatientDetails = () => {
     recentVisitCloseDateTime,
     closedVisitId,
     openClosedVisit,
+    encountersDone,
   } = usePatientContext();
+
+  const triaged = Boolean(
+    Array.isArray(encountersDone) &&
+      encountersDone.find((encounter) => encounter == "Triage Result")
+  );
 
   return {
     activeVisit,
@@ -26,5 +32,7 @@ export const getActivePatientDetails = () => {
     recentVisitCloseDateTime,
     closedVisitId,
     openClosedVisit,
+    encountersDone,
+    triaged,
   };
 };

@@ -87,7 +87,7 @@ export function NewStepperContainer({
 }: IProps) {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { data, isLoading, isRefetching } = getPatientsEncounters(
-    patientId as string
+    patientId as string, `visit=${activeVisitId}`
   );
   const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set());
 

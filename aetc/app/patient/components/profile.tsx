@@ -12,13 +12,18 @@ import { VisitDatesProvider } from "@/contexts/visitDatesContext";
 import { Box, Typography } from "@mui/material";
 import { getActivePatientDetails } from "@/hooks";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import { encounters } from "@/constants";
 
 export const DesktopView = () => {
-  const { hasActiveVisit, recentVisitCloseDateTime, isLoading, isSuccess } =
-    getActivePatientDetails();
+  const {
+    hasActiveVisit,
+    recentVisitCloseDateTime,
+    isLoading,
+    isSuccess,
+    activeVisit,
+    triaged,
+  } = getActivePatientDetails();
   const [load, setLoad] = useState(false);
-
-
 
   // temporary fix to ensure the component loads after the context is ready
   useEffect(() => {
@@ -44,6 +49,21 @@ export const DesktopView = () => {
             {recentVisitCloseDateTime
               ? `The most recent visit was closed on ${getHumanReadableDateTime(recentVisitCloseDateTime)}`
               : null}{" "}
+          </Typography>
+        </Box>
+      )}
+      {load && triaged === false && hasActiveVisit === true && (
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "#FF2400",
+            textAlign: "center",
+            color: "white",
+            padding: "10px",
+          }}
+        >
+          <Typography>
+            This patient wasn't triaged so you can't do assessments
           </Typography>
         </Box>
       )}

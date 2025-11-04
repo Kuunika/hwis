@@ -48,7 +48,7 @@ interface FlowStarterProps {
 const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const [cprDialog, setCprDialog] = useState(false);
   const { gender } = getActivePatientDetails();
-  const { patientId, hasActiveVisit } = getActivePatientDetails();
+  const { patientId, hasActiveVisit, triaged } = getActivePatientDetails();
   const { data: patientHistory, isLoading: historyLoading } =
     getPatientsEncounters(patientId as string);
   const { navigateTo } = useNavigation();
@@ -136,11 +136,11 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
     },
     ...(gender === "Female"
       ? [
-        {
-          label: "Gynaecology Ward Admission",
-          path: `/patient/${patient.id}/gyneacology`,
-        },
-      ]
+          {
+            label: "Gynaecology Ward Admission",
+            path: `/patient/${patient.id}/gyneacology`,
+          },
+        ]
       : []),
   ];
 
@@ -241,7 +241,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       </Button>
 
       <Button
-        disabled={!hasActiveVisit}
+        disabled={!hasActiveVisit || !triaged}
         variant="outlined"
         onClick={() => setCprDialog(true)}
         sx={{
@@ -268,7 +268,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
       {/* Assessment Button Group */}
       <ButtonGroup
         variant="contained"
-        disabled={!hasActiveVisit}
+        disabled={!hasActiveVisit || !triaged}
         sx={{
           borderRadius: "9999px",
           overflow: "hidden",

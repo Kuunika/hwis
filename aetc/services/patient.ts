@@ -118,5 +118,9 @@ export const updateDeathReport = (id: string | number, data: any) =>
 
 export const voidPatient = (id: string, void_reason:string) => remove<Patient>(`patients/${id}`, {  id, void_reason });
 
+export const encountersDone = (id: string) => {
+  return get(`/visits/${id}/encounters_done`);
+};
+
 // export const updateDeathReport = (id: string, data: any) =>
 //   edit<DeathReport>(id, data, "/death_reports");

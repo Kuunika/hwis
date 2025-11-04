@@ -1,6 +1,10 @@
 "use client";
 import { useParameters } from "@/hooks";
-import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
+import {
+  getOnePatient,
+  getPatientVisitTypes,
+  patientEncountersDone,
+} from "@/hooks/patientReg";
 import {
   createContext,
   useContext,
@@ -21,6 +25,7 @@ interface PatientContextProps {
   recentVisitCloseDateTime?: string;
   closedVisitId?: string;
   openClosedVisit: () => void;
+  encountersDone: any;
 }
 
 const PatientContext = createContext<PatientContextProps | undefined>(
@@ -39,9 +44,11 @@ export const ActivePatientProvider = ({
     isLoading,
     isSuccess,
   } = getPatientVisitTypes(params?.id as string);
-
   const { data: patient } = getOnePatient(params?.id as string);
   const activeVisit = patient?.active_visit;
+  const { data: encountersDone } = patientEncountersDone(
+    activeVisit?.uuid as string
+  );
 
   const recentClosedVisit =
     patientVisits && patientVisits.length > 0
@@ -65,6 +72,7 @@ export const ActivePatientProvider = ({
       recentClosedVisit?.date_stopped as unknown as string,
     closedVisitId: recentClosedVisit?.uuid,
     openClosedVisit: () => setHasActiveVisit(true),
+    encountersDone,
   };
 
   return (
