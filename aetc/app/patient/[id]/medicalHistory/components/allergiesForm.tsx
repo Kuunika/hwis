@@ -75,6 +75,12 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     null
   );
 
+  // New states to control allergy details visibility
+  const [showMedicationDetails, setShowMedicationDetails] = useState(false);
+  const [showMedicalSubstanceDetails, setShowMedicalSubstanceDetails] = useState(false);
+  const [showFoodDetails, setShowFoodDetails] = useState(false);
+  const [showSubstanceDetails, setShowSubstanceDetails] = useState(false);
+
   const {
     foodAllergens,
     medicalSubstanceAllergens,
@@ -86,31 +92,53 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 
   useEffect(() => {
     if (allergySelected.length > 0) {
-      setShowFoodOther(
-        allergySelected.some(
-          (allergy) => allergy.value === foodAllergens[4].uuid
-        )
+      // Check if "Other" options are selected
+      const hasFoodOther = allergySelected.some(
+        (allergy) => allergy.value === foodAllergens[4].uuid
       );
-      setShowMedicalSubstanceOther(
-        allergySelected.some(
-          (allergy) => allergy.value === medicalSubstanceAllergens[2].uuid
-        )
+      const hasMedicalSubstanceOther = allergySelected.some(
+        (allergy) => allergy.value === medicalSubstanceAllergens[2].uuid
       );
-      setShowMedicationOther(
-        allergySelected.some(
-          (allergy) => allergy.value === medicationAllergens[10].uuid
-        )
+      const hasMedicationOther = allergySelected.some(
+        (allergy) => allergy.value === medicationAllergens[10].uuid
       );
-      setShowSubstanceOther(
-        allergySelected.some(
-          (allergy) => allergy.value === substanceAllergens[3].uuid
-        )
+      const hasSubstanceOther = allergySelected.some(
+        (allergy) => allergy.value === substanceAllergens[3].uuid
       );
+
+      setShowFoodOther(hasFoodOther);
+      setShowMedicalSubstanceOther(hasMedicalSubstanceOther);
+      setShowMedicationOther(hasMedicationOther);
+      setShowSubstanceOther(hasSubstanceOther);
+
+      // Determine if allergy details should show
+      // Details should show if category has items AND "Other" is NOT selected
+      const hasMedicationCategory = allergySelected.some(
+        (item) => item.group === allergenCats[0].uuid
+      );
+      const hasMedicalSubstanceCategory = allergySelected.some(
+        (item) => item.group === allergenCats[1].uuid
+      );
+      const hasFoodCategory = allergySelected.some(
+        (item) => item.group === allergenCats[3].uuid
+      );
+      const hasSubstanceCategory = allergySelected.some(
+        (item) => item.group === allergenCats[2].uuid
+      );
+
+      setShowMedicationDetails(hasMedicationCategory && !hasMedicationOther);
+      setShowMedicalSubstanceDetails(hasMedicalSubstanceCategory && !hasMedicalSubstanceOther);
+      setShowFoodDetails(hasFoodCategory && !hasFoodOther);
+      setShowSubstanceDetails(hasSubstanceCategory && !hasSubstanceOther);
     } else {
       setShowFoodOther(null);
       setShowMedicalSubstanceOther(null);
       setShowMedicationOther(null);
       setShowSubstanceOther(null);
+      setShowMedicationDetails(false);
+      setShowMedicalSubstanceDetails(false);
+      setShowFoodDetails(false);
+      setShowSubstanceDetails(false);
     }
   }, [
     allergenCats,
@@ -144,8 +172,8 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 
         return hasOtherFoodAllergy
           ? schema
-              .required("Please specify the other food allergy")
-              .min(1, "The other food allergy must not be empty")
+            .required("Please specify the other food allergy")
+            .min(1, "The other food allergy must not be empty")
           : schema.notRequired();
       }),
 
@@ -173,8 +201,8 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
 
         return hasOtherMedicalSubstanceAllergy
           ? schema.required(
-              "Please specify the other medical substance allergy"
-            )
+            "Please specify the other medical substance allergy"
+          )
           : schema.notRequired();
       }),
 
@@ -202,7 +230,6 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   };
 
   const handleSubmit = async () => {
-  
     await schema.validate(formValues);
 
     const allergyListKey = concepts.ALLERGY;
@@ -229,15 +256,14 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
       }
     });
 
-    
     onSubmit(formValues);
   };
 
   useEffect(() => {
-      const isNone = allergySelected.find((allergy: any) => allergy.value === "None");
-      
-      if(isNone) onSkip();
-  }, [allergySelected]);
+    const isNone = allergySelected.find((allergy: any) => allergy.value === "None");
+
+    if (isNone) onSkip();
+  }, [allergySelected, onSkip]);
 
   return (
     <>
@@ -298,9 +324,7 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           />
         )}
 
-        {allergySelected.some(
-          (item) => item.group === allergenCats[0].uuid
-        ) && (
+        {showMedicationDetails && (
           <TextInputField
             id="medication_Allergy_Details"
             name={"medication_Allergy_Details"}
@@ -309,9 +333,7 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           />
         )}
 
-        {allergySelected.some(
-          (item) => item.group === allergenCats[1].uuid
-        ) && (
+        {showMedicalSubstanceDetails && (
           <TextInputField
             id="medical_Substance_Allergy_Details"
             name={"medical_Substance_Allergy_Details"}
@@ -320,9 +342,7 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           />
         )}
 
-        {allergySelected.some(
-          (item) => item.group === allergenCats[3].uuid
-        ) && (
+        {showFoodDetails && (
           <TextInputField
             id="food_Allergy_Details"
             name={"food_Allergy_Details"}
@@ -331,9 +351,7 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
           />
         )}
 
-        {allergySelected.some(
-          (item) => item.group === allergenCats[2].uuid
-        ) && (
+        {showSubstanceDetails && (
           <TextInputField
             id="substance_Allergy_Details"
             name={"substance_Allergy_Details"}
@@ -351,7 +369,7 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
             sx={{ flex: 1, marginRight: "8px" }}
           />
           <MainButton
-            onClick={() => {}}
+            onClick={() => { }}
             variant="primary"
             title="Next"
             type="submit"

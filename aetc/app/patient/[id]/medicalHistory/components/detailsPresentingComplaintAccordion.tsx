@@ -43,7 +43,7 @@ export const DetailsPresentingComplaintsAccordion = () => {
   const sections = [
     {
       id: "complaints",
-      title: "Complains",
+      title: "Presenting Complaints",
       content: <Complaints />,
     },
   ];
