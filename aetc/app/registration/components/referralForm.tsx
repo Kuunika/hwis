@@ -167,7 +167,7 @@ export const ReferralForm: FC<Props> = ({
                       ]
                     : []
                 }
-                label="Diagnosis"
+                label="Reason"
                 disabled={referred == "No"}
                 name={concepts.DIAGNOSIS}
               />
@@ -183,7 +183,7 @@ export const ReferralForm: FC<Props> = ({
                       rows={5}
                       sx={{ width: "100%" }}
                       name={concepts.OTHER}
-                      label="Other Diagnosis"
+                      label="Other Reason"
                       id={concepts.OTHER}
                     />
                   </>
