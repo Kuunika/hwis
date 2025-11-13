@@ -447,7 +447,7 @@ export const MedicalHistoryFlow = () => {
     handleSkip(); // Changed from scrollToDiv(surgeriesFormRef) to handleSkip()
   }
 
- 
+
   async function handleConditionsSubmission(values: any): Promise<any> {
     // Existing conditions submission logic
     const observationsPayload = values.conditions.map((condition: any) => {
@@ -638,7 +638,9 @@ export const MedicalHistoryFlow = () => {
 
   function handleReviewNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, review: values }));
-    scrollToDiv(familyHistoryFormRef);
+    // scrollToDiv(familyHistoryFormRef);
+    setReadyToSubmit(true);
+
   }
 
   function handleLastMealNext(values: any): void {
@@ -676,7 +678,7 @@ export const MedicalHistoryFlow = () => {
       throw error;
     }
   }
-  
+
 
   // 4. The complete updated handleReviewSubmission should be:
   async function handleReviewSubmission(values: any): Promise<any> {
@@ -812,90 +814,90 @@ export const MedicalHistoryFlow = () => {
     setReadyToSubmit(true);
   }
 
-  async function handleFamilyHistorySubmission(values: any): Promise<any> {
-    const conditionConcepts: { [key: string]: string } = {
-      asthma: concepts.FAMILY_HISTORY_ASTHMA,
-      hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
-      diabetes_mellitus: concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
-      epilepsy: concepts.FAMILY_HISTORY_EPILEPSY,
-      cancer: concepts.FAMILY_HISTORY_CANCER,
-      tuberculosis: concepts.FAMILY_HISTORY_TUBERCULOSIS,
-      other: concepts.FAMILY_HISTORY_OTHER_CONDITION,
-    };
+  // async function handleFamilyHistorySubmission(values: any): Promise<any> {
+  //   const conditionConcepts: { [key: string]: string } = {
+  //     asthma: concepts.FAMILY_HISTORY_ASTHMA,
+  //     hypertension: concepts.FAMILY_HISTORY_HYPERTENSION,
+  //     diabetes_mellitus: concepts.FAMILY_HISTORY_DIABETES_MELLITUS,
+  //     epilepsy: concepts.FAMILY_HISTORY_EPILEPSY,
+  //     cancer: concepts.FAMILY_HISTORY_CANCER,
+  //     tuberculosis: concepts.FAMILY_HISTORY_TUBERCULOSIS,
+  //     other: concepts.FAMILY_HISTORY_OTHER_CONDITION,
+  //   };
 
-    const observations: { concept: string; value: any }[] = [];
+  //   const observations: { concept: string; value: any }[] = [];
 
-    Object.keys(values).forEach((key) => {
-      const value = values[key];
+  //   Object.keys(values).forEach((key) => {
+  //     const value = values[key];
 
-      if (key.includes("Relationship")) {
-        const conditionKey = key.replace("Relationship", "");
-        const relationship = value;
+  //     if (key.includes("Relationship")) {
+  //       const conditionKey = key.replace("Relationship", "");
+  //       const relationship = value;
 
-        if (values[conditionKey + "Type"]) {
-          const conditionType = values[conditionKey + "Type"];
+  //       if (values[conditionKey + "Type"]) {
+  //         const conditionType = values[conditionKey + "Type"];
 
-          observations.push({
-            concept: conditionConcepts[conditionKey],
-            value: conditionType,
-          });
-        } else if (key === "otherRelationship" && values["otherSpecify"]) {
-          observations.push({
-            concept: conditionConcepts["other"],
-            value: values["otherSpecify"],
-          });
-        } else {
-          observations.push({
-            concept: conditionConcepts[conditionKey],
-            value: true,
-          });
-        }
+  //         observations.push({
+  //           concept: conditionConcepts[conditionKey],
+  //           value: conditionType,
+  //         });
+  //       } else if (key === "otherRelationship" && values["otherSpecify"]) {
+  //         observations.push({
+  //           concept: conditionConcepts["other"],
+  //           value: values["otherSpecify"],
+  //         });
+  //       } else {
+  //         observations.push({
+  //           concept: conditionConcepts[conditionKey],
+  //           value: true,
+  //         });
+  //       }
 
-        observations.push({
-          concept: concepts.RELATIONSHIP_TO_PATIENT,
-          value: relationship,
-        });
-      }
+  //       observations.push({
+  //         concept: concepts.RELATIONSHIP_TO_PATIENT,
+  //         value: relationship,
+  //       });
+  //     }
 
-      if (
-        key.includes("Type") &&
-        !values[key.replace("Type", "Relationship")]
-      ) {
-        const conditionKey = key.replace("Type", "");
-        const conditionType = value;
+  //     if (
+  //       key.includes("Type") &&
+  //       !values[key.replace("Type", "Relationship")]
+  //     ) {
+  //       const conditionKey = key.replace("Type", "");
+  //       const conditionType = value;
 
-        observations.push({
-          concept: conditionConcepts[conditionKey],
-          value: conditionType,
-        });
-      }
-    });
+  //       observations.push({
+  //         concept: conditionConcepts[conditionKey],
+  //         value: conditionType,
+  //       });
+  //     }
+  //   });
 
-    const groupedObservations = [];
-    for (let i = 0; i < observations.length; i += 2) {
-      groupedObservations.push([observations[i], observations[i + 1]]);
-    }
+  //   const groupedObservations = [];
+  //   for (let i = 0; i < observations.length; i += 2) {
+  //     groupedObservations.push([observations[i], observations[i + 1]]);
+  //   }
 
-    const encounterPayload = groupedObservations.map(
-      ([condition, relation]) => ({
-        ...condition,
-        groupMembers: [relation],
-      })
-    );
+  //   const encounterPayload = groupedObservations.map(
+  //     ([condition, relation]) => ({
+  //       ...condition,
+  //       groupMembers: [relation],
+  //     })
+  //   );
 
-    try {
-      const response = await createEncounter({
-        encounterType: encounters.FAMILY_MEDICAL_HISTORY,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: encounterPayload,
-      });
-      console.log("Encounter successfully created:", response);
-    } catch (error: any) {
-      throw error;
-    }
-  }
+  //   try {
+  //     const response = await createEncounter({
+  //       encounterType: encounters.FAMILY_MEDICAL_HISTORY,
+  //       visit: activeVisit?.uuid,
+  //       patient: params.id,
+  //       encounterDatetime: dateTime,
+  //       obs: encounterPayload,
+  //     });
+  //     console.log("Encounter successfully created:", response);
+  //   } catch (error: any) {
+  //     throw error;
+  //   }
+  // }
 
   async function handleSubmitAll(index: number) {
     if (index >= Object.keys(formData).length) {
@@ -916,7 +918,7 @@ export const MedicalHistoryFlow = () => {
       lastMeal: handleLastMealSubmission,
       // admissions: handleAdmissionsSubmission,
       review: handleReviewSubmission,
-      family: handleFamilyHistorySubmission,
+      // family: handleFamilyHistorySubmission,
     };
 
     const key = Object.keys(formData)[index];
@@ -988,18 +990,18 @@ export const MedicalHistoryFlow = () => {
           />
           <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
-            onSkip={() => scrollToDiv(familyHistoryFormRef)}
+            onSkip={handleSkip}
             onPrevious={handlePrevious}
           />
 
-          <SubSteps parent={patient?.gender === "Female" ? 6 : 5}>
+          {/* <SubSteps parent={patient?.gender === "Female" ? 6 : 5}>
             <div ref={familyHistoryFormRef}>
               <FamilyHistoryForm
                 onSubmit={handleFamilyNext}
                 onSkip={handlePrevious}
               />
             </div>
-          </SubSteps>
+          </SubSteps> */}
         </NewStepperContainer>
       )}
     </>
