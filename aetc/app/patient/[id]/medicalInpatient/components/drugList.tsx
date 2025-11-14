@@ -1,9 +1,8 @@
 import { FormikInit, SearchComboBox, TextInputField } from "@/components";
 import { concepts } from "@/constants";
 import { useServerTime } from "@/contexts/serverTimeContext";
-import { getInitialValues, mapSearchComboOptionsToConcepts } from "@/helpers";
+import { getInitialValues } from "@/helpers";
 import useFetchMedications from "@/hooks/useFetchMedications";
-
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -22,18 +21,32 @@ const schema = Yup.object().shape({
   [form.drug.name]: Yup.array().required().label(form.drug.label),
   [form.other.name]: Yup.string().label(form.other.label),
 });
+
 const initialValues = getInitialValues(form);
 
 export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const [showOther, setShowOther] = useState(false);
+  const [noneSelected, setNoneSelected] = useState(false);
   const { medicationOptions } = useFetchMedications();
   const { ServerTime } = useServerTime();
 
   const handleSubmit = (values: any) => {
     const formValues = { ...values };
     const obsDatetime = ServerTime.getServerTimeString();
-
     const selectedDrugs = formValues[form.drug.name] || [];
+
+    // If "None" is selected, submit just that
+    if (selectedDrugs.some((d: any) => d.id === concepts.NONE)) {
+      const obs = [
+        {
+          concept: form.drug.name,
+          value: "No medications",
+          obsDatetime,
+        },
+      ];
+      onSubmit(obs);
+      return;
+    }
 
     const drugObs = selectedDrugs.map((drug: any) => {
       if (drug.id === concepts.OTHER) {
@@ -46,7 +59,7 @@ export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
 
       return {
         concept: concepts.MEDICATION,
-        value: drug.label, // 👈 human-readable drug name
+        value: drug.label,
         obsDatetime,
       };
     });
@@ -63,6 +76,13 @@ export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
     onSubmit(obs);
   };
 
+  // ✅ Include "None" and "Other" options
+  const options = [
+    { id: concepts.NONE, label: "None" },
+    ...medicationOptions,
+    { id: concepts.OTHER, label: "Other" },
+  ];
+
   return (
     <FormikInit
       validationSchema={schema}
@@ -72,17 +92,25 @@ export const DrugList = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
     >
       <SearchComboBox
         name={form.drug.name}
-        options={[...medicationOptions, { id: concepts.OTHER, label: "Other" }]}
-        getValue={(values: any) => {
-          setShowOther(
-            Boolean(values.find((v: any) => v.id == concepts.OTHER))
-          );
-        }}
+        options={options}
         multiple
         label={form.drug.label}
+        getValue={(values: any) => {
+          const hasNone = values.some((v: any) => v.id === concepts.NONE);
+          setNoneSelected(hasNone);
+
+          // Hide "Other" field if "None" is selected
+          if (hasNone) {
+            setShowOther(false);
+          } else {
+            setShowOther(Boolean(values.find((v: any) => v.id === concepts.OTHER)));
+          }
+        }}
       />
+
       <br />
-      {showOther && (
+
+      {showOther && !noneSelected && (
         <TextInputField
           multiline
           rows={5}

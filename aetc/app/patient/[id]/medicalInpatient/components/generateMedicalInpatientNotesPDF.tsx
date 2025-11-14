@@ -1295,7 +1295,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         )}
                                         <hr />
 
-                                        <h2>Extremities</h2>
+                                        <h3>Extremities</h3>
 
                                         {medicalInpatientInfo.edema && (
                                             <p>
@@ -1304,7 +1304,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                             </p>
                                         )}
                                         <hr />
-                                        <h2>Skin</h2>
+                                        <h3>Skin</h3>
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
 
                                             {medicalInpatientInfo.skinRash && (
@@ -1322,7 +1322,7 @@ export const GenerateMedicalInpatientlNotesPDF = forwardRef<MedicalInpatientNote
                                         </div>
                                         <hr />
 
-                                        <h2>Neurological Examination</h2>
+                                        <h3>Neurological Examination</h3>
                                         {medicalInpatientInfo.nuchalRigidity && (
                                             <p>
                                                 <strong>Neck Stiffness: </strong>
