@@ -147,6 +147,7 @@ const radioOptions = [
 ];
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
+  const { ServerTime } = useServerTime();
   const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
@@ -156,7 +157,6 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
   const [showNasopharyngealSize, setShowNasopharyngealSize] = useState(false);
 
   const handleSubmitForm = async (values: any) => {
-    const { ServerTime } = useServerTime();
     const formValues = { ...values };
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];

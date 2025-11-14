@@ -268,6 +268,7 @@ const radioOptions = [
   { label: "No", value: NO },
 ];
 export const BreathingForm = ({ onSubmit }: Prop) => {
+   const { ServerTime } = useServerTime();
   const { gender } = getActivePatientDetails();
   const [chestExpansionImagesEnc, setChestExpansionImagesEnc] = useState<
     Array<any>
@@ -289,7 +290,7 @@ export const BreathingForm = ({ onSubmit }: Prop) => {
   const [lungBack, setLungBack] = useState<Array<any>>([]);
 
   const handleSubmitForm = async (values: any) => {
-    const { ServerTime } = useServerTime();
+   
     const formValues = { ...values };
 
     const obs = [

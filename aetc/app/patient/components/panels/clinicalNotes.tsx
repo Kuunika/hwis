@@ -181,6 +181,7 @@ export const ClinicalNotes = () => {
     encounters.CLINICAL_NOTES,
     () => ""
   );
+   const { ServerTime } = useServerTime();
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -628,7 +629,7 @@ export const ClinicalNotes = () => {
   ]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
-    const { ServerTime } = useServerTime();
+   
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
       () => refresh()
@@ -1317,7 +1318,7 @@ const AddClinicalNotes = ({
               paddingBottom: "5px",
             }}
           ></span>
-          <Button
+          {/* <Button
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
@@ -1346,8 +1347,8 @@ const AddClinicalNotes = ({
             }}
           >
             SOAPIER Notes
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
@@ -1376,7 +1377,7 @@ const AddClinicalNotes = ({
             }}
           >
             AETC
-          </Button>
+          </Button> */}
           {/* New Surgical Notes Button */}
           <Button
             onClick={() => {

@@ -1,13 +1,13 @@
 import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
-export function Glucose() {
-  const { values, dateTimes } = getObsGraphData("Serum glucose");
+export function Urine() {
+  const { values, dateTimes } = getObsGraphData("Urine Dipstick Ketones");
   return (
     <LineChart
       chartConfig={{
         series: [
           {
-            name: "Glucose",
+            name: "Urine Dipstick Ketones",
             data: values,
           },
         ],
@@ -15,7 +15,7 @@ export function Glucose() {
         title: "",
         height: 350,
         yAxisMin: 0,
-        colors: ["#247BA0"],
+        colors: ["#70C1B3"],
       }}
     />
   );

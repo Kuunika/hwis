@@ -20,13 +20,13 @@ const validationSchema = Yup.object().shape({
 const initialValues = getInitialValues(form);
 
 export const ContinuationSheetForm = () => {
+  const { ServerTime } = useServerTime();
   const { navigateBack } = useNavigation();
   const { handleSubmit } = useSubmitEncounter(encounters.CLINICAL_NOTES, () =>
     navigateBack()
   );
 
   const handleSubmitForm = (values: any) => {
-    const { ServerTime } = useServerTime();
     handleSubmit(getObservations(values, ServerTime.getServerTimeString()));
   };
 

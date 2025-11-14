@@ -21,10 +21,6 @@ const form = {
         name: concepts.ADDITIONAL_NOTES,
         label: "Other Tests",
     },
-    managementPlan: {
-        name: concepts.PLAN,
-        label: "Management Plan",
-    },
 };
 
 const initialValues = getInitialValues(form);
@@ -38,7 +34,7 @@ export const Investigations = ({ onClose }: { onClose: (values: any) => void }) 
         const obsDatetime = ServerTime.getServerTimeString();
         const obs = getObservations(values, obsDatetime);
 
-        // Pass the radiological, additional notes and management plan observations back to the workflow for final submission
+        // Pass the radiological and additional notes observations to the next step
         onClose(obs);
     };
 
@@ -104,7 +100,7 @@ export const Investigations = ({ onClose }: { onClose: (values: any) => void }) 
                     validationSchema={schema}
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
-                    submitButtonText="Complete"
+                    submitButtonText="Next"
                 >
                     <TextInputField
                         multiline
@@ -126,38 +122,16 @@ export const Investigations = ({ onClose }: { onClose: (values: any) => void }) 
                             borderBottom: "2px solid #e5e7eb",
                             paddingBottom: "8px"
                         }}>
-                            Other Tests                        </h3>
+                            Other Tests
+                        </h3>
                         <TextInputField
                             multiline
                             rows={6}
                             name={form.additionalNotes.name}
                             label={form.additionalNotes.label}
                             id={form.additionalNotes.name}
-                            sx={{ width: "100%", marginBottom: "10px" }}
-                            placeholder="Enter any additional investigation notes, observations, or recommendations..."
-                        />
-                    </div>
-
-                    {/* Management Plan Section */}
-                    <div style={{ marginTop: "30px" }}>
-                        <h3 style={{
-                            fontSize: "1.2rem",
-                            fontWeight: "600",
-                            marginBottom: "15px",
-                            color: "#374151",
-                            borderBottom: "2px solid #e5e7eb",
-                            paddingBottom: "8px"
-                        }}>
-                            Management Plan
-                        </h3>
-                        <TextInputField
-                            multiline
-                            rows={6}
-                            name={form.managementPlan.name}
-                            label={form.managementPlan.label}
-                            id={form.managementPlan.name}
                             sx={{ width: "100%" }}
-                            placeholder="Enter the management plan including medications, interventions, and follow-up care..."
+                            placeholder="Enter any additional investigation notes, observations, or recommendations..."
                         />
                     </div>
                 </FormikInit>

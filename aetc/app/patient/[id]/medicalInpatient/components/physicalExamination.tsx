@@ -170,7 +170,8 @@ const form = {
   // },
 
   facialSensation: {
-    name: concepts.SENSATION,
+    // name: concepts.SENSATION,
+    name: concepts.EYE_MOVEMENTS_SENSATION,
     label: "Facial Movements / Sensation:",
   },
 
@@ -407,24 +408,23 @@ export const PhysicalExamination = ({
     const obs = [
       {
         concept: concepts.SITE,
-        values: "Lung Anterior",
+        value: "Lung Anterior",
         groupMembers: await flattenImagesObs(percussionImageEnc),
         obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: "Lung Posterior",
+        value: "Lung Posterior",
         groupMembers: await flattenImagesObs(percussionPosteriorImageEnc),
         obsDatetime,
       },
       {
         concept: concepts.SITE,
-        values: "Abdomen",
+        value: "Abdomen",
         groupMembers: await flattenImagesObs(abdomenImageEnc),
         obsDatetime,
       },
     ];
-
     onSubmit([...getObservations(formValues, obsDatetime), ...obs]);
   };
 

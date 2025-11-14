@@ -25,8 +25,10 @@ import {
   GenerateSurgicalNotesPDF,
   SurgicalNotesPDFRef,
 } from "../../[id]/surgicalNotes/components/generateSurgicalNotesPDF";
+import { TriageNotes } from "./notesComponents/triageNotes";
 
 export const ClinicalNotesUpdated = () => {
+  const { ServerTime } = useServerTime();
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -80,7 +82,6 @@ export const ClinicalNotesUpdated = () => {
   };
 
   const addClinicalNote = (note: string) => {
-    const { ServerTime } = useServerTime();
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
       () => refresh()
@@ -179,6 +180,7 @@ export const ClinicalNotesUpdated = () => {
                 </div>
               </div>
             </div>
+            <TriageNotes patientId={patientId} visitId={selectedVisit.uuid} />
             <MultiColumnNotes columns={2} data={filteredNotes} />
           </div>
         )}

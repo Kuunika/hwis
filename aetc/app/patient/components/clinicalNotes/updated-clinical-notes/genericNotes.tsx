@@ -162,6 +162,98 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
 
 // Configuration presets for different clinical components
 export const NotesConfig = {
+
+    // Vitals Configuration
+    VITALS: {
+        rootConcept: "Triage Result",
+        fields: [
+            {
+                conceptName: "Blood oxygen saturation",
+                displayName: "O2 Sat",
+                format: (value: any) => `${value}%`
+            },
+            {
+                conceptName: "Pulse",
+                displayName: "Pulse",
+                format: (value: any) => `${value} bpm`
+            },
+            {
+                conceptName: "Systolic blood pressure",
+                displayName: "Systolic BP",
+                format: (value: any) => `${value} mmHg`
+            },
+            {
+                conceptName: "Diastolic blood pressure",
+                displayName: "Diastolic BP",
+                format: (value: any) => `${value} mmHg`
+            },
+            {
+                conceptName: "Respiratory rate",
+                displayName: "Respiratory Rate",
+                format: (value: any) => `${value} bpm`
+            },
+            {
+                conceptName: "Temperature (c)",
+                displayName: "Temperature",
+                format: (value: any) => `${value} °C`
+            },
+            {
+                conceptName: "Serum glucose",
+                displayName: "Blood Glucose"
+            },
+            {
+                conceptName: "Urine Dipstick Ketones",
+                displayName: "Urine Dipstick-Ketones"
+            },
+            {
+                conceptName: "AVPU",
+                displayName: "AVPU Scale"
+            },
+            {
+                conceptName: "Peak Expiratory Flow Rate",
+                displayName: "PEFR",
+                format: (value: any) => `${value} L/min`
+            },
+        ],
+    },
+    // Procedures Done Configuration
+    PROCEDURES_DONE: {
+        rootConcept: [
+            "Circulation Interventions",
+            "Breathing Interventions",
+            "Airway opening interventions",
+            "Exposure interventions",
+            "Disability interventions"
+        ],
+        fields: [],
+        itemRenderer: (item: any) => {
+            const categoryName = item.names?.[0]?.name || "";
+            const displayCategory = categoryName
+                .replace(" interventions", "")
+                .replace(" opening", "")
+                .replace("Airway", "Airway Intervention")
+                .replace("Breathing", "Breathing Intervention")
+                .replace("Circulation", "Circulation Intervention")
+                .replace("Disability", "Disability Intervention")
+                .replace("Exposure", "Exposure Intervention");
+
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{
+                         marginBottom: "4px" }}>
+                        - {displayCategory}
+                    </div>
+                    <div style={{ paddingLeft: "16px" }}>
+                        {item.children?.map((child: any, index: number) => (
+                            <div key={index} style={{ marginBottom: "2px" }}>
+                                - {child.names?.[0]?.name}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+    },
     // Allergies Configuration
     ALLERGIES: {
         rootConcept: "Allergen Category",

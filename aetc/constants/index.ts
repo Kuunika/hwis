@@ -1286,6 +1286,7 @@ export const concepts = {
 
   // to be created
   ARV: "on arv",
+  DRUG_START_DATE: "Historical drug start date",
   OTHER_MEDICATION: "Other Medication",
   SURGICAL_HISTORY: "surgical history",
   INTOXICATION_DESCRIPTION: "Intoxication description",
@@ -1515,6 +1516,7 @@ export const concepts = {
   ROUNDED: "Rounded",
   PROTUBERANT: "Protuberant",
   SCAPHOID: "Scaphoid",
+  OUTCOME: "Outcome",
 };
 
 export const conceptNames = {

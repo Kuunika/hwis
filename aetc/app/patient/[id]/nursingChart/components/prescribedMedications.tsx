@@ -23,6 +23,7 @@ import { DrugDispensedList, formatDispensed } from "./drugDispensedList";
 import { PrescribedMedicationList } from "./prescribedMedicationList";
 
 export const PrescribedMedication = () => {
+   const { ServerTime } = useServerTime();
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
   const { data, isPending, isRefetching, refetch } = getPatientsEncounters(
     patientId as string
@@ -83,7 +84,7 @@ export const PrescribedMedication = () => {
   );
 
   const handleSubmit = useCallback(() => {
-    const { ServerTime } = useServerTime();
+   
     if (!formData.dose || !formData.route) {
       setFormError({
         dose: !formData.dose ? "Field is required" : undefined,

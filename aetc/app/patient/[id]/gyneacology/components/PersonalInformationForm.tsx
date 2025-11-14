@@ -31,6 +31,7 @@ export const PersonalInformationForm = ({ onSubmit, onSkip }: Prop) => {
   const { mutate: submitEncounter } = fetchConceptAndCreateEncounter();
   const [activeVisit, setActiveVisit] = useState<Visit | undefined>(undefined);
   const { data: patientVisits } = getPatientVisitTypes(params.id as string);
+   const { ServerTime } = useServerTime();
 
   useEffect(() => {
     if (patientVisits) {
@@ -42,7 +43,7 @@ export const PersonalInformationForm = ({ onSubmit, onSkip }: Prop) => {
   }, [patientVisits]);
 
   const handleSubmit = async (values: any) => {
-    const { ServerTime } = useServerTime();
+   
     const currentDateTime = ServerTime.getServerTimeString();
 
     // Construct observations from all values (replace with actual concept mappings if needed)
