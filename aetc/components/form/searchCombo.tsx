@@ -19,7 +19,7 @@ const Select = dynamic(
 ) as <
   Option = unknown,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>
 ) => JSX.Element;
@@ -92,13 +92,18 @@ export const SearchComboBox: FC<Props> = ({
     { value: string | number; label: string | number },
     boolean
   > = {
+    container: (base) => ({
+      ...base,
+      width, // ✅ use width prop for outer container
+    }),
     control: (base, state) => ({
       ...base,
+      width, // ✅ use width prop for inner control as well
       borderColor: hasError
         ? theme.palette.error.main
         : state.isFocused
-        ? theme.palette.primary.main
-        : theme.palette.divider,
+          ? theme.palette.primary.main
+          : theme.palette.divider,
       boxShadow: state.isFocused
         ? `0 0 0 1px ${theme.palette.primary.main}`
         : "none",
@@ -127,8 +132,8 @@ export const SearchComboBox: FC<Props> = ({
       backgroundColor: state.isSelected
         ? theme.palette.action.selected
         : state.isFocused
-        ? theme.palette.action.hover
-        : theme.palette.background.paper,
+          ? theme.palette.action.hover
+          : theme.palette.background.paper,
       color: theme.palette.text.primary,
       "&:active": {
         backgroundColor: theme.palette.action.selected,
@@ -181,7 +186,13 @@ export const SearchComboBox: FC<Props> = ({
   if (!mounted) return null;
 
   return (
-    <WrapperBox sx={{ width, ...sx, borderRadius: theme.shape.borderRadius }}>
+    <WrapperBox
+      sx={{
+        width, // ✅ use width prop here too
+        ...sx,
+        borderRadius: theme.shape.borderRadius,
+      }}
+    >
       <InputLabel
         shrink
         sx={{ color: hasError ? theme.palette.error.main : "inherit" }}
@@ -194,17 +205,6 @@ export const SearchComboBox: FC<Props> = ({
         isMulti={multiple}
         options={mappedOptions}
         value={value ? mappedOptions?.find((op) => op.value === value) : value}
-        // value={value ? mappedOptions?.find((op) => op.value === value) : null}
-        // value={
-        //   multiple
-        //     ? mappedOptions.filter((op) =>
-        //         Array.isArray(value)
-        //           ? value.some((v: any) => v.id === op.value)
-        //           : false
-        //       )
-        //     : mappedOptions.find((op) => op.value === value) ?? null
-        // }
-
         //@ts-ignore
         styles={customStyles}
         menuPortalTarget={typeof window !== "undefined" ? document.body : null}

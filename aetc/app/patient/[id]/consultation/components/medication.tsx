@@ -12,18 +12,14 @@ import {
 import React, { useEffect, useState } from "react";
 import { FieldArray } from "formik";
 import * as yup from "yup";
-import { Box, Paper, TableCell, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { IoTimeOutline } from "react-icons/io5";
 import { GiMedicines } from "react-icons/gi";
 
 import { concepts, durationOptions, encounters } from "@/constants";
-import { getAllDrugs } from "@/hooks/drugs";
-import {
-  addEncounter,
-  fetchConceptAndCreateEncounter,
-} from "@/hooks/encounter";
-import { getActivePatientDetails, useNavigation } from "@/hooks";
+import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
+import { getActivePatientDetails } from "@/hooks";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { PrescribedMedicationList } from "../../nursingChart/components/prescribedMedicationList";
 import { AccordionComponent } from "@/components/accordion";
@@ -46,6 +42,12 @@ type Medication = {
   medication_frequency: string;
   medication_duration: number;
   medication_duration_unit: string;
+  specify?: string;
+  diluent?: string;
+  finalVolume?: string;
+  rate?: string;
+  route: string;
+  otherDiluent: string;
   // medication_date_last_taken: string;
   // medication_date_of_last_prescription: string;
 };
@@ -58,9 +60,38 @@ const medicationTemplate: Medication = {
   medication_frequency: "",
   medication_duration: 0,
   medication_duration_unit: "",
+  specify: "",
+  diluent: "",
+  finalVolume: "",
+  route: "",
+  rate: "",
+  otherDiluent: "",
   // medication_date_last_taken: "",
   // medication_date_of_last_prescription: "",
 };
+
+const diluent = [
+  { id: concepts.NORMAL_SALIVA, label: "Normal Saliva" },
+  { id: concepts.WATER_FOR_INJECTION, label: "Water for injection" },
+  { id: concepts.RINGERS_LACTATE, label: "Ringer’s Lactate" },
+  { id: concepts.OTHER, label: "Other" },
+];
+
+const routeOptions = [
+  {
+    id: concepts.PO,
+    label: "PO",
+  },
+  { id: concepts.NG, label: "PO" },
+  { id: concepts.IM, label: "IM" },
+  { id: concepts.IV, label: "IV" },
+  { id: concepts.PR, label: "PR" },
+  { id: concepts.SUBLINGUAL, label: "Sublingual" },
+  { id: concepts.SUBCUT, label: "Sub cut" },
+  { id: concepts.TOPICAL, label: "Topical" },
+  { id: concepts.INTRANAS, label: "Intranas" },
+  { id: concepts.INTRAOSSEOUS, label: "Intraosseous" },
+];
 
 const initialValues = {
   medications: [medicationTemplate],
@@ -99,6 +130,8 @@ const frequencyOptions = [
   { id: concepts.ONCE_A_MONTH, label: "Once a month" },
   { id: concepts.MORNING, label: "Morning" },
   { id: concepts.EVENING, label: "Evening" },
+  { id: concepts.PRN, label: "PRN" },
+  { id: concepts.CONTINOUS_INFUSION, label: "Continous Infusion" },
   { id: concepts.OTHER, label: "Other" },
 ];
 
@@ -129,6 +162,12 @@ const schema = yup.object().shape({
         .date()
         .nullable()
         .required("Date of last prescription is required"),
+      specify: yup.string(),
+      diluent: yup.string().label("Diluent"),
+      finalVolume: yup.string().label("Final Volume"),
+      rate: yup.string().label("Rate"),
+      route: yup.string().required().label("route"),
+      otherDiluent: yup.string().label("specify diluent"),
     })
   ),
 });
@@ -140,6 +179,8 @@ const medicationUnits = [
   "International Units (IU)",
   "Milliliters (ml)",
   "Millimoles (mmol)",
+  "Microg/kg/hr",
+  "Mg/kg/hr",
 ];
 
 export const MedicationsForm = ({
@@ -197,6 +238,11 @@ export const MedicationsForm = ({
             obsDateTime,
           },
           {
+            concept: concepts.MEDICATION_ROUTE,
+            value: medication.route,
+            obsDateTime,
+          },
+          {
             concept: concepts.MEDICATION_DOSE_UNIT,
             value: medication.medication_dose_unit,
             obsDateTime,
@@ -205,6 +251,28 @@ export const MedicationsForm = ({
             concept: concepts.MEDICATION_FREQUENCY,
             value: medication.medication_frequency,
             obsDateTime,
+            groupMembers: [
+              {
+                concept: concepts.DILUENT,
+                value: medication.diluent,
+                obsDateTime,
+              },
+              {
+                concept: concepts.FINAL_VOLUME,
+                value: medication.finalVolume,
+                obsDateTime,
+              },
+              {
+                concept: concepts.RATE,
+                value: medication.rate,
+                obsDateTime,
+              },
+              {
+                concept: concepts.SPECIFY,
+                value: medication.otherDiluent,
+                obsDateTime,
+              },
+            ],
           },
           {
             concept: concepts.MEDICATION_DURATION,
@@ -214,6 +282,11 @@ export const MedicationsForm = ({
           {
             concept: concepts.MEDICATION_DURATION_UNIT,
             value: medication.medication_duration_unit,
+            obsDateTime,
+          },
+          {
+            concept: concepts.SPECIFY,
+            value: medication.specify,
             obsDateTime,
           },
           {
@@ -309,29 +382,71 @@ export const MedicationsForm = ({
                         // sx={{ flex: 1 }}
                         inputIcon={<GiMedicines />}
                       />
-                      {!otherFrequency[index] ? (
-                        <SearchComboBox
-                          name={`medications[${index}].medication_frequency`}
-                          label="Frequency"
-                          options={frequencyOptions}
-                          getValue={(value) => {
-                            if (value === "Other")
-                              handleUpdateFrequency(index, true);
-                            setFieldValue(
-                              `medications[${index}].medication_frequency`,
-                              value
-                            );
-                          }}
-                          // sx={{ flex: 1 }}
-                          multiple={false}
-                        />
-                      ) : (
+
+                      <SearchComboBox
+                        name={`medications[${index}].route`}
+                        label="Route"
+                        options={routeOptions}
+                        multiple={false}
+                      />
+                      <SearchComboBox
+                        name={`medications[${index}].medication_frequency`}
+                        label="Frequency"
+                        options={frequencyOptions}
+                        getValue={(value) => {
+                          if (value === "Other")
+                            handleUpdateFrequency(index, true);
+                          setFieldValue(
+                            `medications[${index}].medication_frequency`,
+                            value
+                          );
+                        }}
+                        multiple={false}
+                      />
+
+                      {formValues?.medications[index]?.medication_frequency ==
+                        "Other" && (
                         <TextInputField
                           id={`medications[${index}].medication_frequency`}
-                          name={`medications[${index}].medication_frequency`}
+                          name={`medications[${index}].specify`}
                           label="Specify frequency"
-                          sx={{ flex: 1 }}
+                          sx={{ width: "100%" }}
                         />
+                      )}
+
+                      {formValues?.medications[index]?.medication_frequency ==
+                        concepts.CONTINOUS_INFUSION && (
+                        <>
+                          <SearchComboBox
+                            name={`medications[${index}].diluent`}
+                            label="Diluent"
+                            options={diluent}
+                            multiple={false}
+                          />
+                          {formValues?.medications[index]?.diluent ==
+                            concepts.OTHER && (
+                            <TextInputField
+                              id={`medications[${index}].other_diluent`}
+                              name={`medications[${index}].other_diluent`}
+                              label="Specify Diluent"
+                              sx={{ width: "100%" }}
+                            />
+                          )}
+                          <TextInputField
+                            id={`medications[${index}].finalVolume`}
+                            name={`medications[${index}].finalVolume`}
+                            label="Final Volume"
+                            unitOfMeasure="ML"
+                            sx={{ width: "100%" }}
+                          />
+                          <TextInputField
+                            id={`medications[${index}].rate`}
+                            name={`medications[${index}].rate`}
+                            label="Rate"
+                            unitOfMeasure="ml/h"
+                            sx={{ width: "100%" }}
+                          />
+                        </>
                       )}
                       {formValues?.medications[index]?.medication_frequency !=
                         "STAT" && (

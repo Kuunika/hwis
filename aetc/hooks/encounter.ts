@@ -60,7 +60,7 @@ export const fetchConceptAndCreateEncounter = () => {
     const filteredEncounter = {
       ...encounter,
       obs: encounter?.obs?.filter((ob: any) => Boolean(ob.value)),
-    };
+    };    
 
     filteredEncounter.obs = await getConceptIds(filteredEncounter.obs);
     

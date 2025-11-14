@@ -1516,6 +1516,24 @@ export const concepts = {
   PROTUBERANT: "Protuberant",
   SCAPHOID: "Scaphoid",
   OUTCOME: "Outcome",
+  PRN:"PRN",
+  CONTINOUS_INFUSION:"Continous Infusion",
+  NORMAL_SALIVA:"Normal Saliva",
+  WATER_FOR_INJECTION:"Water for injection",
+  RINGERS_LACTATE: "Ringer’s Lactate",
+  PO:"PO",
+  NG:"NG",
+  IM:"IM",
+  IV:"IV",
+  PR:"PR",
+  SUBLINGUAL:"Sub Lingual",
+  SUBCUT:"Sub Cut",
+  TOPICAL:"Topical",
+  INTRANAS:"Intranas",
+  DILUENT:"Diluent",
+  FINAL_VOLUME:"Final Volume",
+  RATE:"rate"
+
 };
 
 export const conceptNames = {

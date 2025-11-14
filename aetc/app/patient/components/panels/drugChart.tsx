@@ -1,6 +1,4 @@
 import { useState, useRef } from "react";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
-import { Fullscreen, FullscreenExit } from "@mui/icons-material";
 
 export interface Administration {
   time: string;
@@ -43,150 +41,281 @@ export const DrugChart: React.FC<DrugChartProps> = ({ medications }) => {
     }
   };
 
-  const cellStyle = {
-    border: "1px solid #bdbdbd",
-    padding: "4px",
-    textAlign: "center",
-    fontSize: "0.85rem",
-  };
-
-  const scrollCellStyle = {
-    ...cellStyle,
-    minWidth: 120,
-    display: "flex",
-    flexDirection: "column",
-    textAlign: "center",
-  };
-
   return (
-    <Box sx={{ width: "100%" }}>
-      {/* ===== CONTROL BAR ===== */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
-        <Tooltip title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}>
-          <IconButton onClick={handleToggleFullscreen}>
-            {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
-          </IconButton>
-        </Tooltip>
-      </Box>
+    <div style={{ width: "100%" }}>
+      {/* Control Bar */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "8px",
+        }}
+      >
+        <button
+          onClick={handleToggleFullscreen}
+          style={{
+            padding: "8px",
+            cursor: "pointer",
+            border: "1px solid #bdbdbd",
+            borderRadius: "4px",
+            background: "#fff",
+          }}
+          title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+        >
+          {isFullscreen ? "⤓" : "⤢"}
+        </button>
+      </div>
 
-      {/* ===== TABLE ===== */}
-      <Box
+      {/* Table Container */}
+      <div
         ref={chartRef}
-        sx={{
+        style={{
           border: "1px solid #bdbdbd",
-          borderRadius: 1,
+          borderRadius: "4px",
           overflow: "hidden",
-          bgcolor: "#fff",
-          fontSize: "0.85rem",
+          backgroundColor: "#fff",
           width: "100%",
         }}
       >
-        {/* HEADER */}
-        <Box
-          sx={{ display: "flex", backgroundColor: "#f5f5f5", fontWeight: 600 }}
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            fontSize: "0.85rem",
+          }}
         >
-          <Box sx={{ ...cellStyle, flex: "0 0 8%" }}>Date & Time</Box>
-
-          <Box
-            sx={{ display: "flex", flexDirection: "column", flex: "0 0 20%" }}
-          >
-            <Box sx={{ ...cellStyle, borderBottom: "1px solid #bdbdbd" }}>
-              Medication Name
-            </Box>
-            <Box sx={{ display: "flex" }}>
-              <Box
-                sx={{ ...cellStyle, flex: 1, borderRight: "1px solid #bdbdbd" }}
+          <thead>
+            <tr style={{ backgroundColor: "#f5f5f5", fontWeight: 600 }}>
+              <th
+                rowSpan={3}
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "8%",
+                }}
+              >
+                Date & Time
+              </th>
+              <th
+                colSpan={2}
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "20%",
+                }}
+              >
+                Medication Name
+              </th>
+              <th
+                rowSpan={3}
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "6%",
+                }}
+              >
+                Route
+              </th>
+              <th
+                rowSpan={3}
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "8%",
+                }}
+              >
+                Prescriber
+              </th>
+              <th
+                rowSpan={3}
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "7%",
+                }}
+              >
+                Stop Date
+              </th>
+              <th
+                // rowSpan={3}
+                colSpan={
+                  medications[0]?.administrationDatesAndInitials.length || 1
+                }
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                }}
+              >
+                Drug Given and Signature
+              </th>
+            </tr>
+            <tr style={{ backgroundColor: "#f5f5f5", fontWeight: 600 }}>
+              <th
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "10%",
+                }}
               >
                 Dose
-              </Box>
-              <Box sx={{ ...cellStyle, flex: 1 }}>Freq</Box>
-            </Box>
-          </Box>
-
-          <Box sx={{ ...cellStyle, flex: "0 0 6%" }}>Route</Box>
-          <Box sx={{ ...cellStyle, flex: "0 0 8%" }}>Prescriber</Box>
-          <Box sx={{ ...cellStyle, flex: "0 0 7%" }}>Stop Date</Box>
-          <Box sx={{ ...cellStyle, flex: "0 0 50%" }}>
-            Drug Given and Signature
-          </Box>
-        </Box>
-
-        {/* MEDICATION ROWS */}
-        {medications.map((record, idx) => (
-          <Box key={idx} sx={{ display: "flex" }}>
-            <Box sx={{ ...cellStyle, flex: "0 0 8%" }}>{record.date}</Box>
-
-            <Box
-              sx={{ display: "flex", flexDirection: "column", flex: "0 0 20%" }}
-            >
-              <Box sx={{ ...cellStyle, flex:1 }}>{record.medication.name}</Box>
-              <Box sx={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    ...cellStyle,
-                    flex: 1,
-                    borderRight: "1px solid #bdbdbd",
+              </th>
+              <th
+                style={{
+                  border: "1px solid #bdbdbd",
+                  padding: "4px",
+                  textAlign: "center",
+                  width: "10%",
+                }}
+              >
+                Freq
+              </th>
+              {medications[0]?.administrationDatesAndInitials.map((date) => (
+                <th
+                  key={date.date}
+                  style={{
+                    border: "1px solid #bdbdbd",
+                    padding: "4px",
+                    textAlign: "center",
+                    minWidth: "120px",
+                    fontWeight: 600,
+                    backgroundColor: "#f0f0f0",
                   }}
                 >
-                  {record.medication.dose}
-                </Box>
-                <Box sx={{ ...cellStyle, flex: 1 }}>
-                  {record.medication.frequency}
-                </Box>
-              </Box>
-            </Box>
-
-            <Box sx={{ ...cellStyle, flex: "0 0 6%" }}>
-              {record.medication.route}
-            </Box>
-            <Box sx={{ ...cellStyle, flex: "0 0 8%" }}>
-              {record.medication.prescriber}
-            </Box>
-            <Box sx={{ ...cellStyle, flex: "0 0 7%" }}>
-              {record.medication.stopDate}
-            </Box>
-
-            {/* Drug Given Column */}
-            <Box
-              sx={{
-                flex: "0 0 50%",
-                display: "flex",
-                overflowX: "auto",
-                bgcolor: "#fafafa",
-              }}
-            >
-              {record.administrationDatesAndInitials.map((date) => (
-                <Box key={date.date} sx={{ ...scrollCellStyle }}>
-                  <Box
-                    sx={{ ...cellStyle, fontWeight: 600, bgcolor: "#f0f0f0" }}
-                  >
-                    {date.date}
-                  </Box>
-                  {date.initials.map((initial) => (
-                    <Box
-                      key={initial.time}
-                      sx={{
-                        ...cellStyle,
-                        py: 0.5,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "0.7rem", color: "#555" }}>
-                        {initial.time}
-                      </Typography>
-                      <Typography sx={{ fontWeight: 600, fontSize: "0.7rem" }}>
-                        {initial.initial}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
+                  {date.date}
+                </th>
               ))}
-            </Box>
-          </Box>
-        ))}
-      </Box>
-    </Box>
+            </tr>
+            <tr style={{ backgroundColor: "#f5f5f5", fontWeight: 600 }}>
+              <th
+                colSpan={2}
+                style={{ border: "none", padding: 0, height: 0 }}
+              />
+            </tr>
+          </thead>
+          <tbody>
+            {medications.map((record, idx) => (
+              <>
+                <tr key={idx}>
+                  <td
+                    rowSpan={2}
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.date}
+                  </td>
+                  <td
+                    colSpan={2}
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.name}
+                  </td>
+                  <td
+                    rowSpan={2}
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.route}
+                  </td>
+                  <td
+                    rowSpan={2}
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.prescriber}
+                  </td>
+                  <td
+                    rowSpan={2}
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.stopDate}
+                  </td>
+                  {record.administrationDatesAndInitials.map(
+                    (date, dateIdx) => (
+                      <td
+                        key={date.date}
+                        rowSpan={2}
+                        style={{
+                          border: "1px solid #bdbdbd",
+                          padding: "4px",
+                          backgroundColor: "#fafafa",
+                          minWidth: "120px",
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {date.initials.map((initial) => (
+                          <div
+                            key={initial.time}
+                            style={{
+                              padding: "4px 0",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              borderBottom: "1px solid #e0e0e0",
+                            }}
+                          >
+                            <div style={{ fontSize: "0.7rem", color: "#555" }}>
+                              {initial.time}
+                            </div>
+                            <div
+                              style={{ fontWeight: 600, fontSize: "0.7rem" }}
+                            >
+                              {initial.initial}
+                            </div>
+                          </div>
+                        ))}
+                      </td>
+                    )
+                  )}
+                </tr>
+                <tr key={`${idx}-dose`}>
+                  <td
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.dose}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid #bdbdbd",
+                      padding: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {record.medication.frequency}
+                  </td>
+                </tr>
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };

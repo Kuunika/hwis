@@ -224,10 +224,10 @@ export const TabsContainer = () => {
         <Investigations />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <Medications />
+        {/* <Medications /> */}
         {/* <DrugChart /> */}
         {/* <DrugChartDemo /> */}
-        {/* <DrugChartWithData /> */}
+        <DrugChartWithData />
       </CustomTabPanel>
       {/* <CustomTabPanel value={value} index={4}>
         <PresentingComplaint />

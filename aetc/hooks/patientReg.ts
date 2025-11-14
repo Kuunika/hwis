@@ -22,6 +22,7 @@ import {
   updateDeathReport,
   updatePatient,
   voidPatient,
+  encountersDone,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getConcept } from "./encounter";
@@ -382,6 +383,15 @@ export const checkIfPatientIsOnWaitingForAssessmentList = (id: string) => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     refetchOnReconnect: false,
+  });
+};
+export const patientEncountersDone = (id: string) => {
+  const getAll = () =>
+    encountersDone(id).then((response) => response?.data);
+  return useQuery({
+    queryKey: ["visits", id, "encounters_done"],
+    queryFn: getAll,
+    enabled: !!id,
   });
 };
 
