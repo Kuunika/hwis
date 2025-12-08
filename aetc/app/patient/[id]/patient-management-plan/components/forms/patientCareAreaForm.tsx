@@ -41,28 +41,28 @@ const careAreaFormConfig: Record<
   { name: string; label: string }
 > = {
   gynaecological: { name: concepts.GYNAE_BENCH, label: "Gynae Bench" },
-  surgical: { name: concepts.SURGICAL_BENCH, label: "Surgical bench" },
+  surgical: { name: concepts.SURGICAL_BENCH, label: "Surgical Bench" },
   medicalBench: { name: concepts.MEDICAL_BENCH, label: "Medical Bench" },
   shortStay: { name: concepts.SHORT_STAY, label: "Short Stay" },
-  isolation: { name: concepts.ISOLATION, label: "Isolation" },
+  isolation: { name: concepts.ISOLATION, label: "Isolation Room" },
   trauma: { name: concepts.TRAUMA, label: "Trauma" },
   resuscitation: { name: concepts.RESUSCITATION, label: "Resuscitation" },
-  priority: { name: concepts.PRIORITY, label: "Priority" },
+  priority: { name: concepts.PRIORITY, label: "Priority Area" },
 
   // other: { name: concepts.OTHER, label: "Other (Specify)" },
 };
-export const careAreaConfig=careAreaFormConfig;
+export const careAreaConfig = careAreaFormConfig;
 
 
 const radioOptions = [
-  {value: concepts.GYNAE_BENCH, label: concepts.GYNAE_BENCH},
-  {value: concepts.SURGICAL_BENCH, label: concepts.SURGICAL_BENCH},
-  {value: concepts.MEDICAL_BENCH, label: concepts.MEDICAL_BENCH},
-  {value: concepts.SHORT_STAY, label: concepts.SHORT_STAY},
-  {value: concepts.ISOLATION, label: concepts.ISOLATION},
-  {value: concepts.TRAUMA, label: concepts.TRAUMA},
-  {value: concepts.RESUSCITATION, label: concepts.RESUSCITATION},
-  {value: concepts.PRIORITY, label: concepts.PRIORITY},
+  { value: concepts.GYNAE_BENCH, label: concepts.GYNAE_BENCH },
+  { value: concepts.SURGICAL_BENCH, label: concepts.SURGICAL_BENCH },
+  { value: concepts.MEDICAL_BENCH, label: concepts.MEDICAL_BENCH },
+  { value: concepts.SHORT_STAY, label: concepts.SHORT_STAY },
+  { value: concepts.ISOLATION, label: concepts.ISOLATION },
+  { value: concepts.TRAUMA, label: concepts.TRAUMA },
+  { value: concepts.RESUSCITATION, label: concepts.RESUSCITATION },
+  { value: concepts.PRIORITY, label: concepts.PRIORITY },
 ]
 
 
@@ -101,8 +101,8 @@ export const PatientCareAreaForm = ({ onSubmit, onSkip }: Prop) => {
 
     // Determine selected care area
     // let selectedCareArea = values.careArea;
-      // careAreaFormConfig[values.careArea as keyof typeof careAreaFormConfig]
-      //   ?.name;
+    // careAreaFormConfig[values.careArea as keyof typeof careAreaFormConfig]
+    //   ?.name;
 
     // If 'Other' is selected, use the specified other care area
     // if (values.careArea === "other") {

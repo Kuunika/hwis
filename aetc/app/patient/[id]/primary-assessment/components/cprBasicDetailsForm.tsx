@@ -36,7 +36,7 @@ const form = {
   },
 };
 const sites = [
-  { label: "Rescitation", value: concepts.RESUSCITATION },
+  { label: "Resuscitation", value: concepts.RESUSCITATION },
   { label: "Short Stay", value: concepts.SHORT_STAY },
   { label: "Gynae Bench", value: concepts.GYNAE_BENCH },
   { label: "Isolation Room", value: concepts.ISOLATION },
