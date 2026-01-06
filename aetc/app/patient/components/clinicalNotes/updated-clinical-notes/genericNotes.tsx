@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
-import {config} from "winston";
+import { config } from "winston";
 
 interface Name {
     name: string;
@@ -33,13 +33,72 @@ interface GenericNotesProps {
     };
 }
 
+// Helper function to format dates consistently as DD/MM/YYYY HH:MM
+const formatDateTime = (dateString: string): string => {
+    if (!dateString) return dateString;
+
+    try {
+        let date: Date;
+
+        // Handle "16/12/2025, 00:00:00" format
+        if (dateString.includes('/') && dateString.includes(',')) {
+            const parts = dateString.split(',');
+            const [day, month, year] = parts[0].trim().split('/');
+            const timePart = parts[1]?.trim() || '00:00:00';
+            const [hours, minutes] = timePart.split(':');
+            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
+        }
+        // Handle ISO format "2025-12-16T10:54:10.000+02:00"
+        else if (dateString.includes('T')) {
+            date = new Date(dateString);
+        }
+        // Handle "2025-12-16 00:00:00 +0200" format
+        else if (dateString.includes('-') && dateString.includes(' ')) {
+            date = new Date(dateString);
+        }
+        else {
+            return dateString;
+        }
+
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return dateString;
+        }
+
+        // Format to DD/MM/YYYY HH:MM
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    } catch (error) {
+        return dateString;
+    }
+};
+
 export const GenericNotes: React.FC<GenericNotesProps> = ({
-                                                              data,
-                                                              title,
-                                                              config
-                                                          }) => {
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    data,
+    title,
+    config
+}) => {
+    // Check if data is empty
+    const hasNoData = !data || !Array.isArray(data) || data.length === 0;
+
+    if (hasNoData && !title) {
         return null;
+    }
+
+    if (hasNoData && title) {
+        return (
+            <div style={{ marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6 }}>
+                <h4 style={{ fontWeight: "bold", marginBottom: "4px" }}>{title}</h4>
+                <div style={{ marginLeft: "20px", color: "#999", fontStyle: "italic" }}>
+                    Notes not entered
+                </div>
+            </div>
+        );
     }
 
     const renderTimestamp = (panelData: Observation[]) => {
@@ -71,7 +130,7 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
         data.forEach(obs => {
             if (isRootConcept(obs) && obs.value) {
                 const note: any = {
-                    ...obs, // Spread the entire observation
+                    ...obs,
                     timestamp: obs.obs_datetime || "",
                     created_by: obs.created_by,
                     rootValue: obs.value
@@ -98,7 +157,16 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
 
     const notesData = extractNotesData();
 
-    if (notesData.length === 0) return null;
+    if (notesData.length === 0) {
+        return (
+            <div style={{ marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6 }}>
+                {title && <h4 style={{ fontWeight: "bold", marginBottom: "4px" }}>{title}</h4>}
+                <div style={{ marginLeft: "20px", color: "#999", fontStyle: "italic" }}>
+                    Notes not entered
+                </div>
+            </div>
+        );
+    }
 
     // Group by timestamp or specified field
     const groupKey = config.groupBy || 'timestamp';
@@ -109,13 +177,13 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
         }
         groups[key].push(note);
         return groups;
-    }, {} as Record<string, any[]>); // Fix: Use any[] instead of typeof notesData
+    }, {} as Record<string, any[]>);
 
     const defaultItemRenderer = (item: any) => (
         <div style={{ marginBottom: "6px" }}>
             {item.rootValue && (
                 <div style={{ fontWeight: "100", marginBottom: "2px" }}>
-                    - {item.rootValue}
+                    - {formatDateTime(item.rootValue)}
                 </div>
             )}
             <div style={{ paddingLeft: "16px" }}>
@@ -140,13 +208,13 @@ export const GenericNotes: React.FC<GenericNotesProps> = ({
     const renderItem = config.itemRenderer || defaultItemRenderer;
 
     return (
-        <div style={{marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6}}>
+        <div style={{ marginBottom: "12px", fontFamily: "Arial, sans-serif", lineHeight: 1.6 }}>
             <h4 style={{ fontWeight: "bold", marginBottom: "4px" }}>{title}</h4>
 
             <div style={{ marginLeft: "20px" }}>
                 {Object.entries(groupedData).map(([date, dateNotes]) => (
                     <div key={date} style={{ marginBottom: "8px" }}>
-                        {(dateNotes as any[]).map((note, index) => ( // Fix: Cast dateNotes to any[]
+                        {(dateNotes as any[]).map((note, index) => (
                             <div key={index} style={{ marginBottom: "6px" }}>
                                 {renderItem(note)}
                             </div>
@@ -195,7 +263,7 @@ export const NotesConfig = {
             {
                 conceptName: "Temperature (c)",
                 displayName: "Temperature",
-                format: (value: any) => `${value} °C`
+                format: (value: any) => `${value} Â°C`
             },
             {
                 conceptName: "Serum glucose",
@@ -216,6 +284,7 @@ export const NotesConfig = {
             },
         ],
     },
+
     // Procedures Done Configuration
     PROCEDURES_DONE: {
         rootConcept: [
@@ -239,8 +308,7 @@ export const NotesConfig = {
 
             return (
                 <div style={{ marginBottom: "8px" }}>
-                    <div style={{
-                         marginBottom: "4px" }}>
+                    <div style={{ marginBottom: "4px" }}>
                         - {displayCategory}
                     </div>
                     <div style={{ paddingLeft: "16px" }}>
@@ -254,6 +322,7 @@ export const NotesConfig = {
             );
         }
     },
+
     // Allergies Configuration
     ALLERGIES: {
         rootConcept: "Allergen Category",
@@ -261,7 +330,7 @@ export const NotesConfig = {
             {
                 conceptName: "Allergen",
                 displayName: "Allergens",
-                format: (value:any) => value
+                format: (value: any) => value
             },
             {
                 conceptName: "Description",
@@ -270,18 +339,23 @@ export const NotesConfig = {
         ]
     },
 
-    // Medications Configuration
+    // UPDATED: Medications Configuration - Now displays free text
     MEDICATIONS: {
-        rootConcept: "Drug Given",
-        fields: [
-            { conceptName: "Medication Formulation", displayName: "Formulation" },
-            { conceptName: "Medication Dose", displayName: "Dose" },
-            { conceptName: "Medication Dose Unit", displayName: "Unit" },
-            { conceptName: "Medication Frequency", displayName: "Frequency" },
-            { conceptName: "Medication Duration", displayName: "Duration" },
-            { conceptName: "Medication Duration Unit", displayName: "Duration Unit" },
-            { conceptName: "Description", displayName: "Notes",}
-        ]
+        rootConcept: "Description",
+        fields: [],
+        itemRenderer: (item: any) => {
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{
+                        fontWeight: "100",
+                        marginBottom: "4px",
+                        whiteSpace: "pre-wrap"
+                    }}>
+                        {item.rootValue}
+                    </div>
+                </div>
+            );
+        }
     },
 
     // Diagnosis Configuration
@@ -291,7 +365,7 @@ export const NotesConfig = {
             {
                 conceptName: "ICD11 Diagnosis",
                 displayName: "Diagnosis",
-                format: (value:any) => {
+                format: (value: any) => {
                     const parts = value.split(',');
                     return parts.length > 1 ? `${parts[1].trim()} (${parts[0].trim()})` : value;
                 }
@@ -304,41 +378,42 @@ export const NotesConfig = {
         ]
     },
 
-    // Surgical History Configuration
+    // UPDATED: Surgical History Configuration - Now displays free text
     SURGICAL_HISTORY: {
         rootConcept: "Surgical Procedure",
-        fields: [
-            { conceptName: "Date of surgery", displayName: "Date" },
-            { conceptName: "Indication For Surgery", displayName: "Indication" },
-            {
-                conceptName: "Complications",
-                displayName: "Complications",
-            }
-        ]
+        fields: [],
+        itemRenderer: (item: any) => {
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{
+                        fontWeight: "100",
+                        marginBottom: "4px",
+                        whiteSpace: "pre-wrap"
+                    }}>
+                        {item.rootValue}
+                    </div>
+                </div>
+            );
+        }
     },
 
-    // Previous Admissions Configuration
+    // UPDATED: Previous Admissions Configuration - Now displays free text
     ADMISSIONS: {
         rootConcept: "Admission date",
-        fields: [
-            { conceptName: "Health center hospitals", displayName: "Hospital" },
-            { conceptName: "Admission section", displayName: "Section" },
-            {
-                conceptName: "ICD11 Diagnosis",
-                displayName: "Diagnosis",
-                format: (value: any) => {
-                    const parts = value.split(',');
-                    return parts.length > 1 ? `${parts[1].trim()} (${parts[0].trim()})` : value;
-                }
-            },
-            { conceptName: "Surgical interventions", displayName: "Interventions" },
-            {
-                conceptName: "Discharge Instructions",
-                displayName: "Discharge Instructions",
-
-            },
-            { conceptName: "Follow Up", displayName: "Follow-up" }
-        ]
+        fields: [],
+        itemRenderer: (item: any) => {
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{
+                        fontWeight: "100",
+                        marginBottom: "4px",
+                        whiteSpace: "pre-wrap"
+                    }}>
+                        {item.rootValue}
+                    </div>
+                </div>
+            );
+        }
     },
 
     // Last Meal Configuration
@@ -379,59 +454,189 @@ export const NotesConfig = {
         ]
     },
 
-    // Family Medical History Configuration
-    // UPDATED Family Medical History Configuration
-    FAMILY_HISTORY: {
-        rootConcept: [
-            "Family History Asthma",
-            "Family History Diabetes Mellitus",
-            "Family History Tuberculosis",
-            "Family History Other Condition",
-            "Family History Hypertension",
-            "Family History Epilepsy",
-            "Family History Cancer"
-        ],
-        fields: [
-            {
-                conceptName: "Relationship To Patient",
-                displayName: "Relationship",
-            }
-        ],
+    // NEW: History of Presenting Complaints Configuration
+    HISTORY_OF_PRESENTING_COMPLAINTS: {
+        rootConcept: "Presenting history",
+        fields: [],
         itemRenderer: (item: any) => {
-            // Extract condition name from the observation names
-            const rawConditionName = item.names?.[0]?.name || "";
-            const conditionName = rawConditionName.replace("Family History ", "");
+            // The value is stored in the first child's value
+            const historyText = item.children?.[0]?.value || item.rootValue;
+            return (
+                <div style={{ marginBottom: "8px" }}>
+                    <div style={{
+                        fontWeight: "100",
+                        marginBottom: "4px",
+                        whiteSpace: "pre-wrap"
+                    }}>
+                        {historyText}
+                    </div>
+                </div>
+            );
+        }
+    },
 
-            // Handle different value types
-            let conditionValue = item.value;
-            let displayCondition = "";
-            if (rawConditionName === "Family History Other Condition" ||
-                rawConditionName === "Family History Cancer") {
-                displayCondition = conditionValue !== "true" ? conditionValue : conditionName;
-            } else {
-                displayCondition = conditionValue === "true" ? "Yes" : conditionName;
+    // UPDATED: Trauma/Injury History Configuration
+    TRAUMA_HISTORY: {
+        rootConcept: "Review of systems, trauma",
+        fields: [],
+        itemRenderer: (item: any) => {
+            const mechanisms: any = {};
+            const details: any = {};
+
+            item.children?.forEach((child: any) => {
+                const conceptName = child.names?.[0]?.name;
+                const value = child.value;
+
+                // Map mechanism concepts - store the actual values
+                if (conceptName === "Assault") {
+                    mechanisms.assault = value;
+                }
+                if (conceptName === "Road Traffic Accident" || conceptName === "Road Traffic Accidents, RTA") {
+                    mechanisms.roadTraffic = value;
+                }
+                if (conceptName === "Fall") {
+                    mechanisms.fall = value;
+                }
+                if (conceptName === "Bite") {
+                    mechanisms.bite = value;
+                }
+                if (conceptName === "Gunshot") {
+                    mechanisms.gunshot = value;
+                }
+                if (conceptName === "Building Collapse") {
+                    mechanisms.collapse = value;
+                }
+                if (conceptName === "Self Harm") {
+                    mechanisms.selfInflicted = value;
+                }
+                if (conceptName === "Burn Injury") {
+                    mechanisms.burns = value;
+                }
+                if (conceptName === "Drowning") {
+                    mechanisms.drowning = value;
+                }
+                if (conceptName === "Other") {
+                    mechanisms.other = value;
+                }
+
+                // Map assault type
+                if (conceptName === "Sexual Assault" && value === "true") {
+                    details.assaultType = "Sexual";
+                }
+                if (conceptName === "Physical Assault" && value === "true") {
+                    details.assaultType = "Physical";
+                }
+
+                // Map other details with date formatting
+                if (conceptName === "Time Of Injury") {
+                    details.timeOfInjury = formatDateTime(value);
+                }
+                // Handle both "Loss Of Consciousness" and "Fainting" concept names
+                if (conceptName === "Loss Of Consciousness" || conceptName === "Fainting") {
+                    details.lostConsciousness = value;
+                    details.hasLostConsciousnessField = true;
+                }
+                if (conceptName === "Occupational Injury") {
+                    details.occupationalInjury = value;
+                    details.hasOccupationalInjuryField = true;
+                }
+            });
+
+            // Set default "No" for fields that weren't found
+            if (!details.hasLostConsciousnessField) {
+                details.lostConsciousness = "No";
+            }
+            if (!details.hasOccupationalInjuryField) {
+                details.occupationalInjury = "No";
             }
 
-            let relationship = item["Relationship To Patient"];
-            if (!relationship && item.children) {
-                const relationshipChild = item.children.find((child: any) =>
-                    child.names?.[0]?.name === "Relationship To Patient"
-                );
-                relationship = relationshipChild?.value;
+            // Check if there are any mechanisms to display (value exists and is not "false")
+            const hasMechanisms = Object.values(mechanisms).some(val => val && val !== "" && val !== "false");
+
+            if (!hasMechanisms && !details.timeOfInjury && !details.lostConsciousness && !details.occupationalInjury) {
+                return null;
             }
 
             return (
-                <div style={{ marginBottom: "8px" }}>
-                    <div style={{ fontWeight: "100", marginBottom: "4px" }}>
-                        - {conditionName}: {displayCondition}
-                    </div>
-                    {relationship && (
-                        <div style={{ paddingLeft: "16px", marginBottom: "0px", lineHeight: 1.6  }}>
-                            - Relationship: {relationship}
+                <div style={{ marginBottom: "12px" }}>
+                    {hasMechanisms && (
+                        <>
+                            <div style={{ fontWeight: "500", marginBottom: "6px" }}>
+                                Mechanism of Injury:
+                            </div>
+                            <div style={{ paddingLeft: "16px" }}>
+                                {Object.entries(mechanisms).map(([key, value], index) => {
+                                    if (!value || value === "false") return null;
+
+                                    const labels: any = {
+                                        assault: "Assault",
+                                        roadTraffic: "Road Traffic Accident",
+                                        fall: "Fall",
+                                        bite: "Bite",
+                                        gunshot: "Gunshot",
+                                        collapse: "Building Collapse",
+                                        selfInflicted: "Self-Inflicted",
+                                        burns: "Burns",
+                                        drowning: "Drowning",
+                                        other: "Other"
+                                    };
+
+                                    return (
+                                        <div key={index} style={{ marginBottom: "8px" }}>
+                                            <div style={{ fontWeight: "100" }}>- {labels[key]}</div>
+                                            {value !== "true" && value !== "" && (
+                                                <div style={{
+                                                    paddingLeft: "16px",
+                                                    fontStyle: "italic",
+                                                    color: "#555",
+                                                    whiteSpace: "pre-wrap",
+                                                    marginTop: "2px"
+                                                }}>
+                                                    {String(value)}
+                                                </div>
+                                            )}
+                                            {key === "assault" && details.assaultType && (
+                                                <div style={{
+                                                    paddingLeft: "16px",
+                                                    fontStyle: "italic",
+                                                    color: "#555",
+                                                    marginTop: "2px"
+                                                }}>
+                                                    Type: {details.assaultType}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </>
+                    )}
+
+                    {details.timeOfInjury && (
+                        <div style={{ marginTop: "6px" }}>
+                            <div style={{ fontWeight: "100" }}>
+                                - Time of Injury: {details.timeOfInjury}
+                            </div>
+                        </div>
+                    )}
+
+                    {details.lostConsciousness && (
+                        <div style={{ marginTop: "2px" }}>
+                            <div style={{ fontWeight: "100" }}>
+                                - Lost Consciousness: {details.lostConsciousness}
+                            </div>
+                        </div>
+                    )}
+
+                    {details.occupationalInjury && (
+                        <div style={{ marginTop: "2px" }}>
+                            <div style={{ fontWeight: "100" }}>
+                                - Occupational Injury: {details.occupationalInjury}
+                            </div>
                         </div>
                     )}
                 </div>
             );
         }
     }
-    }
+}

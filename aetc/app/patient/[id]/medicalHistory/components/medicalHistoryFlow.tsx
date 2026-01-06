@@ -133,39 +133,42 @@ export const MedicalHistoryFlow = () => {
   }
 
   // Construct steps based on patient gender
+
+  // Construct steps with Events in second position
   const steps = [
     {
       id: 1,
       label: "Symptoms - Presenting Complaints",
       encounter: encounters.PRESENTING_COMPLAINTS,
     },
-    { id: 2, label: "Allergies", encounter: encounters.ALLERGIES },
-    { id: 3, label: "Medications", encounter: encounters.PRESCRIPTIONS },
     {
-      id: 4,
-      label: "Prior/Existing conditions",
+      id: 2,
+      label: "Events",
+      encounter: encounters.REVIEW_OF_SYSTEMS,
+    },
+    { id: 3, label: "Allergies", encounter: encounters.ALLERGIES },
+    { id: 4, label: "Medications", encounter: encounters.PRESCRIPTIONS },
+    {
+      id: 5,
+      label: "Prior/Existing condition",
       encounter: encounters.DIAGNOSIS,
     },
     ...(patient?.gender === "Female"
       ? [
         {
-          id: 5,
+          id: 6,
           label: "Gynaecology and Obstetrics",
           encounter: encounters.OBSTETRIC_HISTORY,
         },
       ]
       : []),
     {
-      id: patient?.gender === "Female" ? 6 : 5,
+      id: patient?.gender === "Female" ? 7 : 6,
       label: "Last Meal",
       encounter: encounters.SUMMARY_ASSESSMENT,
     },
-    {
-      id: patient?.gender === "Female" ? 7 : 6,
-      label: "Events",
-      encounter: encounters.REVIEW_OF_SYSTEMS,
-    },
   ];
+
   const redirectToSecondarySurvey = () => {
     navigateTo(`/patient/${params.id}/secondary-assessment`);
   };
@@ -639,13 +642,17 @@ export const MedicalHistoryFlow = () => {
   function handleReviewNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, review: values }));
     // scrollToDiv(familyHistoryFormRef);
-    setReadyToSubmit(true);
+    // setReadyToSubmit(true);
+    handleSkip();
+
 
   }
 
   function handleLastMealNext(values: any): void {
     setFormData((prev: any) => ({ ...prev, lastMeal: values }));
-    handleSkip();
+    // handleSkip();
+    setReadyToSubmit(true);
+
   }
 
   async function handleLastMealSubmission(values: any): Promise<any> {
@@ -910,6 +917,7 @@ export const MedicalHistoryFlow = () => {
 
     const submissionHandlers: Record<string, (value: any) => Promise<any>> = {
       presentingComplaints: handlePresentingComplaintsSubmission,
+      review: handleReviewSubmission,
       allergies: handleAllergiesSubmission,
       medications: handleMedicationsSubmission,
       conditions: handleConditionsSubmission,
@@ -917,7 +925,6 @@ export const MedicalHistoryFlow = () => {
       obstetrics: handleObstetricsSubmission,
       lastMeal: handleLastMealSubmission,
       // admissions: handleAdmissionsSubmission,
-      review: handleReviewSubmission,
       // family: handleFamilyHistorySubmission,
     };
 
@@ -960,6 +967,11 @@ export const MedicalHistoryFlow = () => {
           showSubmittedStatus
         >
           <ComplaintsForm onSubmit={handlePresentingComplaintsNext} />
+          <ReviewOfSystemsForm
+            onSubmit={handleReviewNext}
+            onSkip={handleSkip}
+            onPrevious={handlePrevious}
+          />
           <AllergiesForm
             onSubmit={handleAllergiesNext}
             onSkip={handleSkip}
@@ -988,11 +1000,11 @@ export const MedicalHistoryFlow = () => {
             onPrevious={handlePrevious}
             onSkip={handleSkip}
           />
-          <ReviewOfSystemsForm
+          {/* <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
             onSkip={handleSkip}
             onPrevious={handlePrevious}
-          />
+          /> */}
 
           {/* <SubSteps parent={patient?.gender === "Female" ? 6 : 5}>
             <div ref={familyHistoryFormRef}>

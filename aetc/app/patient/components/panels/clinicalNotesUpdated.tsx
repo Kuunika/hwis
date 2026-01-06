@@ -4,6 +4,7 @@ import { getPatientsEncounters } from "@/hooks/encounter";
 import { useVisitDates } from "@/contexts/visitDatesContext";
 import { useParameters, useSubmitEncounter } from "@/hooks";
 import { MultiColumnNotes } from "./multiColumnDisplay";
+import { SingleColumnNotes } from "./singleColumnDisplay";
 import { PatientInfoTab, WrapperBox } from "@/components";
 import { Panel } from "./panel";
 import { formatClinicalNotesData } from "./formatters/formatClinicalNotes";
@@ -123,6 +124,7 @@ export const ClinicalNotesUpdated = () => {
 
   return (
     <Panel title="">
+
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
         <AddClinicalNotes
           onAddNote={addClinicalNote}
@@ -181,7 +183,9 @@ export const ClinicalNotesUpdated = () => {
               </div>
             </div>
             <TriageNotes patientId={patientId} visitId={selectedVisit.uuid} />
-            <MultiColumnNotes columns={2} data={filteredNotes} />
+            {/* <MultiColumnNotes columns={2} data={filteredNotes} /> */}
+            <SingleColumnNotes data={filteredNotes} />
+
           </div>
         )}
 
