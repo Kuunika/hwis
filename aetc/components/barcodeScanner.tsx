@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Quagga from '@ericblade/quagga2';
 import { WrapperBox } from '@/components';
