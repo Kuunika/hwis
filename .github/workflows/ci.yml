@@ -20,8 +20,14 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./aetc
-        run: npm install --legacy-peer-deps
+        # ### CHANGE: Explicitly install the missing dependency if not in package.json yet
+        run: |
+          npm install --legacy-peer-deps
+          npm install ndarray-pixels 
 
+      # ------------------------------------------------------------------
+      # RELEASE BUILD
+      # ------------------------------------------------------------------
       - name: Build Next.js app (Release configuration)
         working-directory: ./aetc
         env:
@@ -38,7 +44,9 @@ jobs:
         run: |
           echo "Building Next.js app (Release)..."
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
-          rm -rf .next/cache
+          # No need to delete cache manually here, we just want to copy the correct output
+          
+          # Prepare Standalone Folder
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/
 
@@ -49,9 +57,13 @@ jobs:
         run: |
           echo "Deploying to aetc-release..."
           git clone https://github.com/Kuunika/aetc-release.git
-
+          
+          # Clean destination
           rm -rf aetc-release/*
-          cp -R .next/* aetc-release/
+          
+          # ### CHANGE: Copy ONLY the standalone build artifacts
+          # This puts 'server.js' at the root of your release repo
+          cp -R .next/standalone/* aetc-release/
 
           cd aetc-release
           git config user.name "github-actions[bot]"
@@ -65,6 +77,9 @@ jobs:
             git push https://petroskayange:${{ secrets.RELEASE_TOKEN }}@github.com/Kuunika/aetc-release.git
           fi
 
+      # ------------------------------------------------------------------
+      # PRODUCTION BUILD
+      # ------------------------------------------------------------------
       - name: Build Next.js app (Production configuration)
         working-directory: ./aetc
         env:
@@ -80,8 +95,13 @@ jobs:
           NEXT_PUBLIC_ICD11_API_URL: ${{ secrets.PRODUCTION_NEXT_PUBLIC_ICD11_API_URL }}
         run: |
           echo "Building Next.js app (Production)..."
+          
+          # Clean previous build artifacts to ensure no Release vars leak into Production
+          rm -rf .next
+          
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
-          rm -rf .next/cache
+          
+          # Prepare Standalone Folder
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/
 
@@ -94,7 +114,9 @@ jobs:
           git clone https://github.com/Kuunika/aetc-production.git
 
           rm -rf aetc-production/*
-          cp -R .next/* aetc-production/
+          
+          # ### CHANGE: Copy ONLY the standalone build artifacts
+          cp -R .next/standalone/* aetc-production/
 
           cd aetc-production
           git config user.name "github-actions[bot]"
