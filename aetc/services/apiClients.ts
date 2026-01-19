@@ -12,7 +12,7 @@ export const emrApiClient = () => {
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `${token}`,
     },
   });
   api.interceptors.response.use(response => response, error => {
@@ -33,7 +33,7 @@ export const emrApiClient = () => {
         })
         setTimeout(() => {
           window.location.replace('/');
-          localStorage.clear()
+           localStorage.clear()
         }, 5000)
 
       }

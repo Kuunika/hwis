@@ -86,7 +86,7 @@ export const LoginForm = () => {
                 label="Password"
                 type="password"
               />
-              {isError && (
+              {isError && !isSuccess && (
                 <MainTypography variant="body2" color={"#FF0000"}>
                   Invalid Credentials
                 </MainTypography>

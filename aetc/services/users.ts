@@ -3,10 +3,16 @@ import { create, getAll, getOne, edit, update } from "./httpService";
 
 const endPoint = "/users";
 
+// Type for paginated response
+export type PaginatedUsers = {
+  count: number;
+  results: User[];
+};
+
 export const createUser = (patientData: any) => create(patientData, endPoint);
 
-export const getUsers = () => getAll<User[]>(`${endPoint}?paginate=false`);
-export const searchUser = (username: string) => getAll<User[]>(endPoint + "?paginate=false&username=" + username);
+export const getUsers = () => getAll<PaginatedUsers>(`${endPoint}?paginate=false`);
+export const searchUser = (username: string) => getAll<PaginatedUsers>(endPoint + "?paginate=false&username=" + username);
 
 export const getUserById = (userId: string) => getOne<User>(userId, endPoint);
 

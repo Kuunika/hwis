@@ -177,11 +177,12 @@ export interface Role {
 
 export interface UserRole {
   user_id: number;
-  role: Role;
+  role: string;
 }
 export interface User {
   uuid: string;
   username: string;
+  roles: UserRole[];
   user_roles: UserRole[];
   person: Person;
 }

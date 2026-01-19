@@ -42,8 +42,8 @@ export const UsersList = () => {
 
   // 🔍 Filter users
   const filteredUsers = useMemo(() => {
-    if (!users) return [];
-    return users.filter((u) => {
+    if (!users || !users.results) return [];
+    return users.results.filter((u) => {
       const fullName =
         `${u?.person?.names[0]?.given_name} ${u?.person?.names[0]?.family_name}`.toLowerCase();
       return (
@@ -88,8 +88,7 @@ export const UsersList = () => {
       <Grid container spacing={2}>
         {paginatedUsers.map((user) => {
           const userId = user?.uuid;
-          const roles =
-            user?.user_roles?.map((r) => r?.role?.role).filter(Boolean) || [];
+          const roles = user?.roles?.map((r) => r?.role).filter(Boolean) || [];
           const firstName = user?.person?.names[0]?.given_name || "";
           const lastName = user?.person?.names[0]?.family_name || "";
           const username = user?.username || "User";
@@ -126,10 +125,10 @@ export const UsersList = () => {
 
                   <Stack direction="row" spacing={1} flexWrap="wrap" mt={1}>
                     {roles.length > 0 ? (
-                      roles.map((role, idx) => (
+                      roles.map((role:any, idx) => (
                         <Chip
                           key={idx}
-                          label={role}
+                          label={String(role)}
                           size="small"
                           sx={{
                             backgroundColor: stringToPastelColor(role),

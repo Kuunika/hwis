@@ -64,17 +64,17 @@ export async function login(
 
   try {
     response = await apiClient.post("/auth/login", credentials);
-    setCookie("accessToken", response.data.jwt);
-    localStorage.setItem("accessToken", response.data.jwt);
+    setCookie("accessToken", response.data.authorization.token);
+    localStorage.setItem("accessToken", response.data.authorization.token);
     localStorage.setItem("loginTime", new Date().getTime().toString());
-    const data = response.data.user;
-    const roles = data.user_roles.map((r: any) => r.role.role);
+    const data = response.data.authorization.user;
+    const roles = data.roles.map((r: any) => r.role).join(",");
     const names = data.person?.names?.[0];
     const givenName = names?.given_name || null;
     const familyName = names?.family_name || null;
 
     localStorage.setItem("roles", roles);
-    localStorage.setItem("userName", givenName + " " + familyName);
+    localStorage.setItem("userName", (givenName && familyName) ? (givenName + " " + familyName) : data.username);
 
     return {
       status: response.status,
