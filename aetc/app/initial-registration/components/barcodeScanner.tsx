@@ -1,4 +1,5 @@
 
+'use client';
 import { GenericDialog } from "@/components";
 import { OverlayLoader } from "@/components/backdrop";
 import { BarcodeScanner } from "@/components/barcodeScanner";
