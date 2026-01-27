@@ -181,7 +181,7 @@ export const ClinicalNotes = () => {
     encounters.CLINICAL_NOTES,
     () => ""
   );
-   const { ServerTime } = useServerTime();
+  const { ServerTime } = useServerTime();
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -527,11 +527,11 @@ export const ClinicalNotes = () => {
           />
 
           {/* Family Medical History */}
-          <GenericNotes
+          {/* <GenericNotes
             data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
             title="Family Medical History"
             config={NotesConfig.FAMILY_HISTORY}
-          />
+          /> */}
         </Box>
       ),
       removeObs: [],
@@ -629,7 +629,7 @@ export const ClinicalNotes = () => {
   ]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
-   
+
     const data = { "Clinical notes construct": note };
     handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
       () => refresh()
@@ -1096,11 +1096,11 @@ export const ClinicalNotes = () => {
           />
 
           {/* Family Medical History */}
-          <GenericNotes
+          {/* <GenericNotes
             data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
             title="-Family Medical History"
             config={NotesConfig.FAMILY_HISTORY}
-          />
+          /> */}
         </Box>
       ),
     },
@@ -1484,10 +1484,10 @@ const AddClinicalNotes = ({
             sx={{
               backgroundColor:
                 !filterSoapierState &&
-                !filterAETCState &&
-                !filterSurgicalState &&
-                !filterGyneacologyState &&
-                !filterMedicalInpatientState
+                  !filterAETCState &&
+                  !filterSurgicalState &&
+                  !filterGyneacologyState &&
+                  !filterMedicalInpatientState
                   ? "rgb(221, 238, 221)"
                   : "",
               color: "rgb(0, 70, 0)",

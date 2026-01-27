@@ -472,7 +472,7 @@ export const ReviewOfSystemsForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         <MainButton
           onClick={() => { }}
           variant="primary"
-          title="Submit"
+          title="Next"
           type="submit"
           sx={{ flex: 1 }}
         />

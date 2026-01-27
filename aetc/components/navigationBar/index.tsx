@@ -60,6 +60,8 @@ export function NavigationBar({
   );
   const searchOpen = Boolean(searchAnchorEl) && searchText.trim() !== "";
   const searchPopoverId = searchOpen ? "search-popover" : undefined;
+  const isAdmin = isAuthorizedForRoles([roles.ADMIN]);
+
   const [search, setSearch] = useState({
     firstName: "",
     lastName: "",
@@ -81,13 +83,15 @@ export function NavigationBar({
   const debouncedSearch = useDebounce(searchText, 300);
 
   useEffect(() => {
+    if (!isAdmin) return;
+
     if (debouncedSearch && debouncedSearch.trim() !== "") {
       const searchInput = document.getElementById("search-input");
       setSearchAnchorEl(searchInput);
     } else {
       setSearchAnchorEl(null);
     }
-  }, [debouncedSearch]);
+  }, [debouncedSearch, isAdmin]);
 
   useEffect(() => {
     if (!debouncedSearch || debouncedSearch.trim() === "") return;
@@ -134,6 +138,8 @@ export function NavigationBar({
   const { refetch: refetchNPID, data: dataNPID } = searchNPID(search.firstName);
 
   useEffect(() => {
+    if (!isAdmin) return;
+
     if (search.firstName) {
       refetchLocal();
       refetchNPID();
@@ -141,7 +147,7 @@ export function NavigationBar({
     if (search.firstName && search.lastName && search.gender) {
       refetchDDE();
     }
-  }, [search, refetchDDE, refetchLocal, refetchNPID]);
+  }, [search, refetchDDE, refetchLocal, refetchNPID, isAdmin]);
 
   const splitSearchText = (searchText: string) => {
     const splittedArray = searchText.split(" ");
@@ -252,9 +258,9 @@ export function NavigationBar({
               </Box>
 
               {/* Search Bar */}
-              {isAuthorizedForRoles(allowedRoles) && (
-                <>
-                  <Paper
+              {/* {isAuthorizedForRoles(allowedRoles) && ( */}
+              {/* <> */}
+              {/* <Paper
                     id="search-input"
                     component="div"
                     sx={{
@@ -281,85 +287,140 @@ export function NavigationBar({
                     >
                       <PersonAddAltIcon />
                     </IconButton>
-                  </Paper>
+                  </Paper> */}
+              <Popover
+                open={!isAdmin && Boolean(searchAnchorEl)}
+                anchorEl={searchAnchorEl}
+                onClose={handleSearchPopoverClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              >
+                <Typography sx={{ p: 1, fontSize: "0.85rem" }}>
+                  Search available to Admin only
+                </Typography>
+              </Popover>
 
-                  {/* Search Results */}
-                  <Popover
-                    id={searchPopoverId}
-                    open={searchOpen}
-                    anchorEl={searchAnchorEl}
-                    onClose={handleSearchPopoverClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                    sx={{ mt: 0.1 }}
-                    slotProps={{
-                      paper: { sx: { width: "97.5vw", maxWidth: "none" } },
-                    }}
-                    disableEnforceFocus
-                    disableAutoFocus
-                  >
-                    <Box sx={{ width: "100%" }}>
-                      {(isFetchingDDE || isFetchingLocal) && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            p: 2,
-                          }}
-                        >
-                          <CircularProgress />
-                        </Box>
-                      )}
-                      {!isFetchingDDE &&
-                        !isFetchingLocal &&
-                        transformedData.length > 0 && (
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <ReusableTable<ObjectRow>
-                              data={transformedData}
-                              columns={columns}
-                              title=""
-                              showGlobalFilter={false}
-                              enableColumnOrdering={false}
-                              enableColumnActions={false}
-                              enableColumnFilters={false}
-                              enableSorting={false}
-                              initialState={{
-                                columnPinning: {
-                                  left: ["fullname"],
-                                },
-                              }}
-                              onRowClick={(rowData) => {
-                                handleSearchPopoverClose();
-                                if (isAuthorizedForRoles(allowedRoles)) {
-                                  navigateTo(
-                                    `/patient/${rowData.row.original.id}/profile`
-                                  );
-                                } else {
-                                  alert(
-                                    "You are not authorized to perform this action."
-                                  );
-                                }
-                              }}
-                            />
-                          </LocalizationProvider>
-                        )}
-                      {!isFetchingDDE &&
-                        !isFetchingLocal &&
-                        transformedData.length === 0 && (
-                          <Box sx={{ p: 3, textAlign: "center" }}>
-                            <Typography>No matching patients found</Typography>
-                          </Box>
-                        )}
+              <Paper
+                id="search-input"
+                component="div"
+                sx={{
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  minWidth: "45%",
+                  opacity: isAdmin ? 1 : 0.5,
+                  pointerEvents: isAdmin ? "auto" : "none",
+                  cursor: isAdmin ? "text" : "not-allowed",
+                }}
+              >
+                <IconButton sx={{ p: "10px" }} aria-label="search">
+                  <SearchIcon />
+                </IconButton>
+
+                <InputBase
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder={
+                    isAdmin
+                      ? "Add or search for a client by MRN, name, or by scanning a barcode/QR code."
+                      : "Search available to Admin only"
+                  }
+                  disabled={!isAdmin}
+                />
+
+                <IconButton
+                  color="primary"
+                  sx={{ p: "10px", color: "#000" }}
+                  aria-label="add new patient"
+                  disabled={!isAdmin}
+                  onClick={() => {
+                    if (isAdmin) {
+                      navigateTo(`/registration/new`);
+                    }
+                  }}
+                >
+                  <PersonAddAltIcon />
+                </IconButton>
+              </Paper>
+
+
+              {/* Search Results */}
+              <Popover
+                id={searchPopoverId}
+                open={searchOpen}
+                anchorEl={searchAnchorEl}
+                onClose={handleSearchPopoverClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                sx={{ mt: 0.1 }}
+                slotProps={{
+                  paper: { sx: { width: "97.5vw", maxWidth: "none" } },
+                }}
+                disableEnforceFocus
+                disableAutoFocus
+              >
+                <Box sx={{ width: "100%" }}>
+                  {(isFetchingDDE || isFetchingLocal) && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        p: 2,
+                      }}
+                    >
+                      <CircularProgress />
                     </Box>
-                  </Popover>
-                </>
-              )}
+                  )}
+                  {!isFetchingDDE &&
+                    !isFetchingLocal &&
+                    transformedData.length > 0 && (
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <ReusableTable<ObjectRow>
+                          data={transformedData}
+                          columns={columns}
+                          title=""
+                          showGlobalFilter={false}
+                          enableColumnOrdering={false}
+                          enableColumnActions={false}
+                          enableColumnFilters={false}
+                          enableSorting={false}
+                          initialState={{
+                            columnPinning: {
+                              left: ["fullname"],
+                            },
+                          }}
+                          onRowClick={(rowData) => {
+                            handleSearchPopoverClose();
+                            if (isAuthorizedForRoles(allowedRoles)) {
+                              navigateTo(
+                                `/patient/${rowData.row.original.id}/profile`
+                              );
+                            } else {
+                              alert(
+                                "You are not authorized to perform this action."
+                              );
+                            }
+                          }}
+                        />
+                      </LocalizationProvider>
+                    )}
+                  {!isFetchingDDE &&
+                    !isFetchingLocal &&
+                    transformedData.length === 0 && (
+                      <Box sx={{ p: 3, textAlign: "center" }}>
+                        <Typography>No matching patients found</Typography>
+                      </Box>
+                    )}
+                </Box>
+              </Popover>
+              {/* </> */}
+              {/* // )} */}
 
               {/* Right Section */}
               <Box

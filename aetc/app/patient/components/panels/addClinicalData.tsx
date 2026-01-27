@@ -1,7 +1,10 @@
 import MarkdownEditor from "@/components/markdownEditor";
-import { getActivePatientDetails } from "@/hooks";
-import { Box, Button, Popover } from "@mui/material";
+import { getActivePatientDetails, useParameters } from "@/hooks";
+import { getPatientsEncounters } from "@/hooks/encounter";
+
+import { Box, Button, Popover, Tooltip } from "@mui/material";
 import { useState } from "react";
+import { encounters } from "@/constants";
 import { FaPlus } from "react-icons/fa";
 
 export const AddClinicalNotes = ({
@@ -21,6 +24,7 @@ export const AddClinicalNotes = ({
   gyneacologyData,
   medicalInpatientData,
 
+
   onClickFilterButton,
 }: {
   onAddNote: (value: any) => any;
@@ -38,6 +42,7 @@ export const AddClinicalNotes = ({
   surgicalData?: any; // ADD THIS NEW PROP TYPE
   gyneacologyData?: any;
   medicalInpatientData?: any;
+
 
   onClickFilterButton: (value: string) => void;
 }) => {
@@ -60,6 +65,27 @@ export const AddClinicalNotes = ({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const { gender } = getActivePatientDetails();
+
+  const { params } = useParameters();
+  const patientId = params.id;
+
+  if (!patientId) {
+    throw new Error("Patient ID is undefined");
+  }
+
+  const { data: allEncounters } = getPatientsEncounters(patientId as string);
+
+
+  const hasDisposition = () => {
+    if (!allEncounters || allEncounters.length === 0) return false;
+
+    return allEncounters.some(
+      (enc: any) => enc?.encounter_type?.uuid === encounters.DISPOSITION
+    );
+  };
+
+
+
   return (
     <>
       <Box
@@ -97,28 +123,42 @@ export const AddClinicalNotes = ({
         </Button> */}
 
         <div>
-          <Button
-            onClick={onDownload}
-            sx={{
-              color: "white",
-              backgroundColor: "primary.main",
-              border: "1px solid currentColor",
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontSize: "14px",
-              marginRight: "10px",
-              flexGrow: 1,
-              textTransform: "none",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "110px",
-              "&:hover": {
-                backgroundColor: "rgb(0, 70, 0)",
-              },
-            }}
+          <Tooltip
+            title={!hasDisposition() ? "Patient must be disposed before downloading PDF" : ""}
+            arrow
+            placement="top"
           >
-            Download PDF
-          </Button>
+            <span> {/* Wrap in span to handle disabled button tooltip */}
+              <Button
+                onClick={onDownload}
+                disabled={!hasDisposition()}
+                sx={{
+                  color: "white",
+                  backgroundColor: "primary.main",
+                  border: "1px solid currentColor",
+                  fontFamily: "system-ui, -apple-system, sans-serif",
+                  fontSize: "14px",
+                  marginRight: "10px",
+                  flexGrow: 1,
+                  textTransform: "none",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "110px",
+                  "&.Mui-disabled": {
+                    backgroundColor: "#9e9e9e",
+                    color: "#e0e0e0",
+                  },
+                  "&:hover": {
+                    backgroundColor: "rgb(0, 70, 0)",
+                  },
+                }}
+              >
+                Download PDF
+              </Button>
+            </span>
+          </Tooltip>
+
           <span
             style={{
               width: "10px",
@@ -295,10 +335,10 @@ export const AddClinicalNotes = ({
             sx={{
               backgroundColor:
                 !filterSoapierState &&
-                !filterAETCState &&
-                !filterSurgicalState &&
-                !filterGyneacologyState &&
-                !filterMedicalInpatientState
+                  !filterAETCState &&
+                  !filterSurgicalState &&
+                  !filterGyneacologyState &&
+                  !filterMedicalInpatientState
                   ? "rgb(221, 238, 221)"
                   : "",
               color: "rgb(0, 70, 0)",
