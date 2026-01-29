@@ -61,6 +61,7 @@ export interface Patient {
 }
 
 export interface Person {
+  person_id: number;
   latest_encounter_type: string;
   patient_id: number;
   identifiers: Identifier[];

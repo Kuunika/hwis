@@ -15,7 +15,7 @@ import { create, edit, get, getAll, getOne, remove  } from "./httpService";
 const endPoint = "/people";
 
 export const createPatient = (patientData: any) =>
-  create(patientData, endPoint);
+  create<Person>(patientData, endPoint);
 
 export const initialRegistration = (patientData: any) =>
   create<Person>(patientData, "/patients");

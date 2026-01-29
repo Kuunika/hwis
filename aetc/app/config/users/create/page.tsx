@@ -20,7 +20,16 @@ function Page() {
   }, [isSuccess]);
 
   const handleSubmit = (values: any) => {
-    mutate(values);
+    const payload = {
+      username: values.userName,
+      password: values.password,
+      given_name: values.firstName,
+      family_name: values.lastName,
+      roles: values.role.map((r: any) => r.id),
+      location_id: 1,
+    };
+
+    mutate(payload);
   };
   return (
     <>

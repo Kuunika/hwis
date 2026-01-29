@@ -2,6 +2,7 @@
 
 import { InitialRegistrationForm } from "./components";
 import {
+  addPerson,
   initialPatientRegistration,
   searchDDEPatientByNpid,
 } from "@/hooks/patientReg";
@@ -57,15 +58,23 @@ function InitialRegistration() {
   } = useFormLoading();
 
   const {
-    mutate: createPatient,
+    mutateAsync: createPerson,
     isPending,
     data: createdUser,
     isSuccess,
     isError: patientError,
+  } = addPerson();
+
+  const {
+    mutateAsync: createPatient,
+    isPending: patientPending,
+    data: createdPatient,
+    isSuccess: patientSuccess,
+    isError: errorWhenCreatingPatient,
   } = initialPatientRegistration();
 
   const {
-    mutate: createVisit,
+    mutateAsync: createVisit,
     isPending: creatingVisit,
     isSuccess: visitCreated,
     data: visit,
@@ -113,20 +122,16 @@ function InitialRegistration() {
   }, [patientSearchSuccess]);
 
   // after patient registration create a visit
-  useEffect(() => {
-    if (isSuccess) {
-      setCompleted(1);
-      setMessage("creating visit");
-      const dateTime = ServerTime.getServerTimeString();
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     setCompleted(1);
+  //     setMessage("creating visit");
+  //     const dateTime = ServerTime.getServerTimeString();
 
-      const uuid = createdUser?.uuid;
-      createVisit({
-        patient: uuid,
-        visitType: AETC_VISIT_TYPE,
-        startDatetime: dateTime,
-      });
-    }
-  }, [isPending]);
+  //     const uuid = ""; // createdUser?.uuid;
+
+  //   }
+  // }, [isPending]);
 
   useEffect(() => {
     if (!visitCreated) return;
@@ -185,26 +190,48 @@ function InitialRegistration() {
     setShowForm(false);
     setLoading(true);
 
-    const patient = await createPatient({
-      identifiers: [
-        {
-          identifier: "103VWY7",
-          identifierType: "ba2f7018-8d80-11d8-abbb-0024217bb78e",
-          preferred: true,
-        },
-      ],
-      person: {
-        gender: "N/A",
-        birthdate: "1970-01-01T00:00:00.000+01000",
-        names: [
-          {
-            givenName: values.firstName,
-            familyName: values.lastName,
-          },
-        ],
-        addresses: [],
-      },
+    // const patient = await createPerson({
+    //   identifiers: [
+    //     {
+    //       identifier: "103VWY7",
+    //       identifierType: "ba2f7018-8d80-11d8-abbb-0024217bb78e",
+    //       preferred: true,
+    //     },
+    //   ],
+    //   person: {
+    //     gender: "N/A",
+    //     birthdate: "1970-01-01T00:00:00.000+01000",
+    //     names: [
+    //       {
+    //         givenName: values.firstName,
+    //         familyName: values.lastName,
+    //       },
+    //     ],
+    //     addresses: [],
+    //   },
+    // });
+
+    const person = await createPerson({
+      given_name: values.firstName,
+      family_name: values.lastName,
+      gender: "N/A",
+      birthdate: "1970-01-01T00:00:00.000+01000",
+      birthdate_estimated: false,
     });
+
+    const patient = await createPatient({
+      person_id: person.person_id,
+      program_id: 28,
+    });
+
+    const visit = await createVisit({
+      patientId: patient.patient_id,
+      programId: 28,
+      visitType: AETC_VISIT_TYPE,
+      startDate: new Date(),
+    });
+
+    console.log({ visit });
   };
 
   return (
