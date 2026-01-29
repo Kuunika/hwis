@@ -431,3 +431,16 @@ export const deletePatient = () => {
     mutationFn: addData,
   });
 };
+
+
+export const addPerson = () => {
+  const addData = (patientData: any) => {
+    return createPatient(patientData).then((response) => {
+      return response.data;
+    });
+  };
+
+  return useMutation({
+    mutationFn: addData,
+  });
+};
