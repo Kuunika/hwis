@@ -152,9 +152,12 @@ function InitialRegistration() {
 
     createEncounter({
       encounterType: encounters.INITIAL_REGISTRATION,
-      visit: visit?.uuid,
-      patient: createdUser?.uuid,
+      visit: visit?.visit_id,
+      patient_id: visit?.patient_id,
+      // patient_id: createdUser?.patient_id,
       encounterDatetime: dateTime,
+      encounter_type_id: 227,
+      program_id: 28,
       obs: [
         {
           concept: concepts.VISIT_NUMBER,

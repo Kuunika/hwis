@@ -153,10 +153,12 @@ export interface Encounter {
 }
 
 export interface Visit {
+  visit_id: number;
   uuid: string;
   patient: string;
   visitType: string;
   startDatetime: string;
+  patient_id: number;
 }
 
 export interface LabRequest {
