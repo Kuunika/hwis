@@ -60,6 +60,14 @@ export interface Patient {
   gender: string;
 }
 
+export interface PersonAttribute {
+  person_attribute_id: number;
+  person_attribute_type_id: number;
+  person_id: number;
+  uuid: string;
+  value: string;
+}
+
 export interface Person {
   latest_encounter_type: string;
   patient_id: number;
@@ -70,6 +78,7 @@ export interface Person {
   birthdateEstimated: boolean;
   gender: string;
   birthdate: Date;
+  person: Person;
   addresses: Address[];
   uuid: string;
   visit_uuid: string;
@@ -80,7 +89,8 @@ export interface Person {
     given_name: string;
     family_name: string;
   }>;
-  active_visit?: ActiveVisit 
+  active_visit?: ActiveVisit;
+  person_attributes: PersonAttribute[];
 }
 
 export interface DailyVisitPaginated {
@@ -104,7 +114,6 @@ interface EncounterType {
   name: string;
   description: string;
   uuid: string;
-
 }
 
 export interface Obs {
@@ -148,7 +157,7 @@ export interface Encounter {
   obs: Obs[];
   created_by: string;
   person_uuid?: string;
-  visit: Visit
+  visit: Visit;
 }
 
 export interface Visit {
