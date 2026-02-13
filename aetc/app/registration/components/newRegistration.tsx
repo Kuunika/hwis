@@ -40,7 +40,7 @@ export const NewRegistrationFlow = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const { registrationType } = useContext(
-    SearchRegistrationContext
+    SearchRegistrationContext,
   ) as SearchRegistrationContextType;
   const [formError, setFormError] = useState<{
     hasError: boolean;
@@ -77,7 +77,7 @@ export const NewRegistrationFlow = () => {
     patientValues.birthdate,
     patientValues.homeVillage,
     patientValues.homeTA,
-    patientValues.homeDistrict
+    patientValues.homeDistrict,
   );
 
   const { params } = useParameters();
@@ -146,7 +146,7 @@ export const NewRegistrationFlow = () => {
     if (!Boolean(patientValues.firstName)) return;
 
     if (registrationType != "remote") {
-      refetch();
+      // refetch();
     }
   }, [patientValues]);
 
@@ -431,7 +431,6 @@ export const NewRegistrationFlow = () => {
                   setContext={setDemographicsContext}
                   onSubmit={(values: any) => {
                     formData["demographics"] = values;
-                
 
                     setPatientValues({
                       ...values,
