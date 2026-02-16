@@ -270,7 +270,8 @@ export const concepts = {
   POST_NATAL_WARD: "Post natal ward",
   GYNAECOLOGY_WARD_MAIN: "Gynaecology ward- Main",
   THREE_B_MALE_MEDICAL: "3B Male medical",
-  THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL: "3C Combined male and female medical",
+  THREE_C_COMBINED_MALE_AND_FEMALE_MEDICAL:
+    "3C Combined male and female medical",
   SIX_A_ORTHOPAEDIC_MALE: "6A Orthopaedic male",
   THREE_B_HDU: "3B High Dependency Unit",
   MSF_WARD_GYNAECOLOGY: "MSF ward - Gynaecology",
@@ -1814,4 +1815,10 @@ export const durationOptions = [
 
 export const templateForms = {
   ORTHOPAEDIC_SPECIALTY_REVIEW: "orthopaedic specialty review",
+};
+
+export const attributeType = {
+  PHONE_NUMBER_ATTRIBUTE_TYPE: "ba35e3da-8d80-11d8-abbb-0024217bb78e",
+  NEXT_OF_KIN: "4fb019c3-e326-48f3-8f39-6822a0e9bc9d",
+  GUARDIAN_PHONE_NUMBER: "ba35f2d0-8d80-11d8-abbb-0024217bb78e",
 };

@@ -5,12 +5,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import {
-  FaRegBell,
-  FaCircleUser,
-  FaUser,
-  FaLock,
-} from "react-icons/fa6";
+import { FaRegBell, FaCircleUser, FaUser, FaLock } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -56,7 +51,7 @@ export function NavigationBar({
   // Search state
   const [searchText, setSearchText] = useState("");
   const [searchAnchorEl, setSearchAnchorEl] = useState<null | HTMLElement>(
-    null
+    null,
   );
   const searchOpen = Boolean(searchAnchorEl) && searchText.trim() !== "";
   const searchPopoverId = searchOpen ? "search-popover" : undefined;
@@ -142,12 +137,12 @@ export function NavigationBar({
 
     if (search.firstName) {
       refetchLocal();
-      refetchNPID();
+      // refetchNPID();
     }
     if (search.firstName && search.lastName && search.gender) {
-      refetchDDE();
+      // refetchDDE();
     }
-  }, [search, refetchDDE, refetchLocal, refetchNPID, isAdmin]);
+  }, [search, refetchDDE, refetchLocal, isAdmin]);
 
   const splitSearchText = (searchText: string) => {
     const splittedArray = searchText.split(" ");
@@ -220,7 +215,7 @@ export function NavigationBar({
       { accessorKey: "currentAddress", header: "Current Address" },
       { accessorKey: "homeAddress", header: "Home Address" },
     ],
-    []
+    [],
   );
 
   const allowedRoles = [roles.ADMIN, roles.CLINICIAN, roles.NURSE];
@@ -343,7 +338,6 @@ export function NavigationBar({
                 </IconButton>
               </Paper>
 
-
               {/* Search Results */}
               <Popover
                 id={searchPopoverId}
@@ -399,11 +393,11 @@ export function NavigationBar({
                             handleSearchPopoverClose();
                             if (isAuthorizedForRoles(allowedRoles)) {
                               navigateTo(
-                                `/patient/${rowData.row.original.id}/profile`
+                                `/patient/${rowData.row.original.id}/profile`,
                               );
                             } else {
                               alert(
-                                "You are not authorized to perform this action."
+                                "You are not authorized to perform this action.",
                               );
                             }
                           }}

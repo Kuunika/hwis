@@ -17,6 +17,10 @@ build
 .DS_Store
 *.pem
 
+# Server-specific scripts
+start-frontend.sh
+
+
 # debug
 npm-debug.log*
 yarn-debug.log*

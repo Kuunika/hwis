@@ -47,12 +47,12 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
     // Filter the data to only include objects where identifier_type.name is "National id"
     const nationalIdObjects = data.filter(
       (item: any) =>
-        item.identifier_type && item.identifier_type.name === "National id"
+        item.identifier_type && item.identifier_type.name === "National id",
     );
 
     // Extract just the identifier values from the filtered objects
     const nationalIdValues = nationalIdObjects.map(
-      (item: any) => item.identifier
+      (item: any) => item.identifier,
     );
 
     return nationalIdValues[nationalIdValues.length - 1];
@@ -77,6 +77,16 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
       },
     });
   };
+
+  // =========================
+  // ✅ CONTACT (ONE LINE)
+  // =========================
+  const contactValues =
+    patient?.person?.person_attributes
+      ?.map((a: any) => a?.value)
+      ?.filter((v: any) => typeof v === "string" && v.trim() !== "") || [];
+
+  const contactText = contactValues.length ? contactValues.join(", ") : "-";
 
   return (
     <>
@@ -207,7 +217,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
             </MenuItem>
             {!hasActiveVisit &&
               getRoles().some((role) =>
-                [roles.ADMIN, roles.CLINICIAN].includes(role)
+                [roles.ADMIN, roles.CLINICIAN].includes(role),
               ) && (
                 <MenuItem
                   onClick={handleCloseVisitMenu}
@@ -289,6 +299,9 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
               patient?.addresses[0]?.city_village
             }
           />
+
+          {/* ✅ ONLY ADDITION: Contact (one line) */}
+          <LabelValue label="Contact:" value={contactText} />
         </div>
       </Paper>
 
