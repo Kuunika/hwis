@@ -326,17 +326,58 @@ export const NotesConfig = {
     // Allergies Configuration
     ALLERGIES: {
         rootConcept: "Allergen Category",
-        fields: [
-            {
-                conceptName: "Allergen",
-                displayName: "Allergens",
-                format: (value: any) => value
-            },
-            {
-                conceptName: "Description",
-                displayName: "Notes",
+        fields: [],
+        itemRenderer: (item: any) => {
+            // item.rootValue contains the category name (e.g., "Food Allergy", "Medication Allergy")
+            const categoryName = item.rootValue;
+            
+            // Get all allergens and their details from children
+            const allergens: any[] = [];
+            let allergyDetails = "";
+            
+            item.children?.forEach((child: any) => {
+                const conceptName = child.names?.[0]?.name;
+                
+                // Handle regular allergens and "Other" allergens
+                if (conceptName === "Allergen" || 
+                    conceptName === "Other Food Allergy" ||
+                    conceptName === "Other Medication Allergy" ||
+                    conceptName === "Other Medical Substance Allergy" ||
+                    conceptName === "Other Substance Allergy") {
+                    allergens.push(child.value);
+                } else if (conceptName === "Description") {
+                    allergyDetails = child.value;
+                }
+            });
+            
+            if (allergens.length === 0 && !allergyDetails) {
+                return null;
             }
-        ]
+            
+            return (
+                <div style={{ marginBottom: "12px" }}>
+                    <div style={{ fontWeight: "500", marginBottom: "4px" }}>
+                        {categoryName}
+                    </div>
+                    <div style={{ paddingLeft: "16px" }}>
+                        {allergens.map((allergen, index) => (
+                            <div key={index} style={{ marginBottom: "2px" }}>
+                                - {allergen}
+                            </div>
+                        ))}
+                        {allergyDetails && (
+                            <div style={{ 
+                                marginTop: "4px", 
+                                fontStyle: "italic", 
+                                color: "#555" 
+                            }}>
+                                Notes: {allergyDetails}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
     },
 
     // UPDATED: Medications Configuration - Now displays free text
