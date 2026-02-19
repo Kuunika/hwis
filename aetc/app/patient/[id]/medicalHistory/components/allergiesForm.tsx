@@ -6,6 +6,7 @@ import { concepts } from "@/constants";
 import { GroupedSearchComboBox } from "@/components/form/groupedSearchCombo";
 import AllergiesPanel from "../../medicalInpatient-/components/allergies";
 import { useAllergyFormat } from "@/hooks/useAllergyFormat";
+import LabelledCheckbox from "@/components/form/labelledCheckBox";
 
 interface Observation {
   obs_id: number | null;
@@ -150,17 +151,23 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   ]);
 
   const schema = yup.object().shape({
+    noAllergies: yup.boolean().required(),
     [allergiesFormConfig.allergy.name]: yup
       .array()
-      .min(1, "At least one allergy must be selected")
-      .of(
-        yup.object().shape({
-          group: yup.string().required("Group is required"),
-          value: yup.string().required("Value is required"),
-          label: yup.string().required("Label is required"),
-        })
-      )
-      .required("Allergy field is required"),
+      .when("noAllergies", {
+        is: false,
+        then: (schema) => schema
+          .min(1, "At least one allergy must be selected")
+          .of(
+            yup.object().shape({
+              group: yup.string().required("Group is required"),
+              value: yup.string().required("Value is required"),
+              label: yup.string().required("Label is required"),
+            })
+          )
+          .required("Allergy field is required"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
 
     [allergiesFormConfig.otherFood.name]: yup
       .string()
@@ -227,10 +234,17 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
     [allergiesFormConfig.otherMedicalSubstance.name]: "",
     [allergiesFormConfig.otherSubstance.name]: "",
     [allergiesFormConfig.allergyDetails.name]: "",
+    noAllergies: false,
   };
 
   const handleSubmit = async () => {
     await schema.validate(formValues);
+
+    // If no allergies, skip the form
+    if (formValues.noAllergies) {
+      onSkip();
+      return;
+    }
 
     const allergyListKey = concepts.ALLERGY;
 
@@ -262,12 +276,12 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
   useEffect(() => {
     const isNone = allergySelected.find((allergy: any) => allergy.value === "None");
 
-    if (isNone) onSkip();
+    // if (isNone) onSkip();
   }, [allergySelected, onSkip]);
 
   return (
     <>
-      <AllergiesPanel />
+      {/* <AllergiesPanel /> */}
 
       <FormikInit
         validationSchema={schema}
@@ -276,106 +290,152 @@ export const AllergiesForm = ({ onSubmit, onSkip, onPrevious }: Prop) => {
         enableReinitialize={true}
         submitButton={false}
       >
-        <FormValuesListener getValues={setFormValues} />
+        {({ values }) => (
+          <>
+            <FormValuesListener getValues={setFormValues} />
 
-        <GroupedSearchComboBox
-          options={allergyOptions}
-          getValue={(value) => {
-            setAllergySelected(value);
-          }}
-          multiple={true}
-          name={allergiesFormConfig.allergy.name}
-          label={allergiesFormConfig.allergy.label}
-        />
+            <WrapperBox
+              sx={{
+                bgcolor: "white",
+                padding: "2ch",
+                mb: "2ch",
+                width: "100%",
+                borderRadius: "5px",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 600,
+                  marginBottom: "1rem",
+                  borderBottom: "2px solid #ccc",
+                  paddingBottom: "0.5rem",
+                }}
+              >
+                Allergies
+              </h3>
 
-        {showFoodOther && (
-          <TextInputField
-            id={allergiesFormConfig.otherFood.name}
-            name={allergiesFormConfig.otherFood.name}
-            label={allergiesFormConfig.otherFood.label}
-            sx={{ width: "100%", mt: "2ch" }}
-          />
+              <div style={{ marginBottom: "2ch" }}>
+                <LabelledCheckbox
+                  name="noAllergies"
+                  label="Patient has no known allergies"
+                />
+              </div>
+
+              {!formValues.noAllergies && (
+                <>
+                  <GroupedSearchComboBox
+                    options={allergyOptions}
+                    getValue={(value) => {
+                      setAllergySelected(value);
+                    }}
+                    multiple={true}
+                    name={allergiesFormConfig.allergy.name}
+                    label={allergiesFormConfig.allergy.label}
+                    disabled={formValues.noAllergies}
+                  />
+
+                  {showFoodOther && (
+                    <TextInputField
+                      id={allergiesFormConfig.otherFood.name}
+                      name={allergiesFormConfig.otherFood.name}
+                      label={allergiesFormConfig.otherFood.label}
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showMedicalSubstanceOther && (
+                    <TextInputField
+                      id={allergiesFormConfig.otherMedicalSubstance.name}
+                      name={allergiesFormConfig.otherMedicalSubstance.name}
+                      label={allergiesFormConfig.otherMedicalSubstance.label}
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showMedicationOther && (
+                    <TextInputField
+                      id={allergiesFormConfig.otherMedication.name}
+                      name={allergiesFormConfig.otherMedication.name}
+                      label={allergiesFormConfig.otherMedication.label}
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showSubstanceOther && (
+                    <TextInputField
+                      id={allergiesFormConfig.otherSubstance.name}
+                      name={allergiesFormConfig.otherSubstance.name}
+                      label={allergiesFormConfig.otherSubstance.label}
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showMedicationDetails && (
+                    <TextInputField
+                      id="medication_Allergy_Details"
+                      name={"medication_Allergy_Details"}
+                      label="Medication allergy details"
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showMedicalSubstanceDetails && (
+                    <TextInputField
+                      id="medical_Substance_Allergy_Details"
+                      name={"medical_Substance_Allergy_Details"}
+                      label="Medical substance allergy details"
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showFoodDetails && (
+                    <TextInputField
+                      id="food_Allergy_Details"
+                      name={"food_Allergy_Details"}
+                      label="Food allergy details"
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+
+                  {showSubstanceDetails && (
+                    <TextInputField
+                      id="substance_Allergy_Details"
+                      name={"substance_Allergy_Details"}
+                      label="Substance allergy details"
+                      sx={{ width: "100%", mt: "2ch" }}
+                      disabled={formValues.noAllergies}
+                    />
+                  )}
+                </>
+              )}
+            </WrapperBox>
+
+            <WrapperBox sx={{ mt: "2ch" }}>
+              <MainButton
+                variant="secondary"
+                title="Previous"
+                type="button"
+                onClick={onPrevious}
+                sx={{ flex: 1, marginRight: "8px" }}
+              />
+              <MainButton
+                onClick={() => { }}
+                variant="primary"
+                title="Next"
+                type="submit"
+                sx={{ flex: 1 }}
+              />
+            </WrapperBox>
+          </>
         )}
-
-        {showMedicalSubstanceOther && (
-          <TextInputField
-            id={allergiesFormConfig.otherMedicalSubstance.name}
-            name={allergiesFormConfig.otherMedicalSubstance.name}
-            label={allergiesFormConfig.otherMedicalSubstance.label}
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showMedicationOther && (
-          <TextInputField
-            id={allergiesFormConfig.otherMedication.name}
-            name={allergiesFormConfig.otherMedication.name}
-            label={allergiesFormConfig.otherMedication.label}
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showSubstanceOther && (
-          <TextInputField
-            id={allergiesFormConfig.otherSubstance.name}
-            name={allergiesFormConfig.otherSubstance.name}
-            label={allergiesFormConfig.otherSubstance.label}
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showMedicationDetails && (
-          <TextInputField
-            id="medication_Allergy_Details"
-            name={"medication_Allergy_Details"}
-            label="Medication allergy details"
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showMedicalSubstanceDetails && (
-          <TextInputField
-            id="medical_Substance_Allergy_Details"
-            name={"medical_Substance_Allergy_Details"}
-            label="Medical substance allergy details"
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showFoodDetails && (
-          <TextInputField
-            id="food_Allergy_Details"
-            name={"food_Allergy_Details"}
-            label="Food allergy details"
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        {showSubstanceDetails && (
-          <TextInputField
-            id="substance_Allergy_Details"
-            name={"substance_Allergy_Details"}
-            label="Substance allergy details"
-            sx={{ width: "100%", mt: "2ch" }}
-          />
-        )}
-
-        <WrapperBox sx={{ mt: "2ch" }}>
-          <MainButton
-            variant="secondary"
-            title="Previous"
-            type="button"
-            onClick={onPrevious}
-            sx={{ flex: 1, marginRight: "8px" }}
-          />
-          <MainButton
-            onClick={() => { }}
-            variant="primary"
-            title="Next"
-            type="submit"
-            sx={{ flex: 1 }}
-          />
-        </WrapperBox>
       </FormikInit>
     </>
   );

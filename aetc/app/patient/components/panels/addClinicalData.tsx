@@ -1,6 +1,7 @@
 import MarkdownEditor from "@/components/markdownEditor";
 import { getActivePatientDetails, useParameters } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
+import { getPatientVisitTypes } from "@/hooks/patientReg";
 
 import { Box, Button, Popover, Tooltip } from "@mui/material";
 import { useState } from "react";
@@ -74,13 +75,19 @@ export const AddClinicalNotes = ({
   }
 
   const { data: allEncounters } = getPatientsEncounters(patientId as string);
+  const { data: patientVisits } = getPatientVisitTypes(patientId as string);
+  const activeVisit = patientVisits?.find((visit) => !Boolean(visit.date_stopped));
 
 
   const hasDisposition = () => {
     if (!allEncounters || allEncounters.length === 0) return false;
+    if (!activeVisit) return false; // No active visit means no disposition for current visit
 
+    // Check if there's a disposition encounter in the ACTIVE visit
     return allEncounters.some(
-      (enc: any) => enc?.encounter_type?.uuid === encounters.DISPOSITION
+      (enc: any) => 
+        enc?.encounter_type?.uuid === encounters.DISPOSITION &&
+        enc?.visit_id === activeVisit?.visit_id
     );
   };
 

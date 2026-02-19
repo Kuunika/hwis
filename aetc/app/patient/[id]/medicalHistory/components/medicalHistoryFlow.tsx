@@ -153,17 +153,18 @@ export const MedicalHistoryFlow = () => {
       label: "Prior/Existing condition",
       encounter: encounters.DIAGNOSIS,
     },
-    ...(patient?.gender === "Female"
-      ? [
-        {
-          id: 6,
-          label: "Gynaecology and Obstetrics",
-          encounter: encounters.OBSTETRIC_HISTORY,
-        },
-      ]
-      : []),
+    // ...(patient?.gender === "Female"
+    //   ? [
+    //     {
+    //       id: 6,
+    //       label: "Gynaecology and Obstetrics",
+    //       encounter: encounters.OBSTETRIC_HISTORY,
+    //     },
+    //   ]
+    //   : []),
     {
-      id: patient?.gender === "Female" ? 7 : 6,
+      // id: patient?.gender === "Female" ? 7 : 6,
+      id: 6,
       label: "Last Meal",
       encounter: encounters.SUMMARY_ASSESSMENT,
     },
@@ -655,6 +656,12 @@ export const MedicalHistoryFlow = () => {
 
   }
 
+  function handleLastMealSkip(): void {
+    // When last meal is skipped (patient did not eat), we still need to trigger submission
+    // Don't add lastMeal to formData, but trigger the submission of all other forms
+    setReadyToSubmit(true);
+  }
+
   async function handleLastMealSubmission(values: any): Promise<any> {
     const lastMealDate = values.dateOfMeal;
     const lastMealDescription = values.descriptionOfLastMeal;
@@ -922,7 +929,7 @@ export const MedicalHistoryFlow = () => {
       medications: handleMedicationsSubmission,
       conditions: handleConditionsSubmission,
       // surgeries: handleSurgeriesSubmission,
-      obstetrics: handleObstetricsSubmission,
+      // obstetrics: handleObstetricsSubmission,
       lastMeal: handleLastMealSubmission,
       // admissions: handleAdmissionsSubmission,
       // family: handleFamilyHistorySubmission,
@@ -989,16 +996,16 @@ export const MedicalHistoryFlow = () => {
             onSkip={handleSkip}
           />
           {/* </SubSteps> */}
-          {patient?.gender === "Female" && (
+          {/* {patient?.gender === "Female" && (
             <ObstetricsForm
               onSubmit={handleObstetricsNext}
               onSkip={handlePrevious}
             />
-          )}
+          )} */}
           <LastMealForm
             onSubmit={handleLastMealNext}
             onPrevious={handlePrevious}
-            onSkip={handleSkip}
+            onSkip={handleLastMealSkip}
           />
           {/* <ReviewOfSystemsForm
             onSubmit={handleReviewNext}
