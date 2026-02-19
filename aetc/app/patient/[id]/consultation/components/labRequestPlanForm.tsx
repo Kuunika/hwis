@@ -208,7 +208,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
       return {
         concept: test?.label,
         obsDatetime: dateTime,
-        value: tests?.find((lab) => lab.concept_id === test.id)?.names[0]?.uuid,
+        value: test?.id,
         groupMembers: group_members_data,
       };
     });
@@ -242,7 +242,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
 
   const handleSampleTypeChange = (value: string) => {
     const specimenType = JSON.parse(value);
-    setSampleName(specimenType.uuid);
+    setSampleName(specimenType.name);
     setTestType(""); // Reset testType when sample type changes
     setRadioKey((prevKey) => prevKey + 1); // Force radio buttons to re-render
 
@@ -297,8 +297,8 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
           options={
             tests
               ? tests.map((d) => ({
-                  id: d.concept_id,
-                  label: d.names[0]?.name,
+                  id: d.uuid,
+                  label: d.name,
                 }))
               : []
           }
