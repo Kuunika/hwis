@@ -161,7 +161,7 @@ export const LabRequestForm: React.FC<LabFormProps> = ({
   } = getConceptSetMembers(bedsideTestId);
 
   const [samples, setSamples] = useState<Concept[]>([]);
-  const [tests, setTests] = useState<Concept[]>([]);
+  const [tests, setTests] = useState<any>([]);
 
   const { params } = useParameters();
   const { activeVisit, patientId } = getActivePatientDetails();

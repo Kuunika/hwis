@@ -84,7 +84,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
   } = getConceptSetMembers(bedsideTestId);
 
   const [samples, setSamples] = useState<Concept[]>([]);
-  const [tests, setTests] = useState<Concept[]>([]);
+  const [tests, setTests] = useState<any>([]);
   const [formKey, setFormKey] = useState(0); // Add this to force form reset
   // Add a state to track radio button reset
   const [radioKey, setRadioKey] = useState(0);
@@ -296,7 +296,7 @@ export const LabRequestPlanForm = ({ onClose, addRequest }: LabFormProps) => {
           name="tests"
           options={
             tests
-              ? tests.map((d) => ({
+              ? tests.map((d: any) => ({
                   id: d.uuid,
                   label: d.name,
                 }))
