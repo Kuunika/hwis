@@ -18,7 +18,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   overflow: "auto",
   maxHeight: "400px",
-  minHeight: "200px", // Add minimum height
+  minHeight: "95px", // Add minimum height
   boxShadow: theme.shadows[3],
   position: "relative", // Ensure this is set for absolute children
 }));

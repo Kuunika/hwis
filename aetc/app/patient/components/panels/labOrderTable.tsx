@@ -17,7 +17,7 @@ import {
   getPatientsWaitingForAssessment,
 } from "@/hooks/patientReg";
 import { GenericDialog } from "@/components";
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import {
   Box,
   Button,
@@ -38,7 +38,9 @@ import { getPrinters } from "@/hooks/loadStatic";
 
 export const LabOrderTable = () => {
   const { data: printers } = getPrinters();
-  const [triggerPrintFunc, setTriggerPrintFunc] = useState<() => any>(() => {});
+
+  // Use useRef to store the print function to avoid re-renders
+  const printFuncRef = useRef<(() => any) | null>(null);
 
   const { params } = useParameters();
   const { data: patient } = getOnePatient(params.id as string);
@@ -63,7 +65,8 @@ export const LabOrderTable = () => {
     },
   ]);
 
-  const handleViewClick = (results: any, name: any) => {
+  // Use useCallback to prevent unnecessary re-renders
+  const handleViewClick = useCallback((results: any, name: any) => {
     const formattedResults = results.map((item: any) => ({
       name: item.indicator.name,
       value: item.value,
@@ -71,11 +74,25 @@ export const LabOrderTable = () => {
     }));
     setFullResults(formattedResults);
     setOpenDialog(true);
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpenDialog(false);
-  };
+  }, []);
+
+  // Use useCallback to prevent function recreation on every render
+  const handleSetTriggerFunc = useCallback((func: () => any) => {
+    printFuncRef.current = func;
+  }, []);
+
+  // Use useCallback for the print handler
+  const handlePrint = () => {
+    if (printFuncRef.current && typeof printFuncRef.current === "function") {
+      printFuncRef.current();
+      setShowDialog(false);
+    }
+  }
+
   const columns = [
     {
       field: "specimen",
@@ -232,7 +249,7 @@ export const LabOrderTable = () => {
           <LabBarcodeComponentPrintTemplate
             printer={printer}
             orderDate={selectedTest.orderDate}
-            setTriggerFunc={(test) => setTriggerPrintFunc(test)}
+            setTriggerFunc={handleSetTriggerFunc}
             value={selectedTest.ascension}
             test={`${selectedTest.tests}|${selectedTest.ascension}|${selectedTest.requestingTechnician.split(" ")[1]}`}
             fullName={`${patient?.given_name} ${patient?.family_name}`}
@@ -256,15 +273,7 @@ export const LabOrderTable = () => {
             }
           />
           <br />
-          <MainButton
-            title={"Print Barcode"}
-            onClick={() => {
-              const func = triggerPrintFunc();
-              if (typeof func === "function") {
-                func();
-              }
-            }}
-          />
+          <MainButton title={"Print Barcode"} onClick={handlePrint} />
         </WrapperBox>
       </GenericDialog>
     </>

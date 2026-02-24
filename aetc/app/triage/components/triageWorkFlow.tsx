@@ -124,11 +124,7 @@ export default function TriageWorkFlow() {
     { id: 3, label: "Disability" },
     { id: 4, label: "Persistent Pain/Other Concerns" },
   ];
-  const {
-    data: patientVisits,
-    isLoading,
-    isSuccess,
-  } = getPatientVisitTypes(params?.id as string);
+  const { data: patientVisits } = getPatientVisitTypes(params?.id as string);
 
   const activeVisit = patientVisits?.find((d) => !Boolean(d.date_stopped));
 
@@ -143,8 +139,6 @@ export default function TriageWorkFlow() {
       ?.filter((d) => d?.encounter_type.uuid == encounterType)
       .find((d) => d.visit_id == activeVisit?.visit_id);
   };
-
-  //getDateTime();
 
   useEffect(() => {
     setReferral(getEncounterActiveVisit(encounters.REFERRAL));
@@ -172,6 +166,8 @@ export default function TriageWorkFlow() {
         obs: getObservations(formData.vitals, dateTime),
       });
     }
+
+    return;
   }, [presentingCreated]);
 
   useEffect(() => {
@@ -272,10 +268,7 @@ export default function TriageWorkFlow() {
           },
           {
             concept: concepts.CARE_AREA,
-            value:
-              triageResult === "green" || triageResult === "yellow"
-                ? formData?.serviceArea?.[concepts.CARE_AREA] || ""
-                : "",
+            value: formData?.serviceArea?.[concepts.CARE_AREA] || "",
             obsDatetime: dateTime,
           },
           {
@@ -340,18 +333,25 @@ export default function TriageWorkFlow() {
   const handlePersistentPain = (values: any) => {
     formData["pain"] = values;
     setShowForm(false);
-    if (triageResult == "green" || triageResult == "yellow") {
-      setShowModal(true);
-      return;
-    }
-    triggerSubmission();
+    setShowModal(true);
+    // if (triageResult == "green" || triageResult == "yellow") {
+    //   return;
+    // }
+    // triggerSubmission();
   };
 
   const handleVitalsSubmit = (values: any) => {
-    values[concepts.GLUCOSE] = `${values[concepts.GLUCOSE]} ${
-      values[concepts.ADDITIONAL_NOTES]
-    }`;
-    formData["vitals"] = values;
+    const cloneValues = { ...values };
+    if (
+      cloneValues &&
+      cloneValues[concepts.GLUCOSE] !== undefined &&
+      cloneValues[concepts.ADDITIONAL_NOTES] !== undefined
+    ) {
+      cloneValues[concepts.GLUCOSE] =
+        `${cloneValues[concepts.GLUCOSE]} ${cloneValues[concepts.ADDITIONAL_NOTES]}`;
+    }
+
+    formData["vitals"] = cloneValues;
 
     setActiveStep(2);
     setSubmittedSteps((steps) => [...steps, 1]);
@@ -380,13 +380,13 @@ export default function TriageWorkFlow() {
   };
 
   const handleServiceArea = (values: any) => {
+
     formData["serviceArea"] = values;
     setMessage("adding next service area...");
 
     triggerSubmission();
     setShowModal(false);
   };
-  const dateTime = ServerTime.getServerTimeString();
 
   const triggerSubmission = () => {
     setLoading(true);
@@ -501,6 +501,8 @@ export default function TriageWorkFlow() {
           // onClickAccordion={handleClickAccordion}
           active={activeStep}
           onBack={() => navigateBack()}
+          allowPanelActiveOnClick={false}
+          backButtonProfileText="Back to triage list"
         >
           <PresentingComplaintsForm
             getFormValues={setPresentingComplaints}
@@ -569,7 +571,7 @@ export default function TriageWorkFlow() {
               return prev == "" ? current.label : prev + "," + current.label;
             }, "")}
             triageCategory={triageResult}
-            date={getHumanReadableDateTime(dateTime)}
+            date={getHumanReadableDateTime(ServerTime.getServerTimeString())}
             triagedBy={presentingComplaintsResponse?.created_by as string}
             referredFrom={referralHealthFacility}
             vitals={[
@@ -658,6 +660,8 @@ export default function TriageWorkFlow() {
           Triage status is (
           {triageResult === "green" ? (
             <span style={{ color: "green" }}>{triageResult}</span>
+          ) : triageResult === "red" ? (
+            <span style={{ color: "red" }}>{triageResult}</span>
           ) : (
             <span style={{ color: "#cc9900" }}>{triageResult}</span>
           )}

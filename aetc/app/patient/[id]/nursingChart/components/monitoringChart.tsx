@@ -11,7 +11,6 @@ import {
   addEncounter,
   fetchConceptAndCreateEncounter,
 } from "@/hooks/encounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { getPatientVisitTypes } from "@/hooks/patientReg";
 import { getObservations } from "@/helpers";
 import { Alert, Snackbar } from "@mui/material";
@@ -20,8 +19,7 @@ import { useServerTime } from "@/contexts/serverTimeContext";
 export const MonitoringChart = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { params } = useParameters();
-  const { mutate } = addEncounter();
-  const { navigateTo, navigateBack } = useNavigation();
+  const { navigateBack } = useNavigation();
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertSeverity, setAlertSeverity] = useState<
     "error" | "success" | null
@@ -65,7 +63,6 @@ export const MonitoringChart = () => {
   // } = fetchConceptAndCreateEncounter();
 
   useEffect(() => {
-    
     if (vitalsError) {
       setAlertMessage(`Error submitting vitals encounter`);
       setAlertSeverity("error");
@@ -150,50 +147,114 @@ export const MonitoringChart = () => {
     dateTime = ServerTime.getServerTimeString();
     for (const [key, value] of Object.entries(values)) {
       if (key === "fluidEntries") {
-      if (Array.isArray(value)) {
+        if (Array.isArray(value)) {
+          const validFluidEntries = value.filter((entry) => {
+            return (
+              entry.intakeFluidType?.[0]?.value ||
+              entry.intakeFluidAmount ||
+              entry.outputFluidType?.[0]?.id ||
+              entry.outputFluidAmount ||
+              entry.balance
+            );
+          });
 
+          if (validFluidEntries.length === 0) {
+            continue;
+          }
 
-        const validFluidEntries = value.filter(entry => {
-          return (
-            entry.intakeFluidType?.[0]?.value || 
-            entry.intakeFluidAmount || 
-            entry.outputFluidType?.[0]?.id || 
-            entry.outputFluidAmount || 
-            entry.balance
-          );
-        });
-        
-        if (validFluidEntries.length === 0) {
-          continue;
+          const fluidObs = value.map((entry) => [
+            {
+              concept: concepts.INTAKE_FLUIDS,
+              value: entry.intakeFluidType[0]?.value,
+            },
+            {
+              concept: concepts.INTAKE_FLUID_AMOUNT,
+              value: entry.intakeFluidAmount,
+            },
+            {
+              concept: concepts.OUTPUT_FLUID_TYPE,
+              value: entry.outputFluidType[0]?.id,
+            },
+            {
+              concept: concepts.OUTPUT_FLUID_AMOUNT,
+              value: entry.outputFluidAmount,
+            },
+            { concept: concepts.FLUID_BALANCE, value: entry.balance },
+          ]);
+
+          fluidObs.forEach((groupMembersObj) => {
+            const observations = [
+              {
+                concept: concepts.FLUID_BALANCE_CHART,
+                obsDatetime: dateTime,
+                value: true,
+                groupMembers: groupMembersObj,
+              },
+            ];
+
+            createInterventions({
+              encounterType: encounters.PROCEDURES_DONE,
+              visit: activeVisit?.uuid,
+              patient: params.id,
+              encounterDatetime: dateTime,
+              obs: observations,
+            });
+          });
+        }
+        continue;
+      }
+
+      if (
+        key.endsWith("_Other") ||
+        !value ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
+        continue;
+      }
+
+      if (Array.isArray(value) && value.length > 0) {
+        let obsObject = {};
+
+        if (
+          key === "Circulation Interventions" ||
+          key === "Disability Interventions" ||
+          key === "Exposure Interventions"
+        ) {
+          obsObject = value.reduce((acc, item) => {
+            acc[item.label] = true;
+            return acc;
+          }, {});
+        } else {
+          obsObject = value.reduce((acc, item) => {
+            const itemKey = item.id || item.label;
+            acc[itemKey] = true;
+            return acc;
+          }, {});
         }
 
-        const fluidObs = value.map((entry) => [
-        {
-          concept: concepts.INTAKE_FLUIDS,
-          value: entry.intakeFluidType[0]?.value,
-        },
-        {
-          concept: concepts.INTAKE_FLUID_AMOUNT,
-          value: entry.intakeFluidAmount,
-        },
-        {
-          concept: concepts.OUTPUT_FLUID_TYPE,
-          value: entry.outputFluidType[0]?.id,
-        },
-        {
-          concept: concepts.OUTPUT_FLUID_AMOUNT,
-          value: entry.outputFluidAmount,
-        },
-        { concept: concepts.FLUID_BALANCE, value: entry.balance },
-        ]);
+        const obs = getObservations(obsObject, dateTime);
 
-        fluidObs.forEach((groupMembersObj) => {
+        const otherKey = `${key}_Other`;
+        if (values[otherKey]) {
+          obs.forEach((element) => {
+            const elementConcept = String(element.concept || "");
+            const isOtherField =
+              elementConcept.toLowerCase().includes("other") ||
+              (element.concept &&
+                element.concept.toLowerCase().includes("other"));
+
+            if (isOtherField) {
+              element.value = values[otherKey];
+            }
+          });
+        }
+
         const observations = [
           {
-          concept: concepts.FLUID_BALANCE_CHART,
-          obsDatetime: dateTime,
-          value: true,
-          groupMembers: groupMembersObj,
+            concept: key,
+            obsDatetime: dateTime,
+            value: true,
+            groupMembers: obs,
           },
         ];
 
@@ -204,67 +265,6 @@ export const MonitoringChart = () => {
           encounterDatetime: dateTime,
           obs: observations,
         });
-        });
-      }
-      continue;
-      }
-
-      if (
-      key.endsWith("_Other") ||
-      !value ||
-      (Array.isArray(value) && value.length === 0)
-      ) {
-      continue;
-      }
-
-      if (Array.isArray(value) && value.length > 0) {
-      let obsObject = {};
-
-      if (key === "Circulation Interventions" || key === "Disability Interventions" || key === "Exposure Interventions") {
-        obsObject = value.reduce((acc, item) => {
-        acc[item.label] = true;
-        return acc;
-        }, {});
-      } else {
-        obsObject = value.reduce((acc, item) => {
-        const itemKey = item.id || item.label;
-        acc[itemKey] = true;
-        return acc;
-        }, {});
-      }
-
-      const obs = getObservations(obsObject, dateTime);
-
-      const otherKey = `${key}_Other`;
-      if (values[otherKey]) {
-        obs.forEach((element) => {
-        const elementConcept = String(element.concept || "");
-        const isOtherField =
-          elementConcept.toLowerCase().includes("other") ||
-          (element.concept && element.concept.toLowerCase().includes("other"));
-
-        if (isOtherField) {
-          element.value = values[otherKey];
-        }
-        });
-      }
-
-      const observations = [
-        {
-        concept: key,
-        obsDatetime: dateTime,
-        value: true,
-        groupMembers: obs,
-        },
-      ];
-
-      createInterventions({
-        encounterType: encounters.PROCEDURES_DONE,
-        visit: activeVisit?.uuid,
-        patient: params.id,
-        encounterDatetime: dateTime,
-        obs: observations,
-      });
       }
     }
   };
@@ -321,7 +321,6 @@ export const MonitoringChart = () => {
           onSubmit={handleMedicationsSubmit}
           onSkip={handleSkip}
         />
-
       </NewStepperContainer>
     </>
   );

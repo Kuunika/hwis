@@ -19,8 +19,6 @@ export const emrApiClient = () => {
     if (error.response && error.response.status === 401) {
       // Refresh token logic here or redirect to login
 
-
-
       if (window) {
         toast.error('Your session has expired, please login in again.', {
           position: "bottom-right",

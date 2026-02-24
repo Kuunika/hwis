@@ -70,6 +70,8 @@ interface IProps {
   setActive?: (value: any) => void;
   onBack?: () => void;
   showSubmittedStatus?: boolean;
+  allowPanelActiveOnClick?: boolean;
+  backButtonProfileText?:string
 }
 
 export function NewStepperContainer({
@@ -80,11 +82,14 @@ export function NewStepperContainer({
   setActive,
   onBack,
   showSubmittedStatus = false,
+  allowPanelActiveOnClick = true,
+  backButtonProfileText = "Back to Profile",
 }: IProps) {
   const { patientId, activeVisitId } = getActivePatientDetails();
   const { data, isLoading, isRefetching } = getPatientsEncounters(
     patientId as string
   );
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set());
 
   const filteredChildren = children.filter((item) => item !== false);
 
@@ -140,6 +145,10 @@ export function NewStepperContainer({
     }
   }, [data, steps, showSubmittedStatus]);
 
+  useEffect(() => {
+    setVisitedSteps((prev) => new Set(prev).add(active));
+  }, [active]);
+
   return (
     <MainGrid container spacing={5}>
       {/* Sidebar Navigation */}
@@ -189,7 +198,7 @@ export function NewStepperContainer({
                 textAlign: "left",
               }}
             >
-              Back to Profile
+              {backButtonProfileText}
             </MainTypography>
           </WrapperBox>
 
@@ -207,7 +216,11 @@ export function NewStepperContainer({
                   borderBottom: "solid 0.2ch #B3B3B3",
                 },
               }}
-              onChange={() => setActive && setActive(key)}
+              onChange={() => {
+                (allowPanelActiveOnClick || visitedSteps.has(key)) &&
+                  setActive &&
+                  setActive(key);
+              }}
               expanded={key === active}
               key={key}
             >

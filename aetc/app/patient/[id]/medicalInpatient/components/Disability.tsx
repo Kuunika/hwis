@@ -17,7 +17,6 @@ import {
   mapSubmissionToCodedArray,
 } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 type Props = {
   onSubmit: () => void;
@@ -141,8 +140,8 @@ export const Disability = ({ onSubmit }: Props) => {
     onSubmit
   );
 
-  const handleFormSubmit = (values: any) => {
-    handleSubmit(mapSubmissionToCodedArray(form, values));
+  const handleFormSubmit = async (values: any) => {
+    handleSubmit(await mapSubmissionToCodedArray(form, values));
   };
 
   const totalSum =

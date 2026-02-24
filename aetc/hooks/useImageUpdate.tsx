@@ -1,4 +1,4 @@
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import React from "react";
 import { useRef, useState, useEffect } from "react";
 import { getActivePatientDetails, useImageFormTransform } from ".";
@@ -14,6 +14,7 @@ interface Section {
 }
 
 export const useImageUpdate = () => {
+  const { ServerTime } = useServerTime();
   const { submittedValues, setData, setSubmittedValues } =
     useImageFormTransform();
   const { activeVisit, patientId } = getActivePatientDetails();
@@ -127,7 +128,7 @@ export const useImageUpdate = () => {
   };
 
   const handleFormSubmit = (formData: any) => {
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
     const obs = Object.keys(formData)
       .flatMap((key) => {
         const conceptData = formData[key];

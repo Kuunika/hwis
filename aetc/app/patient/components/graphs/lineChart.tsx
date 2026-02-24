@@ -36,7 +36,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         height: chartConfig.height || 350,
       },
       stroke: {
-        curve: "straight",
+        curve: "smooth",
         width: 3,
       },
       dataLabels: {

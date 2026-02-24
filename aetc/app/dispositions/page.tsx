@@ -29,11 +29,10 @@ function DispositionPage() {
           <br />
           <br />
           <RegistrationMainHeader>
-            Disposition/Specialty{" "}
+            Disposition List{" "}
           </RegistrationMainHeader>
           <RegistrationDescriptionText>
-            This is a list of all patients who have completed assessments and
-            are waiting for Specialty.
+            This is a list of all patients whose visit has been completed.
           </RegistrationDescriptionText>
           <RegistrationCard sx={{ mx: 1, p: 0 }}>
             <ClientsAwaitingDisposition />
@@ -45,4 +44,4 @@ function DispositionPage() {
   );
 }
 
-export default AuthGuard(DispositionPage, [roles.ADMIN, roles.CLINICIAN]);
+export default AuthGuard(DispositionPage, [roles.ADMIN, roles.CLINICIAN, roles.NURSE]);

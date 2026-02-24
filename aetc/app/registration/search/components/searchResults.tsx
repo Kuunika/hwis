@@ -21,11 +21,15 @@ import { GenericDialog } from "@/components";
 import { getPatientRelationships, merge } from "@/hooks/patientReg";
 import { OverlayLoader } from "@/components/backdrop";
 import { ViewPatient } from "@/app/patient/components/viewPatient";
-import { addEncounter, getPatientsEncounters } from "@/hooks/encounter";
+import {
+  addEncounter,
+  fetchConceptAndCreateEncounter,
+  getPatientsEncounters,
+} from "@/hooks/encounter";
 import { closeCurrentVisit } from "@/hooks/visit";
 import { concepts, encounters } from "@/constants";
 import { getObservationValue } from "@/helpers/emr";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
 import {
@@ -381,6 +385,7 @@ const ViewPatientDialog = ({
 }) => {
   const [mergeType, setMergeType] = useState(type);
   const { params } = useParameters();
+  const { ServerTime } = useServerTime();
 
   // encounters for the patient registered during the initial registration
   const { data: patientEncounters } = getPatientsEncounters(
@@ -401,42 +406,40 @@ const ViewPatientDialog = ({
   const [transactionSuccess, setTransactionSuccess] = useState(false);
 
   const {
-    mutate: createSocialHistoryEncounter,
+    mutateAsync: createSocialHistoryEncounter,
     isPending: creatingSocialHistoryEncounter,
     isSuccess: socialHistoryEncounterCreated,
     isError: socialHistoryEncounterErrored,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: createFinancingEncounter,
+    mutateAsync: createFinancingEncounter,
     isPending: creatingFinancingEncounter,
     isSuccess: financingEncounterCreated,
     isError: financingEncounterErrored,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: createReferralEncounter,
+    mutateAsync: createReferralEncounter,
     isPending: creatingReferralEncounter,
     isSuccess: referralCreated,
     isError: referralErrored,
-  } = addEncounter();
+  } = fetchConceptAndCreateEncounter();
 
   const {
-    mutate: mergePatients,
+    mutateAsync: mergePatients,
     isPending: merging,
     isSuccess: merged,
     isError,
     data: mergedResponse,
   } = merge();
   const {
-    mutate: ddeMergePatients,
+    mutateAsync: ddeMergePatients,
     isPending: ddeMerging,
     isSuccess: ddeMerged,
     isError: ddeMergeError,
     data: ddeMergedResponse,
   } = merge();
-
-  const { activeVisit } = getActivePatientDetails();
 
   const loading =
     merging ||
@@ -474,68 +477,19 @@ const ViewPatientDialog = ({
 
     setIsReferred(referred);
   }, [patientEncounters]);
-  // 5550aa4e-59f4-4948-a0ad-e750431a07b1
-  // create social history
-  useEffect(() => {
-    createSocialHistoryEncounter({
-      encounterType: encounters.SOCIAL_HISTORY,
-      visit: activeVisit,
-      patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
-      obs: socialHistory?.obs?.map((ob: any) => ({
-        concept: ob.names[0].uuid,
-        value: ob.value,
-        obsDatetime: getDateTime(),
-      })),
-    });
-  }, [merged]);
-
-  // create financing
-  useEffect(() => {
-    createFinancingEncounter({
-      encounterType: encounters.FINANCING,
-      visit: activeVisit,
-      patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
-      obs: financing?.obs?.map((ob) => ({
-        concept: ob.names[0].uuid,
-        value: ob.value,
-        obsDatetime: getDateTime(),
-      })),
-    });
-  }, [socialHistoryEncounterCreated]);
-
-  // create referral
-  useEffect(() => {
-    createReferralEncounter({
-      encounterType: encounters.REFERRAL,
-      visit: activeVisit,
-      patient: mergedResponse?.uuid,
-      encounterDatetime: getDateTime(),
-      obs: [
-        {
-          concept: concepts.REFERRED_FROM,
-          value: referralData[concepts.REFERRED_FROM],
-          obsDatetime: getDateTime(),
-        },
-      ],
-    });
-  }, [financingEncounterCreated]);
 
   // close patient visit
   useEffect(() => {
-    // const patient = initialPatients?.find(p => p.uuid == params?.id);
     if (referralCreated) {
-      // closeVisit(patient.visit_uuid);
       setTransactionSuccess(true);
     }
   }, [referralCreated]);
 
-  const triggerMerge = () => {
+  const triggerMerge = async () => {
     const uuid = patient?.uuid;
-    const initialUuid = initialPatient?.uuid;
+    const initialUuid = params?.id;
 
-    mergePatients({
+    const mergedResponse = await mergePatients({
       primary: {
         patient_id: uuid,
       },
@@ -545,10 +499,47 @@ const ViewPatientDialog = ({
         },
       ],
     });
+
+    await createSocialHistoryEncounter({
+      encounterType: encounters.SOCIAL_HISTORY,
+      visit: mergedResponse?.active_visit?.uuid,
+      patient: mergedResponse?.uuid,
+      encounterDatetime: ServerTime.getServerTimeString(),
+      obs: socialHistory?.obs?.map((ob: any) => ({
+        concept: ob.names[0].uuid,
+        value: ob.value,
+        obsDatetime: ServerTime.getServerTimeString(),
+      })),
+    });
+
+    await createReferralEncounter({
+      encounterType: encounters.REFERRAL,
+      visit: mergedResponse?.active_visit?.uuid,
+      patient: mergedResponse?.uuid,
+      encounterDatetime: ServerTime.getServerTimeString(),
+      obs: [
+        {
+          concept: concepts.REFERRED_FROM,
+          value: referralData[concepts.REFERRED_FROM],
+          obsDatetime: ServerTime.getServerTimeString(),
+        },
+      ],
+    });
+
+    await createFinancingEncounter({
+      encounterType: encounters.FINANCING,
+      visit: mergedResponse?.active_visit?.uuid,
+      patient: mergedResponse?.uuid,
+      encounterDatetime: ServerTime.getServerTimeString(),
+      obs: financing?.obs?.map((ob) => ({
+        concept: ob.names[0].uuid,
+        value: ob.value,
+        obsDatetime: ServerTime.getServerTimeString(),
+      })),
+    });
   };
 
   const handleContinue = () => {
-    console.log({ isReferred });
     if (isReferred == concepts.YES) {
       setOpenReferralDialog(true);
       return;
@@ -569,9 +560,9 @@ const ViewPatientDialog = ({
     if (financing) setFinancing(financing);
   }, [existingPatientEncounters]);
 
-  const handleReferralSubmit = (values: any) => {
-    setReferralData(values);
-    triggerMerge();
+  const handleReferralSubmit = async (values: any) => {
+    await setReferralData(values);
+    await triggerMerge();
     setOpenReferralDialog(false);
   };
 
@@ -632,7 +623,7 @@ const ViewPatientDialog = ({
       names: [{ uuid: key }],
       concept: key,
       value: social[key],
-      obsDatetime: getDateTime(),
+      obsDatetime: ServerTime.getServerTimeString(),
     }));
     setSocialHistory({ obs });
   };

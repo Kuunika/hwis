@@ -38,19 +38,28 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
         });
 
         const [presentingInfo, setPresentingInfo] = useState({
-            complaints: [] as string[],
+            complaints: [] as Array<{ complaint: string, duration: string }>, // Change this line
             history: "",
             surgicalHistory: "",
             surgicalProcedure: "",
             familyHistory: [] as string[],
             allergies: "",
             differentialDiagnosis: "",
+            notes: "",
             smoking: {
                 status: "",
                 duration: ""
             },
             alcoholIntake: "",
             recreationalDrugs: "",
+        });
+
+        // Add gynae history state
+        const [gynaeHistory, setGynaeHistory] = useState({
+            isPregnant: "",
+            lnmp: "",
+            gestationalAge: "",
+            parity: "",
         });
 
         const [reviewOfSystems, setReviewOfSystems] = useState({
@@ -131,13 +140,14 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     additionalNotes: "",
                 };
                 const newPresentingInfo = {
-                    complaints: [] as string[],
+                    complaints: [] as Array<{ complaint: string, duration: string }>, // Change this line
                     history: "",
                     surgicalHistory: "",
                     surgicalProcedure: "",
                     familyHistory: [] as string[],
                     allergies: "",
                     differentialDiagnosis: "",
+                    notes: "",
                     smoking: {
                         status: "",
                         duration: ""
@@ -145,6 +155,16 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                     alcoholIntake: "",
                     recreationalDrugs: "",
                 };
+
+
+                // Initialize gynae history
+                const newGynaeHistory = {
+                    isPregnant: "",
+                    lnmp: "",
+                    gestationalAge: "",
+                    parity: "",
+                };
+
 
                 const newReviewOfSystems = {
                     general: [] as string[],
@@ -193,12 +213,47 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         newClerkInfo.signature = obs.value || obs.value_text || "";
                     } else if (conceptName === "Additional Notes") {
                         newClerkInfo.additionalNotes = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Presenting Complaints") {
-                        const condition = obs.value || obs.value_text || "";
-                        if (condition) {
-                            newPresentingInfo.complaints.push(condition);
+                    }
+                    // Gynae History mapping
+                    else if (conceptName === "B-HCG") {
+                        newGynaeHistory.isPregnant = obs.value || obs.value_text || "";
+                    } else if (conceptName === "LNMP") {
+                        newGynaeHistory.lnmp = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Gestational age") {
+                        newGynaeHistory.gestationalAge = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Parity") {
+                        newGynaeHistory.parity = obs.value || obs.value_text || "";
+                    }
+
+
+                    // In your useEffect where you process the surgical encounter observations:
+                    else if (conceptName === "Presenting Complaints") {
+                        if (obs.children && obs.children.length > 0) {
+                            obs.children.forEach(child => {
+                                const childValue = child.value || child.value_text || "";
+                                let duration = "";
+
+                                // Check if this child has duration information
+                                if (child.children && child.children.length > 0) {
+                                    const durationChild = child.children.find(grandChild =>
+                                        grandChild.names && grandChild.names.length > 0 &&
+                                        grandChild.names[0].name === "Duration"
+                                    );
+                                    if (durationChild) {
+                                        duration = durationChild.value || durationChild.value_text || "";
+                                    }
+                                }
+
+                                if (childValue) {
+                                    newPresentingInfo.complaints.push({
+                                        complaint: childValue,
+                                        duration: duration
+                                    });
+                                }
+                            });
                         }
-                    } else if (conceptName === "Presenting history") {
+                    }
+                    else if (conceptName === "Presenting history") {
                         newPresentingInfo.history = obs.value || obs.value_text || "";
                     } else if (conceptName === "Surgical Procedure") {
                         newPresentingInfo.surgicalHistory = obs.value || obs.value_text || "";
@@ -213,7 +268,10 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         newPresentingInfo.allergies = obs.value || obs.value_text || "";
                     } else if (conceptName === "Attempted/ Differential Diagnosis") {
                         newPresentingInfo.differentialDiagnosis = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Patient smokes") {
+                    } else if (conceptName === "Clinician notes") {
+                        newPresentingInfo.notes = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Patient smokes") {
                         newPresentingInfo.smoking.status = obs.value || obs.value_text || "";
                         if (obs.children && obs.children.length > 0) {
                             const durationChild = obs.children.find(child =>
@@ -372,6 +430,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
 
                 setClerkInfo(newClerkInfo);
                 setPresentingInfo(newPresentingInfo);
+                setGynaeHistory(newGynaeHistory); // Set the gynae history state
                 setReviewOfSystems(newReviewOfSystems);
                 setPhysicalExam(newPhysicalExam);
             }
@@ -433,6 +492,7 @@ export const GenerateSurgicalNotesPDF = forwardRef<SurgicalNotesPDFRef, Generate
                         reviewOfSystems={reviewOfSystems}
                         physicalExam={physicalExam}
                         clerkInfo={clerkInfo}
+                        gynaeHistory={gynaeHistory} // Pass gynae history to the content component
                         setRow={setRow}
                         showPatientInfo={true}
                     />

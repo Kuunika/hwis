@@ -8,3 +8,9 @@ export * from "./cprDialogForm"
 export * from "./presentingComplaints"
 export * from "./drugList"
 export * from "./pastMedicalHistory"
+export * from './pastMedicalHistory';
+export * from './pastSurgicalHistory';
+export * from './allergyHistory';
+export * from './intoxicationHistory';
+export * from './socialHistory';
+export * from './familyHistory';

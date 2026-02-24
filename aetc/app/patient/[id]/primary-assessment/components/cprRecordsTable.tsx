@@ -32,6 +32,8 @@ export const CPRRecordTable = ({
     const shockEnergy = getObservationValue(children, concepts.SHOCK_ENERGY);
     const medicationName = getObservationValue(children, concepts.MEDICATION);
     const dose = getObservationValue(children, concepts.MEDICATION_DOSE);
+    const route = getObservationValue(children, concepts.MEDICATION_ROUTE);
+
     const doseUnit = getObservationValue(
       children,
       concepts.MEDICATION_DOSE_UNIT
@@ -80,6 +82,7 @@ export const CPRRecordTable = ({
       interventionList,
       rhythm,
       causes,
+      route
     };
   });
 
@@ -93,6 +96,7 @@ export const CPRRecordTable = ({
           { label: "Shock Energy", field: "shockEnergy" },
           { label: "Medication Name", field: "medicationName" },
           { label: "Dose", field: "dose" },
+          { label: "Route", field: "route" },
           { label: "Dose Unit", field: "doseUnit" },
           { label: "Occurrences", field: "occurrences" },
           { label: "Intervention List", field: "interventionList" },

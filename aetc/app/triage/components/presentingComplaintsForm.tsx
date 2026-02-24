@@ -7,7 +7,7 @@ import { getInitialValues, notify } from "@/helpers";
 import { NO, YES, concepts } from "@/constants";
 import { TextInputDisplay } from "@/components/form/textInputDisplay";
 import { getConceptFromCacheOrFetch } from "@/hooks/encounter";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { usePresentingComplaints } from "@/hooks/usePresentingComplaints";
 
 type Prop = {
@@ -34,6 +34,7 @@ export const PresentingComplaintsForm = ({
   setTriageResult,
   getFormValues,
 }: Prop) => {
+  const { ServerTime } = useServerTime();
   const { presentingComplaints } = usePresentingComplaints();
   const [otherPresenting, setOtherPresenting] = useState([]);
   const [showInputTextDisplay, setShowInputTextDisplay] = useState(false);
@@ -74,7 +75,7 @@ export const PresentingComplaintsForm = ({
   };
 
   const handleSubmit = (values: any) => {
-    const dateTime = getDateTime();
+    const dateTime = ServerTime.getServerTimeString();
 
     const other = otherPresenting.map((value) => ({
       value,

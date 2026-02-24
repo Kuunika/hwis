@@ -1,28 +1,31 @@
 import { MinimalTable } from "@/components/tables/minimalTable";
 import { conceptNames, concepts } from "@/constants";
 import { getHumanReadableDateTime } from "@/helpers/dateTime";
-import { Encounter } from "@/interfaces";
+import { Encounter, Obs } from "@/interfaces";
 
-export const formatDispensed = (data: Encounter, givenMedication: string) => {
-  const row = data?.obs
-    ?.filter((ob) => ob.value_coded_uuid == givenMedication)
-    .map((ob) => {
-      return {
-        route: ob.children.find(
-          (b) =>
-            b.names?.length > 0 &&
-            b.names[0]?.name == conceptNames.MEDICATION_ROUTE
-        )?.value,
-        dose: ob.children.find(
-          (b) =>
-            b.names?.length > 0 && b.names[0]?.name == concepts.MEDICATION_DOSE
-        )?.value,
-        createdBy: ob.created_by,
-        createdTime: getHumanReadableDateTime(ob.obs_datetime),
-      };
-    });
+export const formatDispensedMedicationObs = (obs: Obs[]) => {
+  return obs?.map((ob) => {
+    return {
+      route: ob.children.find(
+        (b) =>
+          b.names?.length > 0 &&
+          b.names[0]?.name == conceptNames.MEDICATION_ROUTE
+      )?.value,
+      dose: ob.children.find(
+        (b) =>
+          b.names?.length > 0 && b.names[0]?.name == concepts.MEDICATION_DOSE
+      )?.value,
+      createdBy: ob.created_by,
+      createdTime: getHumanReadableDateTime(ob.obs_datetime),
+      medication: ob.value,
+    };
+  });
+};
 
-  return row;
+export const formatDispensed = (data: Encounter, givenMedication?: string) => {
+  const row = data?.obs?.filter((ob) => ob.value_coded_uuid == givenMedication);
+
+  return formatDispensedMedicationObs(row);
 };
 
 export const DrugDispensedList = ({

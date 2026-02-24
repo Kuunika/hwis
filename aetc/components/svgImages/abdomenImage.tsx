@@ -53,8 +53,6 @@ export function NewAbdomenImage({
     handleFormSubmit(formData);
   };
 
-  console.log({ selectedSection });
-
   return (
     <>
       <AbdomenMale ref={containerRef} />

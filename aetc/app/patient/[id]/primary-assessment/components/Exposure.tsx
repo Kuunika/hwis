@@ -25,23 +25,31 @@ const form = {
     name: concepts.TEMPERATURE,
     label: "Temperature",
   },
-  skinRashInfo: {
-    name: concepts.SKIN_RASH,
-    label: "Does the patient have a rash?",
-  },
+  // skinRashInfo: {
+  //   name: concepts.SKIN_RASH,
+  //   label: "Does the patient have a rash?",
+  // },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
-  abnormalities: {
-    name: concepts.ABNORMALITIES,
-    label: "Other Abnormalities",
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
   },
-  injuries: {
-    name: concepts.INJURY,
-    label: "Other Injuries",
-  },
+
+  // abnormalities: {
+  //   name: concepts.ABNORMALITIES,
+  //   label: "Other Abnormalities",
+  // },
+  // injuries: {
+  //   name: concepts.INJURY,
+  //   label: "Other Injuries",
+  // },
 };
+
+export const exposureFormConfig = form;
 
 const schema = yup.object({
   [form.temperatureInfo.name]: yup
@@ -56,7 +64,7 @@ const schema = yup.object({
 const initialValues = getInitialValues(form);
 
 export const Exposure = ({ onSubmit }: Props) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const { params } = useParameters();
 
   const { data: patient, isLoading: patientLoading } = getOnePatient(
@@ -72,7 +80,7 @@ export const Exposure = ({ onSubmit }: Props) => {
     onSubmit
   );
 
-  const handleFormSubmit = (values: any) => {
+  const handleFormSubmit = async (values: any) => {
     const formValues = { ...values };
 
     const obsDatetime = ServerTime.getServerTimeString();
@@ -82,13 +90,13 @@ export const Exposure = ({ onSubmit }: Props) => {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body anterior",
         obsDatetime,
-        groupMembers: [...flattenImagesObs(fullImageFront)],
+        groupMembers: [...(await flattenImagesObs(fullImageFront))],
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "full body posterior",
         obsDatetime,
-        groupMembers: [...flattenImagesObs(fullImageBack)],
+        groupMembers: [...(await flattenImagesObs(fullImageBack))],
       },
       {
         concept: concepts.NOTES,
@@ -104,12 +112,12 @@ export const Exposure = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if exposure is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

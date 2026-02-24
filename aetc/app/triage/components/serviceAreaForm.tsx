@@ -21,6 +21,18 @@ type Prop = {
   triageStatus: string;
 };
 
+
+
+const triageRedServiceAreas = [
+  { label: concepts.RESUSCITATION, id: concepts.RESUSCITATION },
+  { label: concepts.SHORT_STAY, id: concepts.SHORT_STAY },
+  { label: concepts.GYNAE_BENCH, id: concepts.GYNAE_BENCH },
+  { label: concepts.PRIORITY, id: concepts.PRIORITY },
+  { label: concepts.ISOLATION, id: concepts.ISOLATION },
+  { label: concepts.TRAUMA, id: concepts.TRAUMA },
+  { label: concepts.SURGICAL, id: concepts.SURGICAL },
+];
+
 export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
   const [formValues, setFormValues] = useState<Record<string, any>>({});
   const [showOther, setShowOther] = useState(false);
@@ -67,6 +79,11 @@ export const ServiceAreaForm = ({ onSubmit, triageStatus }: Prop) => {
           service.name.toLowerCase() == concepts.SURGICAL_BENCH.toLowerCase() ||
           service.name.toLowerCase() == concepts.MEDICAL_BENCH.toLowerCase()
       );
+
+      if(triageStatus=='red'){
+        setServiceAreaOptions(triageRedServiceAreas);
+        return;
+      }
 
       const selectedList =
         triageStatus === "yellow"

@@ -12,7 +12,7 @@ import { PatientBarcodePrinter } from "@/components/barcodePrinterDialogs";
 
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import { addEncounter } from "@/hooks/encounter";
 import { merge, patchPatient } from "@/hooks/patientReg";
@@ -420,6 +420,7 @@ const EditDemographics = ({
 };
 
 const SocialForm = ({ next }: { next: () => void }) => {
+  const { ServerTime } = useServerTime();
   const { activeVisit } = getActivePatientDetails();
   const { params } = useParameters();
   const {
@@ -449,7 +450,7 @@ const SocialForm = ({ next }: { next: () => void }) => {
           setContext={setContext}
           initialValues={{}}
           onSubmit={(values) => {
-            const dateTime = getDateTime();
+            const dateTime = ServerTime.getServerTimeString();
             createSocialHistory({
               encounterType: encounters.SOCIAL_HISTORY,
               visit: activeVisit,
@@ -470,6 +471,7 @@ const SocialForm = ({ next }: { next: () => void }) => {
 };
 
 const ReferralForm = ({ next }: { next: () => void }) => {
+  const { ServerTime } = useServerTime();
   const [context, setContext] = useState<any>();
   const { params } = useParameters();
   const { activeVisit } = getActivePatientDetails();
@@ -493,7 +495,7 @@ const ReferralForm = ({ next }: { next: () => void }) => {
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
-            const dateTime = getDateTime();
+            const dateTime = ServerTime.getServerTimeString();
             createReferral({
               encounterType: encounters.REFERRAL,
               visit: activeVisit,
@@ -513,6 +515,7 @@ const ReferralForm = ({ next }: { next: () => void }) => {
   );
 };
 const FinanceForm = ({ next }: { next: () => void }) => {
+  const { ServerTime } = useServerTime();
   const [context, setContext] = useState<any>();
   const { params } = useParameters();
   const { activeVisit } = getActivePatientDetails();
@@ -543,7 +546,7 @@ const FinanceForm = ({ next }: { next: () => void }) => {
           setContext={setContext}
           submitButton={false}
           onSubmit={(values) => {
-            const dateTime = getDateTime();
+            const dateTime = ServerTime.getServerTimeString();
 
             const payments = values[concepts.PAYMENT_OPTIONS];
 
@@ -577,6 +580,7 @@ const FinanceForm = ({ next }: { next: () => void }) => {
 
 // TODO: START FROM HERE
 const RelationshipForm = ({ next }: { next: () => void }) => {
+  const { ServerTime } = useServerTime();
   const [context, setContext] = useState<any>();
   const [relationshipName, setRelationshipName] = useState("");
   const { patient } = getActivePatientDetails();
@@ -599,7 +603,7 @@ const RelationshipForm = ({ next }: { next: () => void }) => {
 
   useEffect(() => {
     if (nextOfKinCreated) {
-      const dateTime = getDateTime();
+      const dateTime = ServerTime.getServerTimeString();
       createRelationship({
         patient: patient?.uuid,
         person: nextOfKin?.uuid,

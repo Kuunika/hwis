@@ -13,7 +13,7 @@ import {
 import DynamicFormList from "@/components/form/dynamicFormList";
 import { concepts, encounters, NO, YES } from "@/constants";
 import { getInitialValues, getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getActivePatientDetails } from "@/hooks";
 import {
   addEncounter,
@@ -366,6 +366,7 @@ const CPRForm = ({
   const { data: users, isLoading } = getAllUsers();
   const { mutate, isSuccess } = fetchConceptAndCreateEncounter();
   const { activeVisitId, patientId, activeVisit } = getActivePatientDetails();
+   const { ServerTime } = useServerTime();
 
   const userOptions = users?.map((user) => {
     return {
@@ -383,7 +384,7 @@ const CPRForm = ({
   };
 
   const handleSubmit = (values: any) => {
-    const obsDatetime = getDateTime();
+    const obsDatetime = ServerTime.getServerTimeString();
     const formValues = { ...values };
 
     let recordsObservation = [];

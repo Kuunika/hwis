@@ -21,7 +21,8 @@ import {
   useSubmitEncounter,
 } from "@/hooks";
 import { encounters, concepts } from "@/constants";
-import { getDateTime, getHumanReadableDateTime } from "@/helpers/dateTime";
+import { getHumanReadableDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getObservations } from "@/helpers";
 import { useClinicalNotes } from "@/hooks/useClinicalNotes";
 import { useReactToPrint } from "react-to-print";
@@ -42,23 +43,31 @@ import {
   GenerateMedicalInpatientlNotesPDF,
   MedicalInpatientNotesPDFRef,
 } from "../../[id]/medicalInpatient/components/generateMedicalInpatientNotesPDF";
-import { SurgicalNotesContent } from "../../[id]/surgicalNotes/components/SurgicalNotesContent";
-import { get } from "http";
+
+import { useVisitDates } from "@/contexts/visitDatesContext";
+import { DisplayInformation } from "./displayInformation";
 import {
-  FamilyMedicalHistoryNotes,
-  MealNotes,
-  MedicalAllegyNotes,
-  MedicationNotes,
-  PatientAdmissionNotes,
-  PresentingComplaintsNotes,
-  PriorConditionsNotes,
-  ReviewOfSystemsNotes,
-  SurgicalNotes,
-} from "./sampleHistory";
+  formatDiagnosisNotes,
+  formatInvestigationPlans,
+  formatPatientManagamentPlan,
+  formatPresentingComplaints,
+  formatPrimarySurvey,
+  formatSoapierNotes,
+  formatVitals,
+  formatSecondarySurvey,
+} from "./formatters";
+import ResultsTable from "./tabularDisplayInformation";
+import { MultiColumnNotes } from "./multiColumnDisplay";
+
+import { PresentingComplaints } from "@/app/patient/components/clinicalNotes/updated-clinical-notes/presentingComplaints";
+import {
+  GenericNotes,
+  NotesConfig,
+} from "@/app/patient/components/clinicalNotes/updated-clinical-notes/genericNotes";
 
 type PanelData = {
   title: string;
-  data: any[];
+  data: any;
   useValue?: boolean;
   removeObs?: string[]; // Add removeObs property to PanelData type
 };
@@ -160,17 +169,19 @@ const filterObservationsByName = (observations: any, filterNames = []) => {
 };
 
 export const ClinicalNotes = () => {
+  const { selectedVisit } = useVisitDates();
   const [filterSoapierState, setFilterSoapierState] = useState(false);
   const [filterAETCState, setFilterAETCState] = useState(false);
   const [filterSurgicalState, setFilterSurgicalState] = useState(false); // New state for surgical notes
   const [filterGyneacologyState, setFilterGyneacologyState] = useState(false); // New state for gyneacology notes
   const [filterMedicalInpatientState, setFilterMedicalInpatientState] =
-    useState(false); // New state for Medical inpatient notes
+    useState(false);
   const [expanded, setExpanded] = useState<string | false>(false); // Changed to false initially
   const { handleSubmit } = useSubmitEncounter(
     encounters.CLINICAL_NOTES,
     () => ""
   );
+  const { ServerTime } = useServerTime();
   const { params } = useParameters();
   const patientId = params.id as string;
   const { notes: clinicalNotes, refresh } = useClinicalNotes(patientId);
@@ -181,6 +192,14 @@ export const ClinicalNotes = () => {
   const pdfRef = useRef<SurgicalNotesPDFRef>(null);
   const gyneacologyRef = useRef<GyneacologyNotesPDFRef>(null);
   const medicalInpatientRef = useRef<MedicalInpatientNotesPDFRef>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Refresh clinical notes when component mounts
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
 
   // Refresh encounter data when component mounts or filters change
   useEffect(() => {
@@ -201,7 +220,7 @@ export const ClinicalNotes = () => {
       isLoading: historyLoading,
     }: { data: any; isLoading: any } = getPatientsEncounters(
       patientId,
-      `encounter_type=${encounterTypeUuid}`
+      `encounter_type=${encounterTypeUuid}&visit=${selectedVisit?.uuid}`
     );
     if (!patientHistory) return [];
     return patientHistory[0]?.obs || [];
@@ -231,7 +250,11 @@ export const ClinicalNotes = () => {
   };
 
   const getObsByConceptName = (obsData: any) => {
-    const { data: obs }: any = getAllObservations(patientId, obsData);
+    const { data: obs }: any = getAllObservations(
+      patientId,
+      obsData,
+      selectedVisit?.id
+    );
     return obs?.data || [];
   };
 
@@ -252,17 +275,25 @@ export const ClinicalNotes = () => {
   // Generate base encounter data with all possible panels and their removeObs arrays
   const baseEncounterData: Record<string, PanelData> = {
     panel14: {
-      title: "Clinical Notes",
+      title: "Continuation Notes",
       data: getEncountersByType(encounters.CLINICAL_NOTES),
       removeObs: ["image part", "image part 2"], // Example headings to remove
     },
     panel13: {
       title: "SOAPIER Notes",
-      data: [
-        ...getEncountersByType(encounters.NURSING_CARE_NOTES),
-        ...getEncountersByType(encounters.PRESCRIPTIONS),
-        ...getEncountersByType(encounters.DISPENSING),
-      ],
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatSoapierNotes(
+            getEncountersByType(encounters.NURSING_CARE_NOTES)
+          )}
+        />
+      ),
+      // data: [
+      //   ...getEncountersByType(encounters.NURSING_CARE_NOTES),
+      //   ...getEncountersByType(encounters.PRESCRIPTIONS),
+      //   ...getEncountersByType(encounters.DISPENSING),
+      // ],
       removeObs: ["nursing chart", "medication chart"], // Example headings to remove
     },
     panel18: {
@@ -282,10 +313,22 @@ export const ClinicalNotes = () => {
     },
     panel1: {
       title: "Triage",
-      data: [
-        ...getEncountersByType(encounters.TRIAGE_RESULT),
-        ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
-      ],
+      // data: <Button title="TEST" variant="contained"  />,
+      data: (
+        <DisplayInformation
+          title=""
+          data={[
+            formatPresentingComplaints(
+              getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+            ),
+            ...formatVitals(getEncountersByType(encounters.VITALS)),
+          ]}
+        />
+      ),
+      // data: [
+      //   ...getEncountersByType(encounters.TRIAGE_RESULT),
+      //   ...getEncountersByType(encounters.PRESENTING_COMPLAINTS),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel2: {
@@ -310,46 +353,78 @@ export const ClinicalNotes = () => {
     },
     panel7: {
       title: "Plan",
-      data: [
-        ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
-        ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
-      ],
+      data: (
+        <ResultsTable
+          title="Beside Tests"
+          data={formatInvestigationPlans([
+            ...getEncountersByType(encounters.BED_SIDE_TEST),
+          ])}
+        />
+      ),
+      //  [
+      //   ...getEncountersByType(encounters.BEDSIDE_INVESTIGATION_PLAN),
+      //   ...getEncountersByType(encounters.LAB_ORDERS_PLAN),
+      // ],
       removeObs: [], // No specific headings to remove
     },
-    panel8: {
-      title: "Primary Survey",
-      data: [
-        ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
-        ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
-        ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
-        ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
-        ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
-      ],
-      removeObs: ["Image Part Name"], // No specific headings to remove
-    },
+    // panel8: {
+    //   title: "Primary Survey",
+    //   data: [
+    //     ...getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+    //     ...getEncountersByType(encounters.BREATHING_ASSESSMENT),
+    //     ...getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+    //     ...getEncountersByType(encounters.PRIMARY_DISABILITY_ASSESSMENT),
+    //     ...getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+    //   ],
+    //   removeObs: ["Image Part Name"], // No specific headings to remove
+    // },
     panel9: {
       title: "Secondary Survey",
-      data: [
-        ...getEncountersByType(encounters.GENERAL_INFORMATION_ASSESSMENT),
-        ...getEncountersByType(encounters.HEAD_AND_NECK_ASSESSMENT),
-        ...getEncountersByType(encounters.CHEST_ASSESSMENT),
-        ...getEncountersByType(encounters.ABDOMEN_AND_PELVIS_ASSESSMENT),
-        ...getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
-        ...getEncountersByType(encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT),
-      ],
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatSecondarySurvey({
+            generalInformationObs: getEncountersByType(
+              encounters.GENERAL_INFORMATION_ASSESSMENT
+            ),
+            headAndNeckObs: getEncountersByType(
+              encounters.HEAD_AND_NECK_ASSESSMENT
+            ),
+            chestObs: getEncountersByType(encounters.CHEST_ASSESSMENT),
+            abdomenAndPelvisObs: getEncountersByType(
+              encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
+            ),
+            extremitiesObs: getEncountersByType(
+              encounters.EXTREMITIES_ASSESSMENT
+            ),
+            neurologicalObs: getEncountersByType(
+              encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
+            ),
+          })}
+        />
+      ),
       removeObs: [
-        "Image Part Name",
-        "Abnormalities",
-        "Clinician notes",
-        "Other",
+        // "Image Part Name",
+        // "Abnormalities",
+        // "Clinician notes",
+        // "Other",
       ], // No specific headings to remove
     },
     panel10: {
       title: "Diagnosis",
-      data: [
-        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
-        ...getEncountersByType(encounters.DIAGNOSIS),
-      ],
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatDiagnosisNotes([
+            ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+            ...getEncountersByType(encounters.DIAGNOSIS),
+          ])}
+        />
+      ),
+      // [
+      //   ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+      //   ...getEncountersByType(encounters.DIAGNOSIS),
+      // ],
       removeObs: [], // No specific headings to remove
     },
     panel11: {
@@ -365,32 +440,100 @@ export const ClinicalNotes = () => {
       data: getEncountersByType(encounters.DISPOSITION),
       removeObs: [], // No specific headings to remove
     },
+    panel20: {
+      title: "Primary Survey",
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatPrimarySurvey({
+            airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+            breathingObs: getEncountersByType(encounters.BREATHING_ASSESSMENT),
+            circulationObs: getEncountersByType(
+              encounters.CIRCULATION_ASSESSMENT
+            ),
+            disabilityObs: getEncountersByType(
+              encounters.PRIMARY_DISABILITY_ASSESSMENT
+            ),
+            exposureObs: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+          })}
+        />
+      ),
+      removeObs: [], // No specific headings to remove
+    },
+    panel51: {
+      title: "Patient Management Plan",
+      data: (
+        <DisplayInformation
+          title=""
+          data={formatPatientManagamentPlan({
+            nonPharmalogical: getEncountersByType(
+              encounters.NON_PHARMACOLOGICAL
+            ),
+          })}
+        />
+      ),
+      removeObs: [], // No specific headings to remove
+    },
     panel15: {
       title: "Sample History",
-      data: [
-        <PresentingComplaintsNotes
-          obs={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
-        />,
-        <MedicalAllegyNotes obs={getEncountersByType(encounters.ALLERGIES)} />,
-        <MedicationNotes obs={getEncountersByType(encounters.PRESCRIPTIONS)} />,
-        <PriorConditionsNotes
-          obs={getEncountersByType(encounters.DIAGNOSIS)}
-        />,
-        <SurgicalNotes
-          obs={getEncountersByType(encounters.SURGICAL_HISTORY)}
-        />,
-        <PatientAdmissionNotes
-          obs={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
-        />,
-        <MealNotes obs={getEncountersByType(encounters.SUMMARY_ASSESSMENT)} />,
-        <FamilyMedicalHistoryNotes
-          obs={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
-        />,
-        <ReviewOfSystemsNotes
-          obs={getEncountersByType(encounters.REVIEW_OF_SYSTEMS)}
-        />,
-        ...getEncountersByType(encounters.OBSTETRIC_HISTORY),
-      ],
+      data: (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {/* Presenting Complaints */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+            title="Presenting Complaints"
+            config={NotesConfig.PRESENTING_COMPLAINTS}
+          />
+
+          {/* Allergies */}
+          <GenericNotes
+            data={getEncountersByType(encounters.ALLERGIES)}
+            title="Allergies"
+            config={NotesConfig.ALLERGIES}
+          />
+
+          {/* Medications */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESCRIPTIONS)}
+            title="Medications"
+            config={NotesConfig.MEDICATIONS}
+          />
+
+          {/* Diagnosis */}
+          <GenericNotes
+            data={getEncountersByType(encounters.DIAGNOSIS)}
+            title="Prior/existing conditions"
+            config={NotesConfig.DIAGNOSIS}
+          />
+
+          {/* Surgical History */}
+          <GenericNotes
+            data={getEncountersByType(encounters.SURGICAL_HISTORY)}
+            title="Surgical History"
+            config={NotesConfig.SURGICAL_HISTORY}
+          />
+
+          {/* Previous Admissions */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+            title="Previous Admissions"
+            config={NotesConfig.ADMISSIONS}
+          />
+
+          <GenericNotes
+            data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
+            title="Last Meal"
+            config={NotesConfig.LAST_MEAL}
+          />
+
+          {/* Family Medical History */}
+          {/* <GenericNotes
+            data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+            title="Family Medical History"
+            config={NotesConfig.FAMILY_HISTORY}
+          /> */}
+        </Box>
+      ),
       removeObs: [],
     },
   };
@@ -486,8 +629,11 @@ export const ClinicalNotes = () => {
   ]); // Added filterSurgicalState to dependencies
 
   const addClinicalNote = (note: string) => {
+
     const data = { "Clinical notes construct": note };
-    handleSubmit(getObservations(data, getDateTime())).then(() => refresh());
+    handleSubmit(getObservations(data, ServerTime.getServerTimeString())).then(
+      () => refresh()
+    );
   };
 
   // Handle accordion expansion
@@ -826,6 +972,140 @@ export const ClinicalNotes = () => {
     );
   };
 
+  const notesData = [
+    {
+      title: "Triage Information",
+      content: [
+        formatPresentingComplaints(
+          getEncountersByType(encounters.PRESENTING_COMPLAINTS)
+        ),
+        ...formatVitals(getEncountersByType(encounters.VITALS)),
+      ],
+    },
+    {
+      title: "Soapier Notes",
+      content: formatSoapierNotes(
+        getEncountersByType(encounters.NURSING_CARE_NOTES)
+      ),
+    },
+    {
+      title: "Primary Survey",
+      content: formatPrimarySurvey({
+        airwayObs: getEncountersByType(encounters.AIRWAY_ASSESSMENT),
+        breathingObs: getEncountersByType(encounters.BREATHING_ASSESSMENT),
+        circulationObs: getEncountersByType(encounters.CIRCULATION_ASSESSMENT),
+        disabilityObs: getEncountersByType(
+          encounters.PRIMARY_DISABILITY_ASSESSMENT
+        ),
+        exposureObs: getEncountersByType(encounters.EXPOSURE_ASSESSMENT),
+      }),
+    },
+    {
+      title: "Secondary Survey",
+      content: formatSecondarySurvey({
+        generalInformationObs: getEncountersByType(
+          encounters.GENERAL_INFORMATION_ASSESSMENT
+        ),
+        headAndNeckObs: getEncountersByType(
+          encounters.HEAD_AND_NECK_ASSESSMENT
+        ),
+        chestObs: getEncountersByType(encounters.CHEST_ASSESSMENT),
+        abdomenAndPelvisObs: getEncountersByType(
+          encounters.ABDOMEN_AND_PELVIS_ASSESSMENT
+        ),
+        extremitiesObs: getEncountersByType(encounters.EXTREMITIES_ASSESSMENT),
+        neurologicalObs: getEncountersByType(
+          encounters.NEUROLOGICAL_EXAMINATION_ASSESSMENT
+        ),
+      }),
+    },
+    {
+      title: "Patient Management Plan",
+      content: formatPatientManagamentPlan({
+        nonPharmalogical: getEncountersByType(encounters.NON_PHARMACOLOGICAL),
+      }),
+    },
+    {
+      title: "Diagnosis",
+      content: formatDiagnosisNotes([
+        ...getEncountersByType(encounters.OUTPATIENT_DIAGNOSIS),
+        ...getEncountersByType(encounters.DIAGNOSIS),
+      ]),
+    },
+    {
+      title: " Laboratory or Radiology Findings",
+      content: (
+        <ResultsTable
+          title="Beside Tests"
+          data={formatInvestigationPlans([
+            ...getEncountersByType(encounters.BED_SIDE_TEST),
+          ])}
+        />
+      ),
+    },
+    {
+      title: "Sample History",
+      content: (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {/* Presenting Complaints */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESENTING_COMPLAINTS)}
+            title="-Presenting Complaints"
+            config={NotesConfig.PRESENTING_COMPLAINTS}
+          />
+
+          {/* Allergies */}
+          <GenericNotes
+            data={getEncountersByType(encounters.ALLERGIES)}
+            title="-Allergies"
+            config={NotesConfig.ALLERGIES}
+          />
+
+          {/* Medications */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PRESCRIPTIONS)}
+            title="-Medications"
+            config={NotesConfig.MEDICATIONS}
+          />
+
+          {/* Diagnosis */}
+          <GenericNotes
+            data={getEncountersByType(encounters.DIAGNOSIS)}
+            title="Prior/existing conditions"
+            config={NotesConfig.DIAGNOSIS}
+          />
+
+          {/* Surgical History */}
+          <GenericNotes
+            data={getEncountersByType(encounters.SURGICAL_HISTORY)}
+            title="-Surgical History"
+            config={NotesConfig.SURGICAL_HISTORY}
+          />
+
+          {/* Previous Admissions */}
+          <GenericNotes
+            data={getEncountersByType(encounters.PATIENT_ADMISSIONS)}
+            title="-Previous Admissions"
+            config={NotesConfig.ADMISSIONS}
+          />
+
+          <GenericNotes
+            data={getEncountersByType(encounters.SUMMARY_ASSESSMENT)}
+            title="-Last Meal"
+            config={NotesConfig.LAST_MEAL}
+          />
+
+          {/* Family Medical History */}
+          {/* <GenericNotes
+            data={getEncountersByType(encounters.FAMILY_MEDICAL_HISTORY)}
+            title="-Family Medical History"
+            config={NotesConfig.FAMILY_HISTORY}
+          /> */}
+        </Box>
+      ),
+    },
+  ];
+
   return (
     <Panel title="">
       <WrapperBox display={"flex"} justifyContent={"space-between"}>
@@ -848,6 +1128,7 @@ export const ClinicalNotes = () => {
           onClickFilterButton={setPrintoutTitle}
         />
       </WrapperBox>
+
       {!filterSurgicalState &&
         !filterGyneacologyState &&
         !filterMedicalInpatientState && (
@@ -874,6 +1155,15 @@ export const ClinicalNotes = () => {
                 </div>
               </div>
             </div>
+            {/* <DownloadClinicalNotesPDF
+              data={notesData}
+            /> */}
+
+            {/*<MultiColumnNotes
+              columns={2}
+              data={notesData}
+            />
+*/}
             <PrintClinicalNotes data={encounterData} />
           </div>
         )}
@@ -1028,7 +1318,7 @@ const AddClinicalNotes = ({
               paddingBottom: "5px",
             }}
           ></span>
-          <Button
+          {/* <Button
             onClick={() => {
               setFilterSoapierState(true);
               setFilterAETCState(false);
@@ -1057,8 +1347,8 @@ const AddClinicalNotes = ({
             }}
           >
             SOAPIER Notes
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={() => {
               setFilterAETCState(true);
               setFilterSoapierState(false);
@@ -1087,7 +1377,7 @@ const AddClinicalNotes = ({
             }}
           >
             AETC
-          </Button>
+          </Button> */}
           {/* New Surgical Notes Button */}
           <Button
             onClick={() => {
@@ -1194,10 +1484,10 @@ const AddClinicalNotes = ({
             sx={{
               backgroundColor:
                 !filterSoapierState &&
-                !filterAETCState &&
-                !filterSurgicalState &&
-                !filterGyneacologyState &&
-                !filterMedicalInpatientState
+                  !filterAETCState &&
+                  !filterSurgicalState &&
+                  !filterGyneacologyState &&
+                  !filterMedicalInpatientState
                   ? "rgb(221, 238, 221)"
                   : "",
               color: "rgb(0, 70, 0)",

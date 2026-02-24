@@ -18,7 +18,6 @@ export default function DifferentialDiagnosis() {
       <PatientInfoTab />
       <FormContainer>
         <BackButton />
-
         <DiagnosisForm conceptType={concepts.DIFFERENTIAL_DIAGNOSIS} />
         <NextButton
           size="medium"

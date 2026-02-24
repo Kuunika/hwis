@@ -18,24 +18,63 @@ import {
 import * as Yup from "yup";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 const form = {
   isAirwayPatent: {
     name: concepts.AIRWAY_PATENT,
     label: "Is Airway Patent",
-    coded: true,
+    type: "string",
+    options: {
+      [YES]: "Patent",
+      [NO]: "Not Patent",
+      [concepts.THREATENED]: "Threatened",
+    },
+    children: [
+      {
+        multiple: true,
+        concept: concepts.AIRWAY_REASON,
+        label: "Reason",
+        type: "string",
+      },
+      {
+        multiple: true,
+        concept: concepts.AIRWAY_OPENING_INTERVENTION,
+        label: "Airway Opening Intervention",
+        type: "string",
+      },
+    ],
   },
   isPatientInjured: {
     name: concepts.PATIENT_INJURED,
     label: "Is Patient Injured",
-    coded: true,
+    type: "string",
+    options: {
+      [YES]: "Injured",
+      [NO]: "Not Injured",
+    },
+    children: [
+      {
+        type: "string",
+        concept: concepts.NECK_COLLAR_APPLIED,
+        label: "Neck Collar Applied",
+        options: {
+          [YES]: "Neck collar applied",
+          [NO]: "Neck collar not applied",
+          [concepts.NOT_INDICATED]: "No indication of neck collar",
+        },
+      },
+      {
+        type: "string",
+        concept: concepts.HEAD_BLOCKS_APPLIED,
+        label: "Head Blocks Applied",
+      },
+    ],
   },
   neckCollar: {
     name: concepts.NECK_COLLAR_APPLIED,
     label: "Neck Collar Applied",
-    coded: true,
+    child: true,
   },
   weakness: {
     name: concepts.WEAKNESS,
@@ -44,12 +83,12 @@ const form = {
   headBlocks: {
     name: concepts.HEAD_BLOCKS_APPLIED,
     label: "Head Blocks Applied",
-    coded: true,
+    child: true,
   },
   airWayThreatenedReason: {
     name: concepts.AIRWAY_REASON,
     label: "Reason",
-    coded: true,
+    child: true,
   },
   otherReason: {
     name: concepts.OTHER,
@@ -58,7 +97,6 @@ const form = {
   intervention: {
     name: concepts.AIRWAY_OPENING_INTERVENTION,
     label: "Airway Opening Intervention",
-    coded: true,
   },
   nasopharyngealSize: {
     name: concepts.NASOPHARYNGEAL_AIRWAY,
@@ -69,6 +107,8 @@ const form = {
     label: "Oropharyngeal Airway Size",
   },
 };
+
+export const airwayFormConfig: any = form;
 
 type Prop = {
   onSubmit: () => void;
@@ -111,7 +151,7 @@ const airwayThreatenedReasons = [
 ];
 
 const airwayInterventionsList = [
-  { id: concepts.SUCTIONING_AIRWAY, label: "Suctioning Airway" },
+  { id: concepts.SUCTIONING_DONE, label: "Suctioning Done" },
   { id: concepts.JAW_THRUST_MANOEUVER, label: "Jaw thrust manoeuver" },
   { id: concepts.HEAD_TILT_CHIN_LIFT, label: "Head tilt/chin lift" },
   {
@@ -145,7 +185,7 @@ const radioOptions = [
 ];
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
-  const {ServerTime}=useServerTime()
+  const { ServerTime } = useServerTime();
   const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
@@ -161,7 +201,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     const interventions = formValues[form.intervention.name];
     let interventionsObs: any = [];
 
-    const obsDatetime = ServerTime.getServerTimeString()
+    const obsDatetime = ServerTime.getServerTimeString();
 
     if (Array.isArray(interventions)) {
       interventionsObs = interventions.map((intervention) => {
@@ -181,7 +221,6 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
           obsDatetime,
-          coded: true,
         };
       });
     }
@@ -190,7 +229,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...interventionsObs,
       ...reasonsObs,
     ]);
@@ -198,12 +237,12 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if airway is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

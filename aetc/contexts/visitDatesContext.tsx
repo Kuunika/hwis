@@ -1,10 +1,13 @@
-'use client'
+"use client";
+import { concepts } from "@/constants";
 import React, { createContext, useContext, useState } from "react";
 
 // Define the shape of the context data
 interface VisitDatesContextType {
   visitDate: any;
   setVisitDates: (visitDate: any) => void;
+  selectedVisit: { id: number; uuid: string };
+  setSelectedVisit: (input: any) => void;
 }
 
 // Create the context with default value as undefined
@@ -17,9 +20,15 @@ export const VisitDatesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [visitDate, setVisitDates] = useState(null);
+  const [selectedVisit, setSelectedVisit] = useState<{
+    id: number;
+    uuid: string;
+  }>({ id: 0, uuid: "" });
 
   return (
-    <VisitDatesContext.Provider value={{ visitDate, setVisitDates }}>
+    <VisitDatesContext.Provider
+      value={{ visitDate, setVisitDates, selectedVisit, setSelectedVisit }}
+    >
       {children}
     </VisitDatesContext.Provider>
   );

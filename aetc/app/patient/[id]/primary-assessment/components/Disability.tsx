@@ -13,14 +13,9 @@ import {
 import * as yup from "yup";
 import { Box, Typography } from "@mui/material";
 import { NO, YES, concepts, encounters } from "@/constants";
-import {
-  getInitialValues,
-  getObservations,
-  mapSubmissionToCodedArray,
-} from "@/helpers";
+import { getInitialValues, getObservations } from "@/helpers";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
-import { CheckBoxNext } from "@/components/form/checkBoxNext";
 import { useServerTime } from "@/contexts/serverTimeContext";
 
 type Props = {
@@ -40,6 +35,10 @@ const form = {
     name: concepts.MOTOR_RESPONSE,
     label: "Best Motor Response",
   },
+  gcs: {
+    name: concepts.GCS,
+    label: "GCS",
+  },
   focalNeurology: {
     name: concepts.FOCAL_NEUROLOGY,
     label: "Focal Neurology",
@@ -57,19 +56,19 @@ const form = {
     label: "Is the patient having Seizures",
   },
   leftPupilSize: {
-    name: "Left Pupil Size",
+    name: concepts.LEFT_PUPIL_SIZE,
     label: "Left Pupil Size",
   },
   rightPupilSize: {
-    name: "Right Pupil Size",
+    name: concepts.RIGHT_PUPIL_SIZE,
     label: "Right Pupil Size",
   },
   leftPupilReaction: {
-    name: "Left Pupil Reaction",
+    name: concepts.LEFT_PUPIL_REACTION,
     label: "Left Pupil Reaction",
   },
   rightPupilReaction: {
-    name: "Right Pupil Reaction",
+    name: concepts.RIGHT_PUPIL_REACTION,
     label: "Right Pupil Reaction",
   },
   // Add units field
@@ -78,6 +77,8 @@ const form = {
     label: "Units",
   },
 };
+
+export const disabilityFormConfig = form;
 
 const schema = yup.object({
   [form.eyeOpening.name]: yup.string().required().label(form.eyeOpening.label),
@@ -198,11 +199,16 @@ export const Disability = ({ onSubmit }: Props) => {
             value: values[form.leftPupilSize.name],
             obsDateTime: obsDateTime,
           },
-          {
-            concept: concepts.PUPIL_REACTION,
-            value: values[form.leftPupilReaction.name],
-            obsDateTime: obsDateTime,
-          },
+          ...(Boolean(values[form.leftPupilReaction.name])
+            ? [
+                {
+                  concept: concepts.PUPIL_REACTION,
+                  value: values[form.leftPupilReaction.name],
+                  obsDateTime: obsDateTime,
+                },
+              ]
+            : []),
+          ,
         ],
       },
       {
@@ -215,11 +221,15 @@ export const Disability = ({ onSubmit }: Props) => {
             value: values[form.rightPupilSize.name],
             obsDateTime: obsDateTime,
           },
-          {
-            concept: concepts.PUPIL_REACTION,
-            value: values[form.rightPupilReaction.name],
-            obsDateTime: obsDateTime,
-          },
+          ...(Boolean(values[form.leftPupilReaction.name])
+            ? [
+                {
+                  concept: concepts.PUPIL_REACTION,
+                  value: values[form.rightPupilReaction.name],
+                  obsDateTime: obsDateTime,
+                },
+              ]
+            : []),
         ],
       },
     ];
@@ -229,7 +239,15 @@ export const Disability = ({ onSubmit }: Props) => {
     delete values[form.rightPupilSize.name];
     delete values[form.rightPupilReaction.name];
 
-    const obs = getObservations(values, obsDateTime);
+    const gcs =
+      Number(eyeOpeningValue || 0) +
+      Number(verbalResponseValue || 0) +
+      Number(motorResponseValue || 0);
+
+    const obs = getObservations(
+      { ...values, [concepts.GCS]: gcs },
+      obsDateTime
+    );
 
     const obsWithEyes = [...obs, ...eyes];
     handleSubmit(obsWithEyes);
@@ -242,12 +260,12 @@ export const Disability = ({ onSubmit }: Props) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if disability is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -353,7 +371,6 @@ export const Disability = ({ onSubmit }: Props) => {
                 label={form.postureInfo.label}
                 id={form.postureInfo.name}
               />
-
             </FieldsContainer>
             <FieldsContainer mr="1ch">
               <SearchComboBox
@@ -371,7 +388,6 @@ export const Disability = ({ onSubmit }: Props) => {
                 unitOfMeasure={formValues[form.units.name] || "mmol/l"}
               />
             </FieldsContainer>
-
 
             <FieldsContainer>
               <RadioGroupInput

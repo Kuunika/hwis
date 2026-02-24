@@ -88,7 +88,7 @@ export const TextInputField: FC<Prop> = ({
         }}
         id={id}
         name={name}
-        value={value ?? ""}
+        value={value}
         type={type}
         onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
           handleBlur(event);

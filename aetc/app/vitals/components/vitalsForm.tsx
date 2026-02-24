@@ -320,10 +320,8 @@ export function VitalsForm({
   previous,
   getFormValues,
 }: props) {
-  const { flow, addKeyToFlow } = useContext(TriageContext) as TriageContextType;
+  const { addKeyToFlow } = useContext(TriageContext) as TriageContextType;
   const [formValues, setFormValues] = useState<any>({});
-  const [systolic, setSystolic] = useState(0);
-  const [diastolic, setDiastolic] = useState(0);
   const [total, setTotal] = useState(0);
 
   const checkTriage = (name: string, formValue: string) => {

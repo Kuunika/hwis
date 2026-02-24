@@ -23,7 +23,6 @@ import {
   LowerLimbMalePosteriorImage,
 } from "@/components/svgImages";
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 
 import { UpperLimbFemaleAnteriorImage } from "@/components/svgImages/upperLimbFemaleAnterior";
@@ -38,11 +37,19 @@ const form = {
     name: concepts.OEDEMA,
     label: "Oedema",
     coded: true,
+    children: [
+      {
+        concept: concepts.OEDEMA_DETAILS,
+        label: "Oedema details",
+        // type: "string",
+      },
+    ],
   },
   oedamaDetails: {
     name: concepts.OEDEMA_DETAILS,
     label: "Oedema Details",
     coded: true,
+    child: true,
   },
   coldClammy: {
     name: concepts.COLD_CLAMMY,
@@ -53,13 +60,30 @@ const form = {
     name: concepts.ABNORMALITIES_UPPER_LIMB,
     label: "Are there other abnormalities  in the upper limbs",
     coded: true,
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Image",
+        image: true,
+        parentConcept: concepts.ABNORMALITIES_UPPER_LIMB,
+      },
+    ],
   },
   abnormalitiesLowerLimb: {
     name: concepts.ABNORMALITIES_LOWER_LIMB,
     label: "Are there other abnormalities  in the lower limbs",
     coded: true,
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Image",
+        image: true,
+        parentConcept: concepts.ABNORMALITIES_LOWER_LIMB,
+      },
+    ],
   },
 };
+export const extremitiesFormConfig: any = form;
 
 type Prop = {
   onSubmit: () => void;
@@ -116,42 +140,42 @@ export const ExtremitiesForm = ({ onSubmit }: Prop) => {
         concept: concepts.IMAGE_PART_NAME,
         value: "lower limb anterior",
         obsDatetime,
-        groupMembers: flattenImagesObs(lowerLimbAnterior),
+        groupMembers: await flattenImagesObs(lowerLimbAnterior),
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "lower limb posterior",
         obsDatetime,
-        groupMembers: flattenImagesObs(lowerLimbPosterior),
+        groupMembers: await flattenImagesObs(lowerLimbPosterior),
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "upper limb posterior",
         obsDatetime,
-        groupMembers: flattenImagesObs(upperLimbPosterior),
+        groupMembers: await flattenImagesObs(upperLimbPosterior),
       },
       {
         concept: concepts.IMAGE_PART_NAME,
         value: "upper limb anterior",
         obsDatetime,
-        groupMembers: flattenImagesObs(upperLimbAnterior),
+        groupMembers: await flattenImagesObs(upperLimbAnterior),
       },
     ];
     // delete formValues[form.abnormalitiesLowerLimb.name];
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...obs,
     ]);
   };
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}

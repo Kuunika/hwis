@@ -55,7 +55,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { isOnList } = checkPatientIfOnWaitingAssessment(patient?.id);
   const { setActiveStep } = useContext(
-    ConsultationContext
+    ConsultationContext,
   ) as ConsultationContextType;
 
   // State for collapsible menu sections
@@ -67,7 +67,7 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
 
   const getEncountersByType = (encounterTypeUuid: any) => {
     const encounter: any = patientHistory?.find(
-      (d: any) => d?.encounter_type?.uuid === encounterTypeUuid
+      (d: any) => d?.encounter_type?.uuid === encounterTypeUuid,
     );
     if (!encounter) return [];
     const latestObsMap = new Map();
@@ -127,14 +127,14 @@ const FlowStarter: React.FC<FlowStarterProps> = ({ patient }) => {
   // Define template forms menu items
   const templateFormsItems: MenuItemConfig[] = [
     {
-      label: "Medical Inpatient",
+      label: "Medical Inpatient Admission Sheet",
       path: `/patient/${patient.id}/medicalInpatient`,
     },
     {
       label: "Surgical Notes",
       path: `/patient/${patient.id}/surgicalNotes`,
     },
-    ...(gender === "Female"
+    ...(gender === "Female" || gender === "F"
       ? [
           {
             label: "Gynaecology Ward Admission",

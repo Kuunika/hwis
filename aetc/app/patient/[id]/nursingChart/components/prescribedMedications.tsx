@@ -16,13 +16,14 @@ import {
   Grid,
 } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { Encounter } from "@/interfaces";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { DrugDispensedList, formatDispensed } from "./drugDispensedList";
 import { PrescribedMedicationList } from "./prescribedMedicationList";
 
 export const PrescribedMedication = () => {
+   const { ServerTime } = useServerTime();
   const { patientId, activeVisitId, activeVisit } = getActivePatientDetails();
   const { data, isPending, isRefetching, refetch } = getPatientsEncounters(
     patientId as string
@@ -83,6 +84,7 @@ export const PrescribedMedication = () => {
   );
 
   const handleSubmit = useCallback(() => {
+   
     if (!formData.dose || !formData.route) {
       setFormError({
         dose: !formData.dose ? "Field is required" : undefined,
@@ -95,23 +97,23 @@ export const PrescribedMedication = () => {
       encounterType: encounters.DISPENSING,
       visit: activeVisit,
       patient: patientId,
-      encounterDatetime: getDateTime(),
+      encounterDatetime: ServerTime.getServerTimeString(),
       obs: [
         {
           concept: concepts.DRUG_GIVEN,
           value: selectedMedication.medicationUUID,
-          obsDatetime: getDateTime(),
+          obsDatetime: ServerTime.getServerTimeString(),
           coded: true,
           groupMembers: [
             {
               concept: concepts.MEDICATION_DOSE,
               value: formData.dose,
-              obsDatetime: getDateTime(),
+              obsDatetime: ServerTime.getServerTimeString(),
             },
             {
               concept: concepts.MEDICATION_ROUTE,
               value: formData.route,
-              obsDatetime: getDateTime(),
+              obsDatetime: ServerTime.getServerTimeString(),
             },
           ],
         },

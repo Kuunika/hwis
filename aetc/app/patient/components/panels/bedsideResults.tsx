@@ -9,49 +9,120 @@ interface BedsideResultsProps {
 export const BedsideResults = ({ data }: BedsideResultsProps) => {
   const [groupedObservations, setGroupedObservations] = useState<Obs[]>([]);
 
-  useEffect(() => {
-    if (data.length > 0) {
-      const finalObsArray = Object.values(data);
+  const UNIT_MAP: Record<string, string> = {
+  // Blood Gas Values
+  "pH": "",
+  "PCO2": "mmHg",
+  "PO2": "mmHg",
+  "Base Excess": "mmol/L",
 
-      const filterObservations = (observations: Obs[]): Obs[] => {
-        return observations
-          .filter((obs) => {
-            const isDescription = obs.names?.[0]?.name === "Description";
-            const val = obs.value ?? obs.value_text ?? obs.value_numeric;
-            const isNumeric = !isNaN(Number(val)) && val !== null && val !== undefined && val !== "";
-            return !(isDescription && isNumeric);
-          })
-          .map((obs) => ({
-            ...obs,
-            children: obs.children ? filterObservations(obs.children) : [],
-          }));
-      };
+  // Oximetry Values
+  "ctHb": "g/dL",
+  "SO2E": "%",
+  "FO2HBE": "%",
+  "FHHBE": "%",
+  "FmetHb": "%",
 
-      const grouped = finalObsArray
-        .filter((obs) => obs.children && obs.children.length > 0)
+  // Electrolyte Values
+  "Creatine kinase": "mmol/L",
+  "CNA": "mmol/L",
+  "CA2": "mmol/L",
+  "CCL": "mmol/L",
+
+  // Metabolic Values
+  "cGlu": "mmol/L",
+  "cLac": "mmol/L",
+  "ctBil": "µmol/L",
+
+  // Temperature-Corrected Values
+  "pH (T)": "",
+  "pCO₂ (T)": "mmHg",
+  "pO₂ (T)": "mmHg",
+  "P50E": "",
+
+  // Acid Base Status
+  "BaseExcess": "mmol/L",
+  "HCO3": "mmol/L",
+  "Anion Gapc": "mmol/L",
+  "MOSMC": "mmol/kg"
+};
+
+
+useEffect(() => {
+  if (data.length > 0) {
+    const finalObsArray = Object.values(data);
+    
+    const filterObservations = (observations: Obs[]): Obs[] => {
+      return observations
+        .filter((obs) => {
+          const isDescription = obs.names?.[0]?.name === "Description";
+          const val = obs.value ?? obs.value_text ?? obs.value_numeric;
+          const isNumeric = !isNaN(Number(val)) && val !== null && val !== undefined && val !== "";
+          return !(isDescription && isNumeric);
+        })
         .map((obs) => ({
           ...obs,
           children: obs.children ? filterObservations(obs.children) : [],
         }));
-
-      setGroupedObservations(grouped);
-    }
-  }, [data]);
-
+    };
+    
+    const grouped = finalObsArray
+      .filter((obs) => obs.children && obs.children.length > 0)
+      .map((obs) => ({
+        ...obs,
+        children: obs.children ? filterObservations(obs.children) : [],
+      }))
+      .sort((a, b) => {
+        const dateA = new Date(a.obs_datetime).getTime();
+        const dateB = new Date(b.obs_datetime).getTime();
+        return dateB - dateA;
+      });
+    
+    setGroupedObservations(grouped);
+  }
+}, [data]);
+  
+  const getUnit = (name: string) => {
+    const unit = UNIT_MAP[name] ?? "";
+    return `${unit ? ` ${unit}` : ""}`;
+};
+ 
   const renderObservation = (obs: Obs, level: number = 0) => {
-    const indent = level * 16;
-
-    return (
-      <div key={obs.obs_id} style={{ marginLeft: indent }}>
-        <Typography>
-          <b>{obs.names?.[0]?.name}:</b>{" "}
-          {obs.value ?? obs.value_text ?? obs.value_numeric ?? "N/A"}
-        </Typography>
-        {obs.children?.length > 0 &&
-          obs.children.map((childObs) => renderObservation(childObs, level + 1))}
-      </div>
-    );
-  };
+  const indent = level * 16;
+  const hasChildren = obs.children?.length > 0;
+  
+  return (
+    <div key={obs.obs_id} style={{ marginLeft: indent }}>
+      <Typography sx={{
+                color: "#777",
+                fontWeight: 400,
+                lineHeight: 1.5,
+              }}>
+        {hasChildren ? (
+          <b>{obs.names?.[0]?.name === 'Description' ? "" : `${obs.names?.[0]?.name} `}</b>
+        ) : (
+          <b>{obs.names?.[0]?.name === 'Description' ? "" : `${obs.names?.[0]?.name} : `}</b>
+        )}
+        {obs.value_text ? (
+          <>
+            {hasChildren ? <b>{obs.value_text}</b> : obs.value_text}
+            <span>{getUnit(obs.names?.[0]?.name)}</span>
+          </>
+        ) : (
+          <>
+            {hasChildren ? <b>{obs.value ?? obs.value_numeric ?? "N/A"}</b> : (obs.value ?? obs.value_numeric ?? "N/A")}
+            <span>{getUnit(obs.names?.[0]?.name)}</span>
+          </>
+        )}
+      </Typography>
+      {hasChildren && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+          {obs.children.map((childObs) => renderObservation(childObs, level + 1))}
+        </div>
+      )}
+    </div>
+  );
+};
 
   return (
     <div

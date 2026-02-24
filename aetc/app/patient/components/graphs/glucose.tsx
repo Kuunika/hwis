@@ -1,7 +1,7 @@
 import { getObsGraphData } from "@/hooks";
 import { LineChart } from "./lineChart";
 export function Glucose() {
-  const { values, dateTimes } = getObsGraphData("Glucose");
+  const { values, dateTimes } = getObsGraphData("Serum glucose");
   return (
     <LineChart
       chartConfig={{

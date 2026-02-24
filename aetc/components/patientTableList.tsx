@@ -74,7 +74,7 @@ export const PatientTableListServer = ({
     <ServerPaginationTable
       searchText={searchText}
       setSearchString={setSearchString}
-      rowCount={data?.data ? data?.per_page * data?.total_pages : 0}
+      rowCount={data?.data ? data?.totalEntries : 0}
       setPaginationModel={setPaginationModel}
       paginationModel={paginationModel}
       loading={loading}

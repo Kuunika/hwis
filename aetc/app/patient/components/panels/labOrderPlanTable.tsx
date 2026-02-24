@@ -55,6 +55,8 @@ export const LabOrderPlanTable = () => {
   ];
 
   let flattenedLabOrdersPlan = [];
+
+
   if (labOrdersPlan && labOrdersPlan?.length > 0) {
     flattenedLabOrdersPlan = labOrdersPlan[0]?.obs?.flatMap((obs: any) =>
       obs.children.map((test: any) => {

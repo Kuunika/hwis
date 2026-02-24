@@ -19,7 +19,6 @@ import {
 import * as Yup from "yup";
 
 import { getActivePatientDetails, useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { LungFrontMaleImage } from "@/components/svgImages/LungFrontMale";
 import { LungFrontFemaleImage } from "@/components/svgImages/LungFrontFemale";
@@ -33,6 +32,7 @@ import { LungLeftMaleImage } from "@/components/svgImages/LungLeftMale";
 import { LungRightFemaleImage } from "@/components/svgImages/LungRightFemale";
 import { LungRightMaleImage } from "@/components/svgImages/LungRightMale";
 import ComponentSlider from "@/components/slider/slider";
+import { number } from "yup";
 
 const form = {
   respiratoryRate: {
@@ -42,10 +42,18 @@ const form = {
   chestWallAbnormality: {
     name: concepts.CHEST_WALL_ABNORMALITY,
     label: "Chest Wall Abnormality",
+    children: [
+      {
+        multiple: true,
+        concept: concepts.ABNORMALITIES,
+        label: "Abnormalities",
+      },
+    ],
   },
   chestWallAbnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Chest Wall Abnormalities",
+    child: true,
   },
   otherSpecify: {
     name: concepts.OTHER,
@@ -54,43 +62,104 @@ const form = {
   localizedChestAbnormality: {
     name: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
     label: "Localised Chest Wall Abnormality",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Localised Chest wall Abnormality Image",
+        image: true,
+        parentConcept: concepts.LOCALISED_CHEST_WALL_ABNORMALITY,
+      },
+    ],
   },
   chestExpansion: {
     name: concepts.CHEST_EXPANSION,
     label: "Chest Expansion",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Chest Expansion Image",
+        image: true,
+        parentConcept: concepts.CHEST_EXPANSION,
+      },
+    ],
   },
   tactileFremitus: {
     name: concepts.TACTILE_FREMITUS,
     label: "Tactile Fremitus",
-  },
-  apexBeat: {
-    name: concepts.APEX_BEAT,
-    label: "Apex Beat",
-  },
-  position: {
-    name: concepts.POSITIONING,
-    label: "Position",
-  },
-  thrill: {
-    name: concepts.TRILL,
-    label: "Thrill",
-  },
-  thrillDescription: {
-    name: concepts.DESCRIPTION,
-    label: "Thrill Description",
-  },
-  heaves: {
-    name: concepts.HEAVES,
-    label: "Heaves",
-  },
-  heavesDescription: {
-    name: concepts.HEAVES_DESCRIPTION,
-    label: "Heaves Description",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Tactile Fremitus Image",
+        image: true,
+        parentConcept: concepts.TACTILE_FREMITUS,
+      },
+    ],
   },
   percussion: {
     name: concepts.PERCUSSION,
     label: "Percussion",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Percussion Image",
+        image: true,
+        parentConcept: concepts.PERCUSSION,
+      },
+    ],
   },
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Image",
+    image: true,
+  },
+  apexBeat: {
+    name: concepts.APEX_BEAT,
+    label: "Apex Beat",
+    children: [
+      {
+        concept: concepts.POSITIONING,
+        label: "Position",
+      },
+    ],
+  },
+  position: {
+    name: concepts.POSITIONING,
+    label: "Position",
+    child: true,
+  },
+  thrill: {
+    name: concepts.TRILL,
+    label: "Thrill",
+    children: [
+      {
+        concept: concepts.DESCRIPTION,
+        label: "Thrill Description",
+        type: "string",
+      },
+    ],
+  },
+  thrillDescription: {
+    name: concepts.DESCRIPTION,
+    label: "Thrill Description",
+    child: true,
+  },
+  heaves: {
+    name: concepts.HEAVES,
+    label: "Heaves",
+    children: [
+      {
+        concept: concepts.HEAVES_DESCRIPTION,
+        label: "Heaves Description",
+        type: "string",
+      },
+    ],
+  },
+  heavesDescription: {
+    name: concepts.HEAVES_DESCRIPTION,
+    label: "Heaves Description",
+    child: true,
+  },
+
   // breathingSounds: {
   //   name: concepts.BREATHING_SOUNDS,
   //   label: "Breath sounds",
@@ -102,18 +171,34 @@ const form = {
   heartSounds: {
     name: concepts.HEART_SOUNDS,
     label: "Heart Sounds",
+    children: [
+      {
+        concept: concepts.ABNORMALITIES,
+        label: "Abnormality Description",
+        type: "string",
+      },
+    ],
   },
   abnormalities: {
     name: concepts.ABNORMALITIES,
     label: "Description of Abnormality",
+    child: true,
   },
   location: {
     name: concepts.LOCATION,
     label: "Location of murmur",
+    children: [
+      {
+        concept: concepts.TYPE_OF_MURMUR,
+        label: "Type of murmur",
+        type: "string",
+      },
+    ],
   },
   type: {
     name: concepts.TYPE_OF_MURMUR,
     label: "Type of murmur",
+    child: true,
   },
   additionalNotes: {
     name: concepts.ADDITIONAL_NOTES,
@@ -136,6 +221,7 @@ const form = {
     label: "specify",
   },
 };
+export const chestFormConfig: any = form;
 
 type Prop = {
   onSubmit: () => void;
@@ -243,8 +329,6 @@ const abnormalities = [
   { id: concepts.OTHER, label: "Other" },
 ];
 
-
-
 export const ChestForm = ({ onSubmit }: Prop) => {
   const { ServerTime } = useServerTime();
   const [isChecked, setIsChecked] = useState(false);
@@ -267,15 +351,18 @@ export const ChestForm = ({ onSubmit }: Prop) => {
   const [breathingSoundsImagesEnc, setBreathingSoundsImagesEnc] = useState<
     Array<any>
   >([]);
-  const [breathingSoundsPosteriorImagesEnc, setBreathingSoundsPosteriorImagesEnc] = useState<
-    Array<any>
-  >([]);
-  const [breathingSoundsLateralRightImagesEnc, setBreathingSoundsLateralRightImagesEnc] = useState<
-    Array<any>
-  >([]);
-  const [breathingSoundsLateralLeftImagesEnc, setBreathingSoundsLateralLeftImagesEnc] = useState<
-    Array<any>
-  >([]);
+  const [
+    breathingSoundsPosteriorImagesEnc,
+    setBreathingSoundsPosteriorImagesEnc,
+  ] = useState<Array<any>>([]);
+  const [
+    breathingSoundsLateralRightImagesEnc,
+    setBreathingSoundsLateralRightImagesEnc,
+  ] = useState<Array<any>>([]);
+  const [
+    breathingSoundsLateralLeftImagesEnc,
+    setBreathingSoundsLateralLeftImagesEnc,
+  ] = useState<Array<any>>([]);
   const [vocalFremitusImagesEnc, setVocalFremitusImagesEnc] = useState<
     Array<any>
   >([]);
@@ -286,72 +373,72 @@ export const ChestForm = ({ onSubmit }: Prop) => {
     onSubmit
   );
 
-    const auscultationSlides = [
-      {
-        id: 1,
-        label: "Lung Lateral Left",
-        content:
-          gender == "Female" ? (
-            <LungLeftFemaleImage
-              form="breathingSoundChest"
-              onValueChange={setBreathingSoundsLateralLeftImagesEnc}
-            />
-          ) : (
-            <LungLeftMaleImage
-              form="breathingSoundChest"
-              onValueChange={setBreathingSoundsLateralLeftImagesEnc}
-            />
-          ),
-      },
-      {
-        id: 2,
-        label: "Lung lateral right",
-        content:
-          gender == "Female" ? (
-            <LungRightFemaleImage
-              form="breathingSoundChest"
-              onValueChange={setBreathingSoundsLateralRightImagesEnc}
-            />
-          ) : (
-            <LungRightMaleImage
-              form="breathingSoundChest"
-              onValueChange={setBreathingSoundsLateralRightImagesEnc}
-            />
-          ),
-      },
-      {
-        id: 3,
-        label: "Lung Anterior",
-        content:
-          gender == "Female" ? (
-            <LungFrontFemaleImage
-              onValueChange={setBreathingSoundsImagesEnc}
-              form="breathingSoundChest"
-            />
-          ) : (
-            <LungFrontMaleImage
-              onValueChange={setBreathingSoundsImagesEnc}
-              form="breathingSoundChest"
-            />
-          ),
-      },
-      {
-        id: 4,
-        label: "Lung Posterior",
-        content:
-          gender == "Female" ? (
-            <LungBackFemaleImage
-              onValueChange={setBreathingSoundsPosteriorImagesEnc}
-              form="breathingSoundChest"
-            />
-          ) : (
-            <LungBackMaleImage
-              onValueChange={setBreathingSoundsPosteriorImagesEnc}
-              form="breathingSoundChest"
-            />
-          ),
-      },
-    ];
+  const auscultationSlides = [
+    {
+      id: 1,
+      label: "Lung Lateral Left",
+      content:
+        gender == "Female" ? (
+          <LungLeftFemaleImage
+            form="breathingSoundChest"
+            onValueChange={setBreathingSoundsLateralLeftImagesEnc}
+          />
+        ) : (
+          <LungLeftMaleImage
+            form="breathingSoundChest"
+            onValueChange={setBreathingSoundsLateralLeftImagesEnc}
+          />
+        ),
+    },
+    {
+      id: 2,
+      label: "Lung lateral right",
+      content:
+        gender == "Female" ? (
+          <LungRightFemaleImage
+            form="breathingSoundChest"
+            onValueChange={setBreathingSoundsLateralRightImagesEnc}
+          />
+        ) : (
+          <LungRightMaleImage
+            form="breathingSoundChest"
+            onValueChange={setBreathingSoundsLateralRightImagesEnc}
+          />
+        ),
+    },
+    {
+      id: 3,
+      label: "Lung Anterior",
+      content:
+        gender == "Female" ? (
+          <LungFrontFemaleImage
+            onValueChange={setBreathingSoundsImagesEnc}
+            form="breathingSoundChest"
+          />
+        ) : (
+          <LungFrontMaleImage
+            onValueChange={setBreathingSoundsImagesEnc}
+            form="breathingSoundChest"
+          />
+        ),
+    },
+    {
+      id: 4,
+      label: "Lung Posterior",
+      content:
+        gender == "Female" ? (
+          <LungBackFemaleImage
+            onValueChange={setBreathingSoundsPosteriorImagesEnc}
+            form="breathingSoundChest"
+          />
+        ) : (
+          <LungBackMaleImage
+            onValueChange={setBreathingSoundsPosteriorImagesEnc}
+            form="breathingSoundChest"
+          />
+        ),
+    },
+  ];
 
   const handleSubmitForm = async (values: any) => {
     const formValues: any = { ...values };
@@ -363,13 +450,13 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         concept: form.chestExpansion.name,
         value: formValues[form.chestExpansion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(chestExpansionImagesEnc),
+        groupMembers: await flattenImagesObs(chestExpansionImagesEnc),
       },
       {
         concept: form.tactileFremitus.name,
         value: formValues[form.tactileFremitus.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(tactileFremitusImagesEnc),
+        groupMembers: await flattenImagesObs(tactileFremitusImagesEnc),
       },
       {
         concept: concepts.AUSCULTATION_LUNG,
@@ -378,41 +465,47 @@ export const ChestForm = ({ onSubmit }: Prop) => {
         groupMembers: [
           {
             concept: concepts.SITE,
-            value:'Auscultation Lung Anterior',
+            value: "Auscultation Lung Anterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsImagesEnc),
+            groupMembers: await flattenImagesObs(breathingSoundsImagesEnc),
           },
           {
             concept: concepts.SITE,
-            value:'Auscultation Lung Posterior',
+            value: "Auscultation Lung Posterior",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsPosteriorImagesEnc),
+            groupMembers: await flattenImagesObs(
+              breathingSoundsPosteriorImagesEnc
+            ),
           },
           {
             concept: concepts.SITE,
-            value:'Auscultation Lung Lateral Left',
+            value: "Auscultation Lung Lateral Left",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsLateralLeftImagesEnc),
+            groupMembers: await flattenImagesObs(
+              breathingSoundsLateralLeftImagesEnc
+            ),
           },
           {
             concept: concepts.SITE,
-            value:'Auscultation Lung Lateral Right',
+            value: "Auscultation Lung Lateral Right",
             obsDatetime,
-            groupMembers: flattenImagesObs(breathingSoundsLateralRightImagesEnc),
-          }
+            groupMembers: await flattenImagesObs(
+              breathingSoundsLateralRightImagesEnc
+            ),
+          },
         ],
       },
       {
         concept: form.percussion.name,
         value: formValues[form.percussion.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(percussionImagesEnc),
+        groupMembers: await flattenImagesObs(percussionImagesEnc),
       },
       {
         concept: form.localizedChestAbnormality.name,
         value: formValues[form.localizedChestAbnormality.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(localizedChestImagesEnc),
+        groupMembers: await flattenImagesObs(localizedChestImagesEnc),
       },
       {
         concept: form.globalChestWallAbnormality.name,
@@ -431,7 +524,6 @@ export const ChestForm = ({ onSubmit }: Prop) => {
           },
         ],
       },
-    
     ];
 
     const abnormalitiesObs =
@@ -470,12 +562,12 @@ export const ChestForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -680,7 +772,6 @@ export const ChestForm = ({ onSubmit }: Prop) => {
             )}
           </FormFieldContainerLayout>
           <FormFieldContainerLayout title="Auscultation (Lungs)">
-       
             <ComponentSlider slides={auscultationSlides} />
             {/* <BreathingSoundsChestLung
             imageEncounter={encounters.CHEST_ASSESSMENT}

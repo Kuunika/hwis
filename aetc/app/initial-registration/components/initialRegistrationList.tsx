@@ -1,7 +1,10 @@
 import { calculateAge, getCATTime, getTime } from "@/helpers/dateTime";
 import { useNavigation } from "@/hooks";
 import { getPatientsEncounters } from "@/hooks/encounter";
-import { getPatientsWaitingForPrescreening } from "@/hooks/patientReg";
+import {
+  deletePatient,
+  getPatientsWaitingForPrescreening,
+} from "@/hooks/patientReg";
 import { getVisitNum } from "@/hooks/visitNumber";
 import { useEffect, useState } from "react";
 import {
@@ -20,6 +23,8 @@ import { Tooltip, IconButton } from "@mui/material";
 import { FaPlay } from "react-icons/fa";
 import { fetchPatientsTablePaginate } from "@/hooks/fetchPatientsTablePaginate";
 import { useDebounce } from "@/hooks/useDebounce";
+import { FaHeartbeat } from "react-icons/fa";
+import { CPRDialogForm } from "@/app/patient/[id]/primary-assessment/components";
 
 export const InitialRegistrationList = () => {
   const {
@@ -31,6 +36,7 @@ export const InitialRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
+    totalEntries
   } = fetchPatientsTablePaginate("screening");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -39,7 +45,11 @@ export const InitialRegistrationList = () => {
     setSearchText(debouncedSearch);
   }, [debouncedSearch]);
   const { navigateTo } = useNavigation();
+  const [cpr, setCpr] = useState(false);
+  const [patientId, setPatientId] = useState("");
+  const [visitUUID, setVisitUUID] = useState("");
   const [deleted, setDeleted] = useState("");
+  const { mutate } = deletePatient();
 
   const rows = patients
     ?.sort((p1, p2) => {
@@ -90,10 +100,29 @@ export const InitialRegistrationList = () => {
               onClick={() => navigateTo(`/prescreening/${cell.id}`)}
             /> */}
             <AbscondButton
-              onDelete={() => setDeleted(cell.id)}
+              onDelete={() => {
+                setDeleted(cell.id);
+                mutate({
+                  id: cell.row.patient_id,
+                  void_reason: "Absconded",
+                });
+              }}
               visitId={cell.row.visit_uuid}
               patientId={cell.id}
             />
+            <Tooltip title="Initiate CPR" arrow>
+              <IconButton
+                onClick={() => {
+                  setPatientId(cell.id);
+                  setCpr(true);
+                  setVisitUUID(cell.row.visit_uuid);
+                }}
+                aria-label="initiate CPR"
+                color="error"
+              >
+                <FaHeartbeat />
+              </IconButton>
+            </Tooltip>
           </>
         );
       },
@@ -150,6 +179,7 @@ export const InitialRegistrationList = () => {
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
+          totalEntries
         }}
         searchText={inputText}
         setSearchString={setInputText}
@@ -162,6 +192,12 @@ export const InitialRegistrationList = () => {
         onRowClick={(row: any) => {
           navigateTo(`/prescreening/${row.id}`);
         }}
+      />
+      <CPRDialogForm
+        patientuuid={patientId}
+        visituuid={visitUUID}
+        open={cpr}
+        onClose={() => setCpr(false)}
       />
     </>
   );

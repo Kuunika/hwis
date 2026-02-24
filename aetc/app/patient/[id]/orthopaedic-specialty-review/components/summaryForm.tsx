@@ -1,7 +1,7 @@
 import { FormikInit, TextInputField } from "@/components";
 import { concepts, encounters, templateForms } from "@/constants";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 
 import { useSubmitEncounter } from "@/hooks";
 import * as Yup from "yup";
@@ -11,13 +11,15 @@ const validationSchema = Yup.object().shape({
 });
 
 export const SummaryForm = () => {
+   const { ServerTime } = useServerTime();
   const { handleSubmit } = useSubmitEncounter(
     encounters.TEMPLATE_NOTES,
     () => {}
   );
 
   const handleSubmitNotes = (values: any) => {
-    const obsDateTime = getDateTime();
+   
+    const obsDateTime = ServerTime.getServerTimeString();
     const obs = [
       {
         concept: concepts.NOTES,
@@ -26,7 +28,6 @@ export const SummaryForm = () => {
         groupMembers: getObservations(values, obsDateTime),
       },
     ];
-    console.log({ obs });
     handleSubmit(obs);
   };
 

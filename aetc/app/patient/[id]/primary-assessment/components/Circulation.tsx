@@ -39,18 +39,146 @@ const form = {
   bleedingInfo: {
     name: concepts.IS_PATIENT_ACTIVELY_BLEEDING,
     label: "Is the patient actively bleeding",
+    children: [
+      {
+        concept: concepts.ACTION_DONE,
+        label: "Action Done",
+      },
+    ],
   },
   pulseInfo: {
     name: concepts.IS_THE_PATIENT_HAVE_PULSE,
     label: "Does the patient have a pulse",
+    children: [
+      {
+        concept: concepts.PULSE_RATE,
+        label: "Pulse rate",
+      },
+      {
+        concept: concepts.PULSE_RATE_WEAK, // You'll need to add this concept
+        label: "Pulse strength",
+      },
+      {
+        concept: concepts.REGULAR_RHYTHM, // You'll need to add this concept
+        label: "Pulse rhythm",
+      },
+      {
+        concept: concepts.CAPILLARY_REFILL_TIME,
+        label: "Capillary refill time",
+      },
+    ],
+  },
+  mucousMembranesInfo: {
+    name: concepts.MUCOUS_MEMBRANES,
+    label: "Mucous membranes",
+    children: [
+      {
+        type: "string",
+        multiple: true,
+        concept: concepts.MUCOUS_ABNORMAL,
+        label: "Mucous Abnormal",
+      },
+    ],
+  },
+  bloodPressureMeasured: {
+    name: concepts.BLOOD_PRESSURE_MEASURED,
+    label: "Blood pressure measured",
+    children: [
+      {
+        concept: concepts.SYSTOLIC_BLOOD_PRESSURE,
+        label: "Blood Pressure Systolic",
+      },
+      {
+        concept: concepts.DIASTOLIC_BLOOD_PRESSURE,
+        label: "Blood Pressure Diastolic",
+      },
+      {
+        name: concepts.REASON_NOT_RECORDED,
+        label: "Reason BP Is unrecordable",
+      },
+      {
+        name: concepts.DESCRIPTION,
+        label: "Reason Not Done",
+      },
+    ],
+  },
+  traumatizedInfo: {
+    name: concepts.IS_PATIENT_TRAUMATIZED,
+    label: "Is the patient injured",
+
+    children: [
+      {
+        name: concepts.IS_PELVIS_STABLE,
+        label: "Is the pelvis unstable",
+      },
+      {
+        name: concepts.IS_FEMUR_TIBIA_NORMAL,
+        label: "is the femur and tibia normal",
+        children: [
+          {
+            concept: concepts.IMAGE_PART_NAME,
+            label: "Leg Image",
+            image: true,
+            parentConcept: concepts.IS_FEMUR_TIBIA_NORMAL,
+          },
+        ],
+      },
+    ],
+  },
+  intravenousAccess: {
+    name: concepts.PATIENT_INTRAVENOUS,
+    label: "Does the patient need intravenous access",
+    children: [
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.SIZE_OF_CATHETER,
+        label: "Size of intravenous catheter",
+      },
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.CANNULATION_SITE,
+        label: "Cannulation Site",
+      },
+      {
+        multiple: true,
+        type: "string",
+        concept: concepts.DIAGRAM_CANNULATION_SITE,
+        label: "Cannulation Site",
+      },
+    ],
+  },
+  abnormalitiesInfo: {
+    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
+    label: "Is there any other abnormalities?",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Abdomen Image",
+        image: true,
+        parentConcept: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
+      },
+    ],
+  },
+  abdnomenDistention: {
+    name: concepts.HEADACHE,
+    label: "Is there abdominal distention?",
+  },
+
+  assessPeripheries: {
+    name: concepts.ASSESS_PERIPHERIES,
+    label: "Assess peripheries",
   },
 
   pulseStrength: {
+    child: true,
     name: concepts.PULSE_RATE_WEAK, // You'll need to add this concept
     label: "Pulse strength",
   },
   pulseRhythm: {
-    name: concepts.REGULAR_RHYTHM, // You'll need to add this concept  
+    child: true,
+    name: concepts.REGULAR_RHYTHM, // You'll need to add this concept
     label: "Pulse rhythm",
   },
   // pulseRate: {
@@ -58,53 +186,38 @@ const form = {
   //   label: "Pulse rate",
   // },
   bloodPressureSystolic: {
+    child: true,
     name: concepts.SYSTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Systolic",
   },
   bloodPressureDiastolic: {
+    child: true,
     name: concepts.DIASTOLIC_BLOOD_PRESSURE,
     label: "Blood Pressure Diastolic",
   },
-  intravenousAccess: {
-    name: concepts.PATIENT_INTRAVENOUS,
-    label: "Does the patient need intravenous access",
-  },
-  traumatizedInfo: {
-    name: concepts.IS_PATIENT_TRAUMATIZED,
-    label: "Is the patient injured",
-  },
-
-  abnormalitiesInfo: {
-    name: concepts.IS_THERE_ANY_OTHER_ABNOMALITIES,
-    label: "Is there any other abnormalities?",
-  },
   capillaryInfo: {
+    child: true,
     name: concepts.CAPILLARY_REFILL_TIME,
     label: "Capillary refill time",
   },
   pelvisInfo: {
+    child: true,
     name: concepts.IS_PELVIS_STABLE,
     label: "Is the pelvis unstable?",
   },
-  abdnomenDistention: {
-    name: concepts.HEADACHE,
-    label: "Is there abdominal distention?",
-  },
-
-  mucousMembranesInfo: {
-    name: concepts.MUCOUS_MEMBRANES,
-    label: "Mucous membranes",
-  },
 
   catheterInfo: {
+    child: true,
     name: concepts.SIZE_OF_CATHETER,
     label: "Size of intravenous catheter",
   },
   femurAndTibiaNormalInfo: {
+    child: true,
     name: concepts.IS_FEMUR_TIBIA_NORMAL,
     label: "is the femur and tibia normal?",
   },
   bleedingActionDone: {
+    child: true,
     name: concepts.ACTION_DONE,
     label: "Action done",
   },
@@ -121,19 +234,13 @@ const form = {
     name: concepts.ADDITIONAL_NOTES,
     label: "Additional Notes",
   },
-  assessPeripheries: {
-    name: concepts.ASSESS_PERIPHERIES,
-    label: "Assess peripheries",
-  },
-  bloodPressureMeasured: {
-    name: concepts.BLOOD_PRESSURE_MEASURED,
-    label: "Blood pressure measured",
-  },
   reasonNotRecorded: {
+    child: true,
     name: concepts.REASON_NOT_RECORDED,
     label: "Reason BP Is unrecordable",
   },
   reasonNotDone: {
+    child: true,
     name: concepts.DESCRIPTION,
     label: "Reason Not Done",
   },
@@ -146,6 +253,7 @@ const form = {
     label: "Specify",
   },
   siteOfCannulation: {
+    child: true,
     name: concepts.CANNULATION_SITE,
     label: "Cannulation Site",
   },
@@ -154,7 +262,8 @@ const form = {
     label: "Cannulation Site",
   },
   pulse: {
-    name: concepts.PULSE_RATE,
+    child: true,
+    name: concepts.HEART_RATE,
     label: "Pulse rate",
   },
   centralLineCannulationSite: {
@@ -162,6 +271,7 @@ const form = {
     label: "Cannulation Site (Central Line)",
   },
 };
+export const circulationFormConfig = form;
 
 const schema = yup.object({
   [form.bleedingInfo.name]: yup
@@ -172,7 +282,6 @@ const schema = yup.object({
 
   [form.pulseStrength.name]: yup.string().label(form.pulseStrength.label),
   [form.pulseRhythm.name]: yup.string().label(form.pulseRhythm.label),
-
 
   // [form.pulseRate.name]: yup.string().label(form.pulseRate.label),
   [form.bleedingActionDone.name]: yup
@@ -336,7 +445,7 @@ const centralLineCannulationSites = [
   },
 ];
 export const Circulation = ({ onSubmit }: Prop) => {
-  const { ServerTime } = useServerTime()
+  const { ServerTime } = useServerTime();
   const { gender } = getActivePatientDetails();
   const [formValues, setFormValues] = useState<any>({});
   const [abdomenOtherImage, setAbdomenOtherImage] = useState<Array<any>>([]);
@@ -354,26 +463,26 @@ export const Circulation = ({ onSubmit }: Prop) => {
   const handleSubmitForm = async (values: any) => {
     const formValues = { ...values };
 
-    const obsDatetime = ServerTime.getServerTimeString()
+    const obsDatetime = ServerTime.getServerTimeString();
 
     const obs = [
       {
         concept: form.abnormalitiesInfo.name,
         value: formValues[form.abnormalitiesInfo.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(abdomenOtherImage),
+        groupMembers: await flattenImagesObs(abdomenOtherImage),
       },
       {
         concept: form.femurAndTibiaNormalInfo.name,
         value: formValues[form.femurAndTibiaNormalInfo.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(legImage),
+        groupMembers: await flattenImagesObs(legImage),
       },
       // {
       //   concept: form.anyOtherAbnormalitiesOnAbdomen.name,
       //   value: formValues[form.anyOtherAbnormalitiesOnAbdomen.name],
       //   obsDatetime,
-      //   groupMembers: flattenImagesObs(abdomenImage),
+      //   groupMembers: await flattenImagesObs(abdomenImage),
       // },
     ];
 
@@ -411,7 +520,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
     delete formValues[form.diagramCannulationSite.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues, obsDatetime),
+      ...(await mapSubmissionToCodedArray(form, formValues, obsDatetime)),
       ...obs,
       ...mucusAbnormalitiesObs,
       ...sizeOfCatheterObs,
@@ -427,12 +536,12 @@ export const Circulation = ({ onSubmit }: Prop) => {
   };
   return (
     <ContainerLoaderOverlay loading={isLoading}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -563,36 +672,36 @@ export const Circulation = ({ onSubmit }: Prop) => {
             </FieldsContainer>
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.NOT_DONE && (
-                <>
-                  <SearchComboBox
-                    multiple={false}
-                    name={form.reasonNotDone.name}
-                    label={form.reasonNotDone.label}
-                    options={notDoneReasons}
+              <>
+                <SearchComboBox
+                  multiple={false}
+                  name={form.reasonNotDone.name}
+                  label={form.reasonNotDone.label}
+                  options={notDoneReasons}
+                />
+                {formValues[form.reasonNotDone.name] == concepts.OTHER && (
+                  <TextInputField
+                    multiline
+                    rows={3}
+                    name={form.bloodPressureNotDoneOther.name}
+                    id={form.bloodPressureNotDoneOther.name}
+                    label={form.bloodPressureNotDoneOther.label}
+                    sx={{ width: "100%", mt: "1ch" }}
                   />
-                  {formValues[form.reasonNotDone.name] == concepts.OTHER && (
-                    <TextInputField
-                      multiline
-                      rows={3}
-                      name={form.bloodPressureNotDoneOther.name}
-                      id={form.bloodPressureNotDoneOther.name}
-                      label={form.bloodPressureNotDoneOther.label}
-                      sx={{ width: "100%", mt: "1ch" }}
-                    />
-                  )}
-                </>
-              )}
+                )}
+              </>
+            )}
             {formValues[form.bloodPressureMeasured.name] ==
               concepts.BP_NOT_RECORDABLE && (
-                <>
-                  <TextInputField
-                    sx={{ m: 0, width: "100%" }}
-                    name={form.reasonNotRecorded.name}
-                    label={form.reasonNotRecorded.label}
-                    id={form.reasonNotRecorded.name}
-                  />
-                </>
-              )}
+              <>
+                <TextInputField
+                  sx={{ m: 0, width: "100%" }}
+                  name={form.reasonNotRecorded.name}
+                  label={form.reasonNotRecorded.label}
+                  id={form.reasonNotRecorded.name}
+                />
+              </>
+            )}
             {formValues[form.bloodPressureMeasured.name] == concepts.DONE && (
               <>
                 <br />
@@ -627,7 +736,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                                 Number(
                                   formValues[form.bloodPressureSystolic.name]
                                 )) /
-                              3
+                                3
                             ) < 65
                               ? "red"
                               : "inherit", // Use default text color if MAP is 65 or above
@@ -642,7 +751,7 @@ export const Circulation = ({ onSubmit }: Prop) => {
                             Number(
                               formValues[form.bloodPressureSystolic.name]
                             )) /
-                          3
+                            3
                         )}{" "}
                         mmHg
                       </Typography>
@@ -739,17 +848,17 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   formValues[form.catheterInfo.name],
                   concepts.CENTRAL_LINE
                 ) && (
-                    <>
-                      <Typography variant="h6">Central Line</Typography>
-                      <SearchComboBox
-                        multiple={false}
-                        name={form.centralLineCannulationSite.name}
-                        label={form.centralLineCannulationSite.label}
-                        options={centralLineCannulationSites}
-                      />
-                      <br />
-                    </>
-                  )}
+                  <>
+                    <Typography variant="h6">Central Line</Typography>
+                    <SearchComboBox
+                      multiple={false}
+                      name={form.centralLineCannulationSite.name}
+                      label={form.centralLineCannulationSite.label}
+                      options={centralLineCannulationSites}
+                    />
+                    <br />
+                  </>
+                )}
 
                 <SearchComboBox
                   multiple
@@ -762,33 +871,33 @@ export const Circulation = ({ onSubmit }: Prop) => {
                   formValues[form.siteOfCannulation.name],
                   concepts.LEFT
                 ) && (
-                    <>
-                      <Typography my={2} variant="h6">
-                        Left
-                      </Typography>
-                      <SearchComboBox
-                        name={form.diagramCannulationSite.name}
-                        label={form.diagramCannulationSite.label}
-                        options={diagramSitesOfCannulation}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Typography my={2} variant="h6">
+                      Left
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={diagramSitesOfCannulation}
+                    />
+                  </>
+                )}
 
                 {checkCanulationSite(
                   formValues[form.siteOfCannulation.name],
                   concepts.RIGHT
                 ) && (
-                    <>
-                      <Typography my={2} variant="h6">
-                        Right
-                      </Typography>
-                      <SearchComboBox
-                        name={form.diagramCannulationSite.name}
-                        label={form.diagramCannulationSite.label}
-                        options={diagramSitesOfCannulation}
-                      />
-                    </>
-                  )}
+                  <>
+                    <Typography my={2} variant="h6">
+                      Right
+                    </Typography>
+                    <SearchComboBox
+                      name={form.diagramCannulationSite.name}
+                      label={form.diagramCannulationSite.label}
+                      options={diagramSitesOfCannulation}
+                    />
+                  </>
+                )}
 
                 <br />
               </>

@@ -17,7 +17,7 @@ import {
 } from "@/components";
 import * as Yup from "yup";
 
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { useSubmitEncounter } from "@/hooks/useSubmitEncounter";
 import { OverlayLoader } from "@/components/backdrop";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
@@ -113,7 +113,7 @@ const airwayThreatenedReasons = [
 ];
 
 const airwayInterventionsList = [
-  { id: concepts.SUCTIONING_AIRWAY, label: "Suctioning Airway" },
+  { id: concepts.SUCTIONING_DONE, label: "Suctioning Done" },
   { id: concepts.JAW_THRUST_MANOEUVER, label: "Jaw thrust manoeuver" },
   { id: concepts.HEAD_TILT_CHIN_LIFT, label: "Head tilt/chin lift" },
   {
@@ -147,6 +147,7 @@ const radioOptions = [
 ];
 
 export const AirwayForm = ({ onSubmit }: Prop) => {
+  const { ServerTime } = useServerTime();
   const [formValues, setFormValues] = useState<any>({});
   const { handleSubmit, isLoading } = useSubmitEncounter(
     encounters.AIRWAY_ASSESSMENT,
@@ -165,7 +166,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.intervention.name,
           value: intervention.id,
-          obsDateTime: getDateTime(),
+          obsDateTime: ServerTime.getServerTimeString(),
           coded: true,
         };
       });
@@ -178,7 +179,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
         return {
           concept: form.airWayThreatenedReason.name,
           value: reasons.id,
-          obsDateTime: getDateTime(),
+          obsDateTime: ServerTime.getServerTimeString(),
           coded: true,
         };
       });
@@ -188,7 +189,7 @@ export const AirwayForm = ({ onSubmit }: Prop) => {
     delete formValues[form.intervention.name];
 
     await handleSubmit([
-      ...mapSubmissionToCodedArray(form, formValues),
+      ...(await mapSubmissionToCodedArray(form, formValues)),
       ...interventionsObs,
       ...reasonsObs,
     ]);

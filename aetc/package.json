@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --debug",
+    "build": "rm -rf .next && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/",
     "start": "next start",
     "lint": "next lint"
   },
@@ -22,6 +22,7 @@
     "@mui/x-data-grid": "^8.0.0",
     "@mui/x-date-pickers": "^7.27.1",
     "@mui/x-tree-view": "^7.26.0",
+    "@react-pdf/renderer": "^4.3.0",
     "@replytechnologies/zpl-image-convert": "^0.0.2",
     "@tanstack/react-query": "^5.66.9",
     "@tanstack/react-query-devtools": "^5.66.9",
@@ -35,6 +36,7 @@
     "eslint": "^8.57.1",
     "formik": "^2.4.3",
     "html-to-image": "^1.11.11",
+    "jwt-decode": "^4.0.0",
     "material-react-table": "^3.2.1",
     "next": "^15.2.4",
     "react": "^19.0.0",
@@ -50,6 +52,7 @@
     "schema-to-yup": "^1.12.15",
     "sweetalert2": "^11.6.13",
     "sweetalert2-react-content": "^5.0.7",
+    "winston": "^3.17.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
@@ -57,6 +60,7 @@
     "@types/node": "^20",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18",
+    "baseline-browser-mapping": "^2.9.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.2",
     "prettier": "^3.5.3",

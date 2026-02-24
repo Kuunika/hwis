@@ -20,7 +20,6 @@ import * as Yup from "yup";
 import { NewAbdomenImage } from "@/components/svgImages";
 import { getOnePatient } from "@/hooks/patientReg";
 import { useParameters, useSubmitEncounter } from "@/hooks";
-import { getDateTime } from "@/helpers/dateTime";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { NewAbdomenFemaleImage } from "@/components/svgImages/abdomenFemaleImage";
 import { CheckBoxNext } from "@/components/form/checkBoxNext";
@@ -34,8 +33,20 @@ const form = {
   abnormalitiesPresent: {
     name: concepts.ABNORMALITIES_PRESENT,
     label: "Are there abnormalities",
+    children: [
+      {
+        concept: concepts.IMAGE_PART_NAME,
+        label: "Abdomen and Pelvis Abnormalities Image",
+        image: true,
+        parentConcept: concepts.ABDOMINAL_DISTENTION,
+      },
+    ],
   },
-
+  image: {
+    name: concepts.IMAGE_PART_NAME,
+    label: "Palpation image",
+    image: true,
+  },
   shiftingDullness: {
     name: concepts.SHIFTING_DULLNESS,
     label: "Shifting Dullness",
@@ -43,6 +54,10 @@ const form = {
   fluidThrill: {
     name: concepts.FLUID_THRILL,
     label: "Fluid Thrill",
+  },
+  tenderness: {
+    name: concepts.TENDERNESS,
+    label: "Tenderness",
   },
   bowelSounds: {
     name: concepts.BOWEL_SOUNDS,
@@ -55,6 +70,7 @@ const form = {
   general: {
     name: concepts.GENERAL,
     label: "General",
+    multiple: true,
   },
   prostate: {
     name: concepts.PROSTATE,
@@ -63,10 +79,17 @@ const form = {
   mass: {
     name: concepts.MASS,
     label: "Mass",
+    children: [
+      {
+        concept: concepts.DESCRIPTION,
+        label: "Mass Description",
+      },
+    ],
   },
   massDescription: {
     name: concepts.DESCRIPTION,
     label: "Mass Description",
+    child: true,
   },
   sphincterTone: {
     name: concepts.SPHINCTER_TONE,
@@ -80,6 +103,84 @@ const form = {
     name: concepts.CIRCUMCISION_STATUS,
     label: "Is the patient circumcised?",
   },
+  laceration: {
+    name: concepts.LACERATION,
+    label:
+      "Are there any ulcerations/lacerations, bite marks of any kind present ",
+    children: [
+      {
+        concept: concepts.LACERATION_NOTES,
+        label: "Laceration Notes",
+      },
+    ],
+  },
+  lacerationNotes: {
+    name: concepts.LACERATION_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  hematomas: {
+    name: concepts.HEMATOMAS,
+    label: "Are there any signs of  oedema, hematomas, discolourations",
+    children: [
+      {
+        concept: concepts.HEMATOMAS_NOTES,
+        label: "Hematomas Notes",
+      },
+    ],
+  },
+  hematomasNotes: {
+    name: concepts.HEMATOMAS_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  inflammation: {
+    name: concepts.INFLAMMATION,
+    label:
+      "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
+    children: [
+      {
+        concept: concepts.INFLAMMATION_NOTES,
+        label: "Inflammation Notes",
+      },
+    ],
+  },
+  inflammationNotes: {
+    name: concepts.INFLAMMATION_NOTES,
+    label: "Notes",
+    child: true,
+  },
+  urethraMeatus: {
+    name: concepts.URETHRAL_MEATUS,
+    label: "Are there any signs discharge from the urethra meatus",
+    children: [
+      {
+        concept: concepts.URETHRAL_NOTES,
+        label: "Urethral Notes",
+      },
+    ],
+  },
+  descriptionUrethral: {
+    name: concepts.URETHRAL_NOTES,
+    label: "Urethral Notes",
+    child: true,
+  },
+  scrotum: {
+    name: concepts.SCROTUM,
+    label:
+      "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
+    children: [
+      {
+        concept: concepts.SCROTUM_NOTES,
+        label: "Scrotum Notes",
+      },
+    ],
+  },
+  scrotumNotes: {
+    name: concepts.SCROTUM_NOTES,
+    label: "Scrotum Notes",
+    child: true,
+  },
   unusualAppearance: {
     name: concepts.UNUSUAL_SIZE_APPEARANCE_OF_CLITORIS,
     label: "Is the clitoris of unusual size/appearance",
@@ -92,11 +193,7 @@ const form = {
     name: concepts.VAGINA,
     label: "Does the vagina have visible bleeding, discharge, lacerations)",
   },
-  scrotum: {
-    name: concepts.SCROTUM,
-    label:
-      "Does the scrotum have any erythema, ecchymoses, abrasions, swelling ",
-  },
+
   periymen: {
     name: concepts.PERIHYMEN,
     label: "PERIHYMEN",
@@ -145,10 +242,6 @@ const form = {
     name: concepts.URETHRAL_NOTES,
     label: "Urethral Notes",
   },
-  scrotumNotes: {
-    name: concepts.SCROTUM_NOTES,
-    label: "Scrotum Notes",
-  },
   otherDigitalGeneral: {
     name: concepts.OTHER_RECTAL_GENERAL,
     label: "Other",
@@ -161,53 +254,15 @@ const form = {
     name: concepts.SPHINCTER_OTHER,
     label: "Sphincter Description",
   },
-  tenderness: {
-    name: concepts.TENDERNESS,
-    label: "Tenderness",
-  },
-  laceration: {
-    name: concepts.LACERATION,
-    label:
-      "Are there any ulcerations/lacerations, bite marks of any kind present ",
-  },
-  lacerationNotes: {
-    name: concepts.LACERATION_NOTES,
-    label: "Notes",
-  },
-  hematomas: {
-    name: concepts.HEMATOMAS,
-    label: "Are there any signs of  oedema, hematomas, discolourations",
-  },
-  hematomasNotes: {
-    name: concepts.HEMATOMAS_NOTES,
-    label: "Notes",
-  },
-  inflammation: {
-    name: concepts.INFLAMMATION,
-    label:
-      "Are there any signs of inflammation, edema, lesions around periurethral tissue, bleeding",
-  },
-  inflammationNotes: {
-    name: concepts.INFLAMMATION_NOTES,
-    label: "Notes",
-  },
 
-  urethraMeatus: {
-    name: concepts.URETHRAL_MEATUS,
-    label: "Are there any signs discharge from the urethra meatus",
-  },
-  descriptionUrethral: {
-    name: concepts.URETHRAL_NOTES,
-    label: "Urethral Notes",
-  },
   perihymen: {
     name: concepts.PERIHYMEN,
     label: "Does the perihymen have abrasions, lacerations scarring",
   },
-  perihymenNotes: {
-    name: concepts.PERIHYMEN_NOTES,
-    label: "Notes",
-  },
+  // perihymenNotes: {
+  //   name: concepts.PERIHYMEN_NOTES,
+  //   label: "Notes",
+  // },
   examination: {
     name: concepts.GENETELIA_EXAMINATION_REQUIRED,
     label: "Does the condition necessitate genitalia examination?",
@@ -217,6 +272,7 @@ const form = {
     label: "Does the condition necessitate digital rectal examination?",
   },
 };
+export const abdomenAndPelvisFormConfig: any = form;
 
 type Prop = {
   onSubmit: () => void;
@@ -239,13 +295,11 @@ const schema = Yup.object().shape({
   [form.bowelSounds.name]: Yup.string()
     .label(form.bowelSounds.label)
     .required(),
-  [form.general.name]: Yup.array().label(form.general.label).required(),
+  [form.general.name]: Yup.array().label(form.general.label),
   [form.prostate.name]: Yup.array().label(form.prostate.label),
-  [form.mass.name]: Yup.string().label(form.mass.label).required(),
+  [form.mass.name]: Yup.string().label(form.mass.label),
   [form.massDescription.name]: Yup.string().label(form.massDescription.label),
-  [form.sphincterTone.name]: Yup.string()
-    .required()
-    .label(form.sphincterTone.label),
+  [form.sphincterTone.name]: Yup.string().label(form.sphincterTone.label),
   [form.periymen.name]: Yup.array().label(form.periymen.label),
   [form.scrotum.name]: Yup.string().label(form.scrotum.label),
   [form.vagina.name]: Yup.string().label(form.vagina.label),
@@ -297,7 +351,7 @@ const schema = Yup.object().shape({
     form.inflammationNotes.label
   ),
   [form.perihymen.name]: Yup.string().label(form.perihymen.label),
-  [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
+  // [form.perihymenNotes.name]: Yup.string().label(form.perihymenNotes.label),
   [form.examination.name]: Yup.string().label(form.examination.label),
 });
 
@@ -406,13 +460,13 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
         concept: form.abnormalitiesPresent.name,
         value: formValues[form.abnormalitiesPresent.name],
         obsDatetime,
-        groupMembers: flattenImagesObs(abnormalitiesPresentImageEnc),
+        groupMembers: await flattenImagesObs(abnormalitiesPresentImageEnc),
       },
       {
         concept: concepts.PALPATION,
         value: concepts.PALPATION,
         obsDatetime,
-        groupMembers: flattenImagesObs(tendernessImageEnc),
+        groupMembers: await flattenImagesObs(tendernessImageEnc),
       },
     ];
 
@@ -482,12 +536,12 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
 
   return (
     <ContainerLoaderOverlay loading={isLoading || creatingEncounter}>
-      <CheckBoxNext
+      {/* <CheckBoxNext
         isChecked={isChecked}
         setIsChecked={setIsChecked}
         onNext={(obs: any) => handleSubmit(obs)}
         title="Tick if circulation is normal and there are no abnormalities"
-      />
+      /> */}
       {!isChecked && (
         <FormikInit
           validationSchema={schema}
@@ -718,7 +772,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.lacerationNotes.label}
+                          name={form.lacerationNotes.name}
                           label={form.lacerationNotes.label}
                           id={form.lacerationNotes.name}
                         />
@@ -738,7 +792,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.hematomasNotes.label}
+                          name={form.hematomasNotes.name}
                           label={form.hematomasNotes.label}
                           id={form.hematomasNotes.name}
                         />
@@ -758,7 +812,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.inflammationNotes.label}
+                          name={form.inflammationNotes.name}
                           label={form.inflammationNotes.label}
                           id={form.inflammationNotes.name}
                         />
@@ -778,7 +832,7 @@ export const AbdomenPelvisForm = ({ onSubmit }: Prop) => {
                           rows={4}
                           multiline
                           sx={{ width: "100%" }}
-                          name={form.urethralMeatusNotes.label}
+                          name={form.urethralMeatusNotes.name}
                           label={form.urethralMeatusNotes.label}
                           id={form.urethralMeatusNotes.name}
                         />

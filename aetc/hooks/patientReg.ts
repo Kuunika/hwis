@@ -1,4 +1,4 @@
-import { concepts } from "@/constants";
+import { attributeType, concepts } from "@/constants";
 import { PaginationModel, Person } from "@/interfaces";
 import {
   addDeathReport,
@@ -21,6 +21,7 @@ import {
   potentialDuplicates,
   updateDeathReport,
   updatePatient,
+  voidPatient,
 } from "@/services/patient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getConcept } from "./encounter";
@@ -53,7 +54,7 @@ export const patchPatient = () => {
     return updatePatient(patientData.id, { ...patientData.data }).then(
       (response) => {
         return response.data;
-      }
+      },
     );
   };
 
@@ -72,12 +73,27 @@ export const registerPatient = () => {
       patientData.identificationNumber == ""
         ? []
         : [
-          {
-            identifier: patientData.identificationNumber,
-            identifierType: nationalIdIdentifierType,
-            preferred: true,
-          },
-        ];
+            {
+              identifier: patientData.identificationNumber,
+              identifierType: nationalIdIdentifierType,
+              preferred: true,
+            },
+          ];
+
+    const attributes = [
+      {
+        attribute_type: attributeType.PHONE_NUMBER_ATTRIBUTE_TYPE,
+        value: patientData.phoneNumber,
+      },
+      {
+        attribute_type: attributeType.NEXT_OF_KIN,
+        value: patientData.guardianPhoneNumber,
+      },
+      {
+        attribute_type: attributeType.GUARDIAN_PHONE_NUMBER,
+        value: patientData.guardianNumber,
+      },
+    ].filter((a) => a.value?.trim());
 
     const mappedPatient = {
       identifiers,
@@ -109,6 +125,7 @@ export const registerPatient = () => {
           preferred: false,
         },
       ],
+      attributes,
     };
     return updatePatient(patientData.id, mappedPatient).then((response) => {
       return response.data;
@@ -136,9 +153,9 @@ export const getPatientsWaitingForPrescreening = () => {
 export const getPatientsWaitingForRegistrations = () => {
   const getall = () =>
     getDailyVisits("registration").then((response: any) => {
-      const { data } = response as {data: any};
+      const { data } = response as { data: any };
 
-      return Array.isArray(data) ? data : data.data as Person[];
+      return Array.isArray(data) ? data : (data.data as Person[]);
     });
 
   return useQuery({
@@ -182,11 +199,10 @@ export const getPatientCategoryListPaginated = (
   search?: string,
 ) => {
   const page = paginationDetails.page + 1;
- 
 
   const getall = () =>
     getDailyVisitsPaginated(
-      `category=${category}&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+      `category=${category}&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`,
     ).then((response) => response.data);
 
   return useQuery({
@@ -194,7 +210,7 @@ export const getPatientCategoryListPaginated = (
       category,
       paginationDetails.page,
       paginationDetails.pageSize,
-      search
+      search,
     ],
     queryFn: getall,
     enabled: false,
@@ -206,13 +222,13 @@ export const getPatientCategoryListPaginated = (
 
 export const getPatientsWaitingForDispositionPaginated = (
   paginationDetails: PaginationModel,
-  search?: string
+  search?: string,
 ) => {
   const page = paginationDetails.page == 0 ? 1 : paginationDetails.page;
 
   const getall = () =>
     getDailyVisitsPaginated(
-      `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`
+      `category=disposition&page=${page}&page_size=${paginationDetails.pageSize}&search=${search}`,
     ).then((response) => response.data);
 
   return useQuery({
@@ -255,11 +271,11 @@ export const getOnePatient = (patientId: string) => {
 export const searchDDEPatient = (
   firstName: string,
   lastName: string,
-  gender: string
+  gender: string,
 ) => {
   const findAll = () =>
     findByNameAndGender(firstName, lastName, gender).then(
-      (response) => response.data
+      (response) => response.data,
     );
 
   return useQuery({
@@ -273,11 +289,11 @@ export const searchDDEPatient = (
 export const searchLocalPatient = (
   firstName: string,
   lastName: string,
-  gender: string
+  gender: string,
 ) => {
   const findAll = () =>
     searchByNameAndGender(firstName, lastName, gender).then(
-      (response) => response.data
+      (response) => response.data,
     );
 
   return useQuery({
@@ -304,7 +320,7 @@ export const searchByDemographics = (
   birthdate: string,
   homeVillage: string,
   homeTA: string,
-  homeDistrict: string
+  homeDistrict: string,
 ) => {
   const findAll = () =>
     findByDemographics(
@@ -314,7 +330,7 @@ export const searchByDemographics = (
       birthdate,
       homeVillage,
       homeTA,
-      homeDistrict
+      homeDistrict,
     ).then((response) => response.data);
 
   return useQuery({
@@ -416,5 +432,19 @@ export const useUpdateDeathReport = () => {
 
   return useMutation({
     mutationFn: updateData,
+  });
+};
+
+export const deletePatient = () => {
+  const addData = (patientData: any) => {
+    return voidPatient(patientData.id, patientData.void_reason).then(
+      (response) => {
+        return response.data;
+      },
+    );
+  };
+
+  return useMutation({
+    mutationFn: addData,
   });
 };

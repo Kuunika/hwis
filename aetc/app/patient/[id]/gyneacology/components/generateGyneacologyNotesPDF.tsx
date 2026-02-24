@@ -33,10 +33,11 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
             chiefComplaint: "",
             illnessHistory: "",
             lnmp: "",
+            edd: "",
             //edd remaining
             gestationalAge: "",
             gravidity: "",
-            //parity
+            parity: "",
             numberOfLivingChildren: "",
             menarche: "",
             menstralCycle: "",
@@ -49,7 +50,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
             odour: "",
             amount: "",
             previousContraceptive: "",
-            //currently on contracepptive
+            currentlyOnContraceptive: "",
             sideEffects: "",
             cancerScreening: "",
             historyOfStis: "",
@@ -59,15 +60,23 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
             pulse: "",
             respiratory: "",
             bloodPressure: "",
+            systolic: "", // Add this
+            diastolic: "", // Add this        
             stats: "",
             rbs: "",
             weight: "",
-            //height
+            height: "",
+            condition: "",
+            pallor: "",
             chestExamination: "",
             abdomenExamination: "",
+            vaginalInspection: "",
             vaginalExamination: "",
             extremities: "",
             impression: "",
+            plan: "",
+            immediateIntervention: "",
+            admittingOfficer: "", // Default value
 
 
         });
@@ -102,14 +111,16 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                 )[0];
 
             if (gyneacologyEncounter && gyneacologyEncounter.obs) {
+                const admittingOfficer = gyneacologyEncounter.created_by || "";
                 const newComplaintsInfo = {
                     chiefComplaint: "",
                     illnessHistory: "",
                     lnmp: "",
+                    edd: "", // This can be removed if not needed
                     //edd remaining
                     gestationalAge: "",
                     gravidity: "",
-                    //parity
+                    parity: "",
                     numberOfLivingChildren: "",
                     menarche: "",
                     menstralCycle: "",
@@ -122,6 +133,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                     odour: "",
                     amount: "",
                     previousContraceptive: "",
+                    currentlyOnContraceptive: "", // This can be removed if not needed
                     //currently on contracepptive
                     sideEffects: "",
                     cancerScreening: "",
@@ -131,15 +143,24 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                     temperature: "",
                     pulse: "",
                     respiratory: "",
+                    systolic: "", // Add this
+                    diastolic: "", // Add this                
                     bloodPressure: "",
                     stats: "",
                     rbs: "",
                     weight: "",
+                    height: "",
+                    condition: "",
+                    pallor: "",
                     chestExamination: "",
                     abdomenExamination: "",
+                    vaginalInspection: "",
                     vaginalExamination: "",
                     extremities: "",
                     impression: "",
+                    plan: "",
+                    immediateIntervention: "",
+                    admittingOfficer: admittingOfficer, // Use the created_by field as the admitting officer
 
                 };
 
@@ -168,11 +189,19 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                     }
                     else if (conceptName === "LNMP") {
                         newComplaintsInfo.lnmp = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Gestational age") {
+                    }
+                    else if (conceptName === "EDD") {
+                        newComplaintsInfo.edd = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Gestational age") {
                         newComplaintsInfo.gestationalAge = obs.value || obs.value_text || "";
                     } else if (conceptName === "Gravidity") {
                         newComplaintsInfo.gravidity = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Number of living children") {
+                    }
+                    else if (conceptName === "Parity") {
+                        newComplaintsInfo.parity = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Number of living children") {
                         newComplaintsInfo.numberOfLivingChildren = obs.value || obs.value_text || "";
                     } else if (conceptName === "Menarche") {
                         newComplaintsInfo.menarche = obs.value || obs.value_text || "";
@@ -196,7 +225,14 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                         newComplaintsInfo.amount = obs.value || obs.value_text || "";
                     } else if (conceptName === "Previous Contraceptive") {
                         newComplaintsInfo.previousContraceptive = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Side effects") {
+                    } else if (conceptName === "Currently On Contraceptive") {
+                        newComplaintsInfo.currentlyOnContraceptive = obs.value || obs.value_text || "";
+                    }
+
+
+                    else if (
+                        obs.names?.some((n: any) => n.name.toLowerCase() === "side effects")
+                    ) {
                         newComplaintsInfo.sideEffects = obs.value || obs.value_text || "";
                     } else if (conceptName === "Cancer Screening") {
                         newComplaintsInfo.cancerScreening = obs.value || obs.value_text || "";
@@ -213,30 +249,56 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                             newComplaintsInfo.habits.push(condition);
                         }
 
-                    } else if (conceptName === "Temperature") {
+                    } else if (conceptName === "Temperature (c)") {
                         newComplaintsInfo.temperature = obs.value || obs.value_text || "";
                     } else if (conceptName === "Pulse Rate") {
                         newComplaintsInfo.pulse = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Respiratory Rate") {
+                    } else if (conceptName === "Respiratory rate") {
                         newComplaintsInfo.respiratory = obs.value || obs.value_text || "";
                     } else if (conceptName === "Blood Pressure Measured") {
                         newComplaintsInfo.bloodPressure = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Stats") {
+                    }
+
+                    else if (conceptName === "Systolic blood pressure") {
+                        newComplaintsInfo.systolic = obs.value || obs.value_text || "";
+                    }
+
+                    else if (conceptName === "Diastolic blood pressure") {
+                        newComplaintsInfo.diastolic = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Stats") {
                         newComplaintsInfo.stats = obs.value || obs.value_text || "";
                     } else if (conceptName === "Random Blood Glucose (RBS)") {
                         newComplaintsInfo.rbs = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Weight") {
+                    } else if (conceptName === "Weight (kg)") {
                         newComplaintsInfo.weight = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Chest examination") {
+                    }
+                    else if (conceptName === "Raised height") {
+                        newComplaintsInfo.height = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Condition") {
+                        newComplaintsInfo.condition = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Pallor") {
+                        newComplaintsInfo.pallor = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Chest examination") {
                         newComplaintsInfo.chestExamination = obs.value || obs.value_text || "";
                     } else if (conceptName === "Abdominal examination") {
                         newComplaintsInfo.abdomenExamination = obs.value || obs.value_text || "";
+                    } else if (conceptName === "Vaginal Inspection") {
+                        newComplaintsInfo.vaginalInspection = obs.value || obs.value_text || "";
                     } else if (conceptName === "Vaginal examination") {
                         newComplaintsInfo.vaginalExamination = obs.value || obs.value_text || "";
                     } else if (conceptName === "Extremities") {
                         newComplaintsInfo.extremities = obs.value || obs.value_text || "";
-                    } else if (conceptName === "Impression") {
+                    } else if (conceptName === "Clinical impression comments") {
                         newComplaintsInfo.impression = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Treatment plan other remarks") {
+                        newComplaintsInfo.plan = obs.value || obs.value_text || "";
+                    }
+                    else if (conceptName === "Immediate Intervention") {
+                        newComplaintsInfo.immediateIntervention = obs.value || obs.value_text || "";
                     }
                 });
                 setComplaintsInfo(newComplaintsInfo);
@@ -275,8 +337,11 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                             {/* Obstetric and Gyneacology History */}
                             {[
                                 complaintsInfo.lnmp,
+                                complaintsInfo.edd,
+                                // complaintsInfo.edd,
                                 complaintsInfo.gestationalAge,
                                 complaintsInfo.gravidity,
+                                complaintsInfo.parity,
                                 complaintsInfo.numberOfLivingChildren,
                                 complaintsInfo.menarche,
                                 complaintsInfo.menstralCycle,
@@ -289,6 +354,8 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                 complaintsInfo.odour,
                                 complaintsInfo.amount,
                                 complaintsInfo.previousContraceptive,
+                                complaintsInfo.currentlyOnContraceptive,
+                                // complaintsInfo.contraceptiveUse,
                                 complaintsInfo.sideEffects,
                                 complaintsInfo.cancerScreening,
                                 complaintsInfo.historyOfStis
@@ -297,12 +364,14 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                         <h2>Obstetric and Gyneacology History</h2>
                                         <div style={{ display: "flex", gap: "20px", marginBottom: "10px", flexWrap: "wrap" }}>
                                             {complaintsInfo.lnmp && <p><strong>LNMP: </strong>{complaintsInfo.lnmp}</p>}
+                                            {complaintsInfo.edd && <p><strong>EDD: </strong>{complaintsInfo.edd}</p>}
                                             {complaintsInfo.gestationalAge && <p><strong>Gestational Age: </strong>{complaintsInfo.gestationalAge}</p>}
                                             {complaintsInfo.gravidity && <p><strong>Gravidity: </strong>{complaintsInfo.gravidity}</p>}
+                                            {complaintsInfo.parity && <p><strong>Parity: </strong>{complaintsInfo.parity}</p>}
                                             {complaintsInfo.numberOfLivingChildren && <p><strong>Number of Living Children: </strong>{complaintsInfo.numberOfLivingChildren}</p>}
                                             {complaintsInfo.menarche && <p><strong>Menarche: </strong>{complaintsInfo.menarche}</p>}
                                             {complaintsInfo.menstralCycle && <p><strong>Menstrual Cycle: </strong>{complaintsInfo.menstralCycle}</p>}
-                                            {complaintsInfo.duration && <p><strong>Duration: </strong>{complaintsInfo.duration}</p>}
+                                            {complaintsInfo.duration && <p><strong>Duration in Days: </strong>{complaintsInfo.duration}</p>}
                                             {complaintsInfo.prevAbortion && <p><strong>Prev Abortion: </strong>{complaintsInfo.prevAbortion}</p>}
                                             {complaintsInfo.prevEctopic && <p><strong>Prev Ectopic: </strong>{complaintsInfo.prevEctopic}</p>}
                                             {complaintsInfo.abnormalVaginalDischarge && <p><strong>Abnormal Vaginal Discharge: </strong>{complaintsInfo.abnormalVaginalDischarge}</p>}
@@ -311,6 +380,7 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                             {complaintsInfo.odour && <p><strong>Odour: </strong>{complaintsInfo.odour}</p>}
                                             {complaintsInfo.amount && <p><strong>Amount: </strong>{complaintsInfo.amount}</p>}
                                             {complaintsInfo.previousContraceptive && <p><strong>Previous Contraceptive: </strong>{complaintsInfo.previousContraceptive}</p>}
+                                            {complaintsInfo.currentlyOnContraceptive && <p><strong>Currently on Contraceptive: </strong>{complaintsInfo.currentlyOnContraceptive}</p>}
                                             {complaintsInfo.sideEffects && <p><strong>Side Effects: </strong>{complaintsInfo.sideEffects}</p>}
                                             {complaintsInfo.cancerScreening && <p><strong>Cancer Screening: </strong>{complaintsInfo.cancerScreening}</p>}
                                             {complaintsInfo.historyOfStis && <p><strong>History of STIs: </strong>{complaintsInfo.historyOfStis}</p>}
@@ -350,21 +420,80 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
                                 complaintsInfo.temperature,
                                 complaintsInfo.pulse,
                                 complaintsInfo.respiratory,
-                                complaintsInfo.bloodPressure,
+                                // complaintsInfo.bloodPressure,
+                                complaintsInfo.systolic,
+                                complaintsInfo.diastolic,
                                 complaintsInfo.stats,
                                 complaintsInfo.rbs,
-                                complaintsInfo.weight
+                                complaintsInfo.weight,
+                                complaintsInfo.height
+
                             ].some(Boolean) && (
                                     <>
                                         <h2>Vital Signs</h2>
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "10px" }}>
-                                            {complaintsInfo.temperature && <p><strong>Temperature: </strong>{complaintsInfo.temperature}</p>}
-                                            {complaintsInfo.pulse && <p><strong>Pulse: </strong>{complaintsInfo.pulse}</p>}
-                                            {complaintsInfo.respiratory && <p><strong>Respiratory: </strong>{complaintsInfo.respiratory}</p>}
-                                            {complaintsInfo.bloodPressure && <p><strong>Blood Pressure: </strong>{complaintsInfo.bloodPressure}</p>}
-                                            {complaintsInfo.stats && <p><strong>Stats: </strong>{complaintsInfo.stats}</p>}
-                                            {complaintsInfo.rbs && <p><strong>RBS: </strong>{complaintsInfo.rbs}</p>}
-                                            {complaintsInfo.weight && <p><strong>Weight: </strong>{complaintsInfo.weight}</p>}
+                                            {complaintsInfo.temperature && (
+                                                <p>
+                                                    <strong>Temperature: </strong>
+                                                    {complaintsInfo.temperature} °C
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.pulse && (
+                                                <p>
+                                                    <strong>Pulse: </strong>
+                                                    {complaintsInfo.pulse} bpm
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.respiratory && (
+                                                <p>
+                                                    <strong>Respiratory Rate: </strong>
+                                                    {complaintsInfo.respiratory} breaths/min
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.systolic && (
+                                                <p>
+                                                    <strong>Systolic Blood Pressure: </strong>
+                                                    {complaintsInfo.systolic} mmHg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.diastolic && (
+                                                <p>
+                                                    <strong>Diastolic Blood Pressure: </strong>
+                                                    {complaintsInfo.diastolic} mmHg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.stats && (
+                                                <p>
+                                                    <strong>O<sub>2</sub> Saturation: </strong>
+                                                    {complaintsInfo.stats} %
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.rbs && (
+                                                <p>
+                                                    <strong>RBS: </strong>
+                                                    {complaintsInfo.rbs} mmol/L
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.weight && (
+                                                <p>
+                                                    <strong>Weight: </strong>
+                                                    {complaintsInfo.weight} kg
+                                                </p>
+                                            )}
+
+                                            {complaintsInfo.height && (
+                                                <p>
+                                                    <strong>Height: </strong>
+                                                    {complaintsInfo.height} cm
+                                                </p>
+                                            )}
                                         </div>
                                         <hr />
                                     </>
@@ -372,30 +501,84 @@ export const GenerateGyneacologyNotesPDF = forwardRef<GyneacologyNotesPDFRef, Ge
 
                             {/* Examinations */}
                             {[
+                                complaintsInfo.condition,
+                                complaintsInfo.pallor,
                                 complaintsInfo.chestExamination,
                                 complaintsInfo.abdomenExamination,
+                                complaintsInfo.vaginalInspection,
                                 complaintsInfo.vaginalExamination,
                                 complaintsInfo.extremities,
-                                complaintsInfo.impression
+                                complaintsInfo.impression,
+                                complaintsInfo.plan,
+                                complaintsInfo.immediateIntervention,
+                                complaintsInfo.admittingOfficer,
+
+
                             ].some(Boolean) && (
                                     <>
-                                        <h2>Examinations</h2>
-                                        {complaintsInfo.chestExamination && (
-                                            <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
+                                        <h2>General Examinations</h2>
+                                        {complaintsInfo.condition && (
+                                            <p><strong>Condition: </strong>{complaintsInfo.condition}</p>
                                         )}
-                                        {complaintsInfo.abdomenExamination && (
-                                            <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
+                                        {complaintsInfo.pallor && (
+                                            <p><strong>Pallor: </strong>{complaintsInfo.pallor}</p>
                                         )}
-                                        {complaintsInfo.vaginalExamination && (
-                                            <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
-                                        )}
+                                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                                            <tbody>
+                                                <tr>
+                                                    {complaintsInfo.chestExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                            <p><strong>Chest Examination: </strong>{complaintsInfo.chestExamination}</p>
+                                                        </td>
+
+                                                    )}
+
+                                                    {complaintsInfo.abdomenExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                                            <p><strong>Abdominal Examination: </strong>{complaintsInfo.abdomenExamination}</p>
+                                                        </td>
+
+                                                    )}
+                                                </tr>
+                                                <tr>
+                                                    {complaintsInfo.vaginalInspection && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+
+                                                            <p><strong>Vaginal Inspection: </strong>{complaintsInfo.vaginalInspection}</p>
+                                                        </td>
+                                                    )}
+                                                    {complaintsInfo.vaginalExamination && (
+                                                        <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+
+                                                            <p><strong>Vaginal Examination: </strong>{complaintsInfo.vaginalExamination}</p>
+                                                        </td>
+
+                                                    )}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
                                         {complaintsInfo.extremities && (
                                             <p><strong>Extremities: </strong>{complaintsInfo.extremities}</p>
                                         )}
                                         {complaintsInfo.impression && (
                                             <p><strong>Impression: </strong>{complaintsInfo.impression}</p>
                                         )}
+                                        {complaintsInfo.plan && (
+                                            <p><strong>Plan: </strong>{complaintsInfo.plan}</p>
+                                        )}
+                                        {complaintsInfo.immediateIntervention && (
+                                            <p><strong>Immediate Intervention: </strong>{complaintsInfo.immediateIntervention}</p>
+                                        )}
                                         <hr />
+                                        {complaintsInfo.admittingOfficer && (
+                                            <p><strong>Admitting Officer: </strong>{complaintsInfo.admittingOfficer}</p>
+                                        )}
+
+                                        {/* <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                                            Admitting Officer: {complaintsInfo.admittingOfficer}
+                                        </div> */}
                                     </>
                                 )}
                         </div>

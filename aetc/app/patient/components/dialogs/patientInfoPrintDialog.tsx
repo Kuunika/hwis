@@ -1,6 +1,7 @@
 import { GenericDialog } from "@/components";
 import { SelectPrinter } from "@/components/selectPrinter";
 import { concepts, encounters } from "@/constants";
+import { useVisitDates } from "@/contexts/visitDatesContext";
 import { getObservationValue } from "@/helpers/emr";
 import { generatePatientSummaryZPL } from "@/helpers/zpl";
 
@@ -15,27 +16,29 @@ import { Obs } from "@/interfaces";
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-// import { PrescribedMedicationList } from "../../[id]/disposition/components/prescribedMedicationList";
 
 type Prop = {
   onClose: () => void;
   open: boolean;
+  initialNotes?: any
 };
 
-export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
+export const PatientInfoPrintDialog = ({ onClose, open, initialNotes }: Prop) => {
   const { params } = useParameters();
   const [diagnosis, setDiagnosis] = useState<Obs[]>([]);
   const [presentingComplaints, setPresentingComplaints] = useState<Obs[]>([]);
   const [patientLabOrders, setPatientLabOrders] = useState<Array<any>>([]);
   const [printer, setPrinter] = useState("");
+    const { selectedVisit } = useVisitDates();
+
   const [notes, setNotes] = useState<any>({
     dischargeNotes: "",
     dischargePlan: "",
     followUpDetails: "",
     followUpPlan: "",
     clinic: "",
+    homeCareInstructions: "",
   });
-  // const [prescribedMedicationRows, setPrescribedMedicationRows] = useState<Array<any>>([]);
 
   const { data: presentingComplaintsData } = getPatientsEncounters(
     params?.id as string,
@@ -55,12 +58,12 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (data) {
-      const finalDiagnosis = data[0]?.obs?.filter((ob) =>
+      const finalDiagnosis = data?.filter(d=>d.visit_id==selectedVisit.id)[0]?.obs?.filter((ob) =>
         ob.names.find((n) => n.name === concepts.FINAL_DIAGNOSIS)
       );
       setDiagnosis(finalDiagnosis);
     }
-  }, [data]);
+  }, [data, selectedVisit]);
 
   useEffect(() => {
     if (ordersData) {
@@ -70,17 +73,26 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   useEffect(() => {
     if (presentingComplaintsData) {
-      setPresentingComplaints(presentingComplaintsData[0]?.obs);
+      setPresentingComplaints(
+        presentingComplaintsData.filter(
+          (d) => d.visit_id == selectedVisit.id
+        )[0]?.obs
+      );
     }
-  }, [presentingComplaintsData]);
+  }, [presentingComplaintsData, selectedVisit]);
 
-  console.log({ disposition });
 
   useEffect(() => {
+    if (initialNotes) {
+      setNotes(initialNotes);
+      return
+    }
     if (disposition) {
-      const dischargedOb = disposition[0]?.obs.find((d: Obs) =>
-        d.names.find((n) => n.name == concepts.DISCHARGE_HOME)
-      );
+      const dischargedOb = disposition
+        .filter((d) => d.visit_id == selectedVisit.id)[0]
+        ?.obs.find((d: Obs) =>
+          d.names.find((n) => n.name == concepts.DISCHARGE_HOME)
+        );
       const dischargeNotes = getObservationValue(
         dischargedOb?.children,
         concepts.DISCHARGE_NOTES
@@ -101,20 +113,24 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
         dischargedOb?.children,
         concepts.SPECIALIST_CLINIC
       );
+      const homeCareInstructions = getObservationValue(
+        dischargedOb?.children,
+        concepts.HOME_CARE_INSTRUCTIONS
+      );
 
       (async () => {
         const clinicConcept = await getConceptFromCacheOrFetch(clinic);
-
         setNotes({
           dischargeNotes,
           dischargePlan,
           followUpDetails,
           followUpPlan,
           clinic: clinicConcept?.data[0]?.short_name,
+          homeCareInstructions,
         });
       })();
     }
-  }, [disposition]);
+  }, [disposition, selectedVisit]);
 
   const handleOnPrint = async () => {
     const zpl = generatePatientSummaryZPL({
@@ -124,6 +140,8 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
       dischargeNotes: notes.dischargeNotes,
       dischargePlan: notes.dischargePlan,
       followUpPlan: `${notes.followUpDetails} | ${notes.clinic}`,
+      homeCareInstructions: notes.homeCareInstructions,
+
       // prescribedMedications: prescribedMedicationRows, // ✅ include this
     });
 
@@ -134,7 +152,7 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
 
   return (
     <GenericDialog
-      title="Patient Summary-QUECH AETC"
+      title="Patient Summary-QECH AETC"
       onClose={() => {}}
       open={open}
     >
@@ -232,6 +250,15 @@ export const PatientInfoPrintDialog = ({ onClose, open }: Prop) => {
             </Box>
           </>
         )}
+        {Boolean(notes.homeCareInstructions) && (
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Home care instructions
+            </Typography>
+            <Typography>{notes.homeCareInstructions}</Typography>
+          </Box>
+        )}
+
         {/* <Box>
           <Typography variant="h6" gutterBottom>
             Prescribed Medication

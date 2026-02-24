@@ -8,6 +8,7 @@ type Category =
   | "assessment"
   | "triage"
   | "disposition"
+  | "awaiting_speciality"
   | "screening"
   | "registration"
   | "investigations";
@@ -17,7 +18,7 @@ interface PaginationModel {
   pageSize: number;
 }
 
-export const fetchPatientsTablePaginate = (category: Category) => {
+export const fetchPatientsTablePaginate = (category: Category, patientCareArea?: string, creator?:string) => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({
     page: 0,
     pageSize: 10,
@@ -26,9 +27,14 @@ export const fetchPatientsTablePaginate = (category: Category) => {
   const [patients, setPatients] = useState<Array<any>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalEntries, setTotalEntries] = useState<number>(0);
   const [onSwitch, setOnSwitch] = useState<boolean>(false);
 
-  const fetchData = useCallback(async () => {
+  useEffect(() => {
+    fetchData();
+  }, [patientCareArea, paginationModel, searchText, onSwitch, creator]);
+
+  const fetchData = async () => {
     setLoading(true);
     let date;
 
@@ -42,33 +48,22 @@ export const fetchPatientsTablePaginate = (category: Category) => {
         paginationModel.pageSize,
         searchText,
         paginationModel.page + 1,
-        date || ""
+        date || "",
+        patientCareArea,
+        creator
       );
 
       setPatients(response.data.data);
       setTotalPages(response.data.total_pages);
+      setTotalEntries(response.data.totalEntries);
     } catch (error) {
       console.error("Error fetching patients:", error);
       // Optionally set error state here
     } finally {
       setLoading(false);
     }
-  }, [
-    category,
-    paginationModel.pageSize,
-    searchText,
-    paginationModel.page,
-    onSwitch,
-  ]);
+  }
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Create a refetch function that can be called manually
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
 
   return {
     loading,
@@ -78,8 +73,9 @@ export const fetchPatientsTablePaginate = (category: Category) => {
     searchText,
     setSearchText,
     totalPages,
+    totalEntries,
     setOnSwitch,
-    refetch, // Add refetch to the returned object
+    refetch: fetchData, // Add refetch to the returned object
   };
 };
 
@@ -88,27 +84,23 @@ export const getPatientsFromCacheOrFetch = async (
   pageSize: number,
   searchString: string,
   page: number,
-  date: string
+  date: string,
+  patientCareArea?: string,
+  creator?: string
+
 ): Promise<any> => {
-  const cacheKey = [category, pageSize, searchString, page];
-  // const cachedPatientList =
-  //   queryClient.getQueryData<DailyVisitPaginated>(cacheKey);
+ 
+    let query = `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`;
 
-  // if (cachedPatientList) {
-  //   console.log("using cached data", cachedPatientList);
-  //   return cachedPatientList;
-  // } else {
-  const patientList = await getDailyVisitsPaginated(
-    `category=${category}&page=${page}&page_size=${pageSize}&search=${searchString}&date=${date}`
-  );
-  // queryClient.setQueryData(cacheKey, patientList);
-
-  // setTimeout(() => {
-  //   //   console.log("object");
-  //   //   queryClient.invalidateQueries(cacheKey);
-  //   //   queryClient.invalidateQueries({ queryKey: cacheKey, exact: true });
-  //   queryClient.removeQueries({ queryKey: cacheKey, exact: true });
-  // }, 5000);
+    if (patientCareArea) {
+      query = query +`&patient_care_area=${encodeURIComponent(patientCareArea)}`;
+    }
+    
+    if (creator) {
+      query = query + `&last_encounter_creator=${encodeURIComponent(creator)}`;
+    }
+    
+    const patientList = await getDailyVisitsPaginated(query);
 
   return patientList;
   // }

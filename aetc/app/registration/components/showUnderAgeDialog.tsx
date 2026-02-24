@@ -2,9 +2,13 @@ import { FormikInit, GenericDialog, SearchComboBox } from "@/components";
 import { ContainerLoaderOverlay } from "@/components/containerLoaderOverlay";
 import { concepts, encounters } from "@/constants";
 import { getObservations } from "@/helpers";
-import { getDateTime } from "@/helpers/dateTime";
+import { useServerTime } from "@/contexts/serverTimeContext";
 import { getObservation } from "@/helpers/emr";
-import { getActivePatientDetails, useNavigation, useSubmitEncounter } from "@/hooks";
+import {
+  getActivePatientDetails,
+  useNavigation,
+  useSubmitEncounter,
+} from "@/hooks";
 import { fetchConceptAndCreateEncounter } from "@/hooks/encounter";
 import { getConceptSet } from "@/hooks/getConceptSet";
 import { closeCurrentVisit } from "@/hooks/visit";
@@ -22,26 +26,28 @@ type Props = {
   onClose: () => void;
 };
 export const ShowUnderAgeDialog = ({ open, onClose }: Props) => {
+  const { ServerTime } = useServerTime();
   const [no, setNo] = useState(false);
   const { activeVisitId, activeVisit } = getActivePatientDetails();
   const { data: serviceAreas, isLoading: serviceAreaLoading } = getConceptSet(
     concepts.SERVICE_AREAS
   );
-  const { mutate: closeVisit, isSuccess: visitClosed, isPending  } = closeCurrentVisit();
-  const {navigateTo}=useNavigation()
-
-
+  const {
+    mutate: closeVisit,
+    isSuccess: visitClosed,
+    isPending,
+  } = closeCurrentVisit();
+  const { navigateTo } = useNavigation();
 
   useEffect(() => {
-    if (visitClosed) { 
+    if (visitClosed) {
       onClose();
       navigateTo(`/dashboard`);
-
     }
   }, [visitClosed]);
 
   const onFinishSubmission = () => {
-    closeVisit( activeVisit as string);
+    closeVisit(activeVisit as string);
   };
 
   const { handleSubmit, isLoading } = useSubmitEncounter(
@@ -50,7 +56,7 @@ export const ShowUnderAgeDialog = ({ open, onClose }: Props) => {
   );
 
   const handleSubmitForm = (values: any) => {
-    handleSubmit(getObservations(values, getDateTime()));
+    handleSubmit(getObservations(values, ServerTime.getServerTimeString()));
   };
 
   return (
@@ -60,7 +66,9 @@ export const ShowUnderAgeDialog = ({ open, onClose }: Props) => {
       maxWidth="sm"
       onClose={onClose}
     >
-      <ContainerLoaderOverlay loading={serviceAreaLoading || isLoading ||isPending}>
+      <ContainerLoaderOverlay
+        loading={serviceAreaLoading || isLoading || isPending}
+      >
         <Typography variant="body1" gutterBottom>
           {" "}
           The patient is below the age of 14. Do you want to proceed with the
