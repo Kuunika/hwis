@@ -39,14 +39,7 @@ function Home() {
           pt="5ch"
         >
           {/* Cards with roles */}
-          <AuthGuardComp
-            roles={[
-              roles.REGISTRATION_CLERK,
-              roles.ADMIN,
-              roles.CLINICIAN,
-              roles.NURSE,
-            ]}
-          >
+          <AuthGuardComp roles={[roles.REGISTRATION_CLERK, roles.ADMIN]}>
             <Card
               link="/registration/search"
               title="Find Patient"
@@ -98,7 +91,11 @@ function Home() {
               roles.STUDENT_CLINICIAN,
             ]}
           >
-            <Card icon={<FcTodoList />} link="/triage" title="Awaiting Triage List" />
+            <Card
+              icon={<FcTodoList />}
+              link="/triage"
+              title="Awaiting Triage List"
+            />
           </AuthGuardComp>
           <AuthGuardComp
             roles={[
