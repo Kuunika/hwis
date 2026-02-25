@@ -29,11 +29,18 @@ export const FormTimePicker: FC<Prop> = ({
   getValue,
   disabled = false,
 }) => {
-  const { value, setFieldValue } = useFormikField(name);
+  const { value, setFieldValue, initialValues } = useFormikField(name);
 
   useEffect(() => {
     getValue && getValue(value);
   }, [value]);
+
+  let initialTime = "";
+
+  if (typeof initialValues == "object" && initialValues !== null) {
+    //@ts-ignore
+    initialTime = initialValues[name] as string;
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -47,7 +54,7 @@ export const FormTimePicker: FC<Prop> = ({
           ...sx,
         }}
         label={label}
-        // value={value}
+        value={value ? dayjs(value, "HH:mm:ss") : dayjs(initialTime, "HH:mm:ss")}
         onChange={(dateValue: any) => {
           //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));

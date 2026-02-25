@@ -21,6 +21,7 @@ type Prop = {
   showHelperText?: boolean;
   disabled?: boolean;
   onBlur?: (values: any) => void;
+  format?: string;
 };
 
 export const FormDatePicker: FC<Prop> = ({
@@ -32,6 +33,7 @@ export const FormDatePicker: FC<Prop> = ({
   getValue,
   disabled = false,
   onBlur,
+  format = "YYYY-MM-DD",
 }) => {
   const { value, setFieldValue, initialValues, errorMessage } =
     useFormikField(name);
@@ -61,7 +63,8 @@ export const FormDatePicker: FC<Prop> = ({
             "& fieldset": { borderRadius: "5px" },
             ...sx,
           }}
-          defaultValue={dayjs(initialDate)}
+          format={format}
+          value={value ? dayjs(value) : dayjs(initialDate)}
           label="" // Keep label empty to avoid internal label rendering
           onChange={(dateValue: any) =>
             setFieldValue(name, dayjs(dateValue).format("YYYY-MM-DD"))
