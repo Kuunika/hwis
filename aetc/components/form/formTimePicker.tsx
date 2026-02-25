@@ -35,11 +35,18 @@ export const FormTimePicker: FC<Prop> = ({
     getValue && getValue(value);
   }, [value]);
 
-  let initialTime = "";
+  let initialTime: string | number | Date | dayjs.Dayjs | null | undefined =
+    undefined;
 
   if (typeof initialValues == "object" && initialValues !== null) {
     //@ts-ignore
-    initialTime = initialValues[name] as string;
+    initialTime = initialValues[name] as
+      | string
+      | number
+      | Date
+      | dayjs.Dayjs
+      | null
+      | undefined;
   }
 
   return (
@@ -54,7 +61,16 @@ export const FormTimePicker: FC<Prop> = ({
           ...sx,
         }}
         label={label}
-        value={value ? dayjs(value, "HH:mm:ss") : dayjs(initialTime, "HH:mm:ss")}
+        value={
+          value
+            ? dayjs(
+                value as string | number | Date | dayjs.Dayjs | null | undefined,
+                "HH:mm:ss"
+              )
+            : initialTime
+              ? dayjs(initialTime, "HH:mm:ss")
+              : null
+        }
         onChange={(dateValue: any) => {
           //   console.log(dayjs(dateValue).format("HH:mm:ss"));
           setFieldValue(name, dayjs(dateValue).format("HH:mm:ss"));
