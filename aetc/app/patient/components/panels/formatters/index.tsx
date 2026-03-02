@@ -259,21 +259,99 @@ export const formatDiagnosisNotes = (data: Obs[]) => {
 };
 
 export const formatInvestigationPlans = (data: Obs[]) =>
-  data.map((ob) => {
-    const plan = ob.value;
-    const result = ob.children.map((child: Obs) => ({
-      test: child.names[0].name,
-      result: child.value,
-    }));
-
-    return {
-      plan,
-      result,
+  data
+    .filter((ob) => ob && (ob.value || (Array.isArray(ob.children) && ob.children.length > 0)))
+    .map((ob) => ({
+      plan: ob?.value ? String(ob.value) : ob?.names?.[0]?.name || "Plan",
+      result: (Array.isArray(ob?.children) ? ob.children : []).map((child: Obs) => ({
+        test: child?.names?.[0]?.name || "Result",
+        result: child?.value ? String(child.value) : "—",
+      })),
       user: ob?.created_by
         ? `${ob.created_by} ${getHumanReadableDateTime(ob?.obs_datetime)}`
         : undefined,
-    };
-  });
+    }));
+
+const normalizeObsValue = (value: unknown) =>
+  typeof value === "string" ? value.trim() : value == null ? "" : String(value);
+
+const isPatientContextValue = (value: string) =>
+  value.toLowerCase().startsWith("patient context(hidden):");
+
+export const formatRadiologyInvestigationPlans = (data: Obs[]) =>
+  data
+    .filter((ob) => ob && (ob.value || (Array.isArray(ob.children) && ob.children.length > 0)))
+    .flatMap((ob) => {
+      const name = ob?.names?.[0]?.name || "Result";
+      const value = normalizeObsValue(ob?.value);
+      const children = Array.isArray(ob?.children) ? ob.children : [];
+
+      if (isPatientContextValue(value)) {
+        return [];
+      }
+
+      const selectedChildren = children
+        .filter((child: Obs) => {
+          const childValue = normalizeObsValue(child?.value).toLowerCase();
+          return childValue.length > 0;
+        })
+        .map((child: Obs) => ({
+          test: child?.names?.[0]?.name || "Result",
+          result: normalizeObsValue(child?.value) || "—",
+        }));
+
+      if (selectedChildren.length > 0) {
+        return [
+          {
+            plan: name,
+            result: selectedChildren,
+            user: ob?.created_by
+              ? `${ob.created_by} ${getHumanReadableDateTime(ob?.obs_datetime)}`
+              : undefined,
+          },
+        ];
+      }
+
+      if (name === concepts.DESCRIPTION) {
+        const [prefix, ...rest] = value.split(":");
+        const label = normalizeObsValue(prefix) || "Description";
+        const descriptionValue = normalizeObsValue(rest.join(":"));
+
+        return [
+          {
+            plan: "Description",
+            result: [
+              {
+                test: label,
+                result: descriptionValue || "—",
+              },
+            ],
+            user: ob?.created_by
+              ? `${ob.created_by} ${getHumanReadableDateTime(ob?.obs_datetime)}`
+              : undefined,
+          },
+        ];
+      }
+
+      if (!value) {
+        return [];
+      }
+
+      return [
+        {
+          plan: name,
+          result: [
+            {
+              test: name,
+              result: value,
+            },
+          ],
+          user: ob?.created_by
+            ? `${ob.created_by} ${getHumanReadableDateTime(ob?.obs_datetime)}`
+            : undefined,
+        },
+      ];
+    });
 
 export const formatManagementPlan = (data: Obs[]): ClinicalNotesDataType => {
   const items = data?.map((item) => ({ item: item?.value }));

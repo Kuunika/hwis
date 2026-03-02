@@ -49,6 +49,7 @@ import { DisplayInformation } from "./displayInformation";
 import {
   formatDiagnosisNotes,
   formatInvestigationPlans,
+  formatRadiologyInvestigationPlans,
   formatPatientManagamentPlan,
   formatPresentingComplaints,
   formatPrimarySurvey,
@@ -356,9 +357,9 @@ export const ClinicalNotes = () => {
       data: (
         <ResultsTable
           title="Beside Tests"
-          data={formatInvestigationPlans([
-            ...getEncountersByType(encounters.BED_SIDE_TEST),
-          ])}
+          data={formatInvestigationPlans(
+            getEncountersByType(encounters.BED_SIDE_TEST)
+          )}
         />
       ),
       //  [
@@ -1034,14 +1035,31 @@ export const ClinicalNotes = () => {
     },
     {
       title: " Laboratory or Radiology Findings",
-      content: (
-        <ResultsTable
-          title="Beside Tests"
-          data={formatInvestigationPlans([
-            ...getEncountersByType(encounters.BED_SIDE_TEST),
-          ])}
-        />
-      ),
+      content: (() => {
+        const bedSideFindings = formatInvestigationPlans(
+          getEncountersByType(encounters.BED_SIDE_TEST)
+        );
+        const radiologyFindings = formatRadiologyInvestigationPlans(
+          getEncountersByType(encounters.RADIOLOGY_EXAMINATON)
+        );
+
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {bedSideFindings.length > 0 && (
+              <ResultsTable title="Beside Tests" data={bedSideFindings} />
+            )}
+            {radiologyFindings.length > 0 && (
+              <ResultsTable
+                title="Radiology Examinations"
+                data={radiologyFindings}
+              />
+            )}
+            {bedSideFindings.length === 0 && radiologyFindings.length === 0 && (
+              <Typography variant="body2">No findings recorded.</Typography>
+            )}
+          </Box>
+        );
+      })(),
     },
     {
       title: "Sample History",

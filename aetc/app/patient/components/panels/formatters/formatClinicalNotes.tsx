@@ -10,6 +10,7 @@ import {
   formatPatientManagamentPlan,
   formatDiagnosisNotes,
   formatInvestigationPlans,
+  formatRadiologyInvestigationPlans,
   formatDisposition,
 } from ".";
 import {
@@ -300,14 +301,31 @@ export const formatClinicalNotesData = (
     },
     {
       title: "Laboratory or Radiology Findings",
-      content: (
-        <ResultsTable
-          title="Beside Tests"
-          data={formatInvestigationPlans(
-            getEncountersByType(encounters.BED_SIDE_TEST)
-          )}
-        />
-      ),
+      content: (() => {
+        const bedSideFindings = formatInvestigationPlans(
+          getEncountersByType(encounters.BED_SIDE_TEST)
+        );
+        const radiologyFindings = formatRadiologyInvestigationPlans(
+          getEncountersByType(encounters.RADIOLOGY_EXAMINATON)
+        );
+
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {bedSideFindings.length > 0 && (
+              <ResultsTable title="Beside Tests" data={bedSideFindings} />
+            )}
+            {radiologyFindings.length > 0 && (
+              <ResultsTable
+                title="Radiology Examinations"
+                data={radiologyFindings}
+              />
+            )}
+            {bedSideFindings.length === 0 && radiologyFindings.length === 0 && (
+              <Box>No findings recorded.</Box>
+            )}
+          </Box>
+        );
+      })(),
     },
     {
       title: "Patient Management Plan",

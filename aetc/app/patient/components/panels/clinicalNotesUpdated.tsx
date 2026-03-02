@@ -107,7 +107,8 @@ export const ClinicalNotesUpdated = () => {
         notes.title === "Secondary Survey" ||
         notes.title === "Patient Management Plan" ||
         notes.title === "Diagnosis" ||
-        notes.title === "Investigation Plans"
+        notes.title === "Investigation Plans" ||
+        notes.title === "Laboratory or Radiology Findings"
       );
     }
     if (filterSurgicalState) {

@@ -935,6 +935,10 @@ export const concepts = {
   HYPOGLYCAEMIA: "Hypoglycaemia",
   HYPOTHERMIA: "Hypothermia",
   IMAGING_TESTS: "Imaging Tests",
+  MRI: "MRI",
+  X_RAY: "X-Ray",
+  ULTRASOUND: "Ultrasound",
+  CT_SCAN: "CT Scan",
   UPPER_EXTREMITY: "Upper Extremity",
   SPINE: "Spine",
   PELVIS: "Pelvis",
@@ -1839,6 +1843,8 @@ export const roles = {
   DATA_MANAGER: process.env.NEXT_PUBLIC_DATA_MANAGER as string,
   STUDENT_CLINICIAN: process.env
     .NEXT_PUBLIC_STUDENT_CLINICIAN_USER_ROLE as string,
+  PROVIDER:
+    (process.env.NEXT_PUBLIC_PROVIDER_USER_ROLE as string) || "Provider",
 };
 
 // username: registration, clinician, nurse

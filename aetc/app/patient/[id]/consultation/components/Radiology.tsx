@@ -28,7 +28,12 @@ import { Bounce, toast } from "react-toastify";
 import { FormDatePicker, FormikInit, TextInputField } from "@/components";
 import * as Yup from "yup";
 
-type ImagingType = "X-Ray" | "Ultrasound" | "CT" | "MRI" | "Other";
+type ImagingType =
+  | typeof concepts.MRI
+  | typeof concepts.X_RAY
+  | typeof concepts.ULTRASOUND
+  | typeof concepts.CT_SCAN
+  | "Other";
 type BodyPartKey =
   | "head"
   | "neck"
@@ -60,10 +65,10 @@ interface BodyPartConfig {
 }
 
 const IMAGING_TYPE_OPTIONS: ImagingType[] = [
-  "X-Ray",
-  "Ultrasound",
-  "CT",
-  "MRI",
+  concepts.MRI,
+  concepts.X_RAY,
+  concepts.ULTRASOUND,
+  concepts.CT_SCAN,
   "Other",
 ];
 
@@ -84,7 +89,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
       concepts.TMJS,
       concepts.ZYGOMATIC,
     ],
-    supportedIn: ["X-Ray", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   neck: {
     label: concepts.NECK,
@@ -92,7 +103,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
     clickTargetIds: ["NECK", "LABEL-6"],
     highlightTargetIds: ["NECK", "LABEL-6"],
     indications: [concepts.NECK],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   chest: {
     label: concepts.CHEST,
@@ -106,7 +123,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
       concepts.RIBS,
       concepts.SCJ,
     ],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   abdomen: {
     label: concepts.ABDOMEN,
@@ -114,7 +137,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
     clickTargetIds: ["ABDOMEN", "ABDOMEN_LABEL", "ABDOMEN_LABEL-2"],
     highlightTargetIds: ["ABDOMEN", "ABDOMEN_LABEL", "ABDOMEN_LABEL-2"],
     indications: [concepts.ABDOMEN, concepts.IVP],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   upper_extremity: {
     label: concepts.UPPER_EXTREMITY,
@@ -132,7 +161,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
       concepts.HAND,
       concepts.PHALANGES,
     ],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   spine: {
     label: concepts.SPINE,
@@ -146,7 +181,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
       concepts.S_SPINE,
       concepts.COCCYX,
     ],
-    supportedIn: ["X-Ray", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   pelvis: {
     label: concepts.PELVIS,
@@ -154,7 +195,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
     clickTargetIds: ["PELVIS", "LABEL-2"],
     highlightTargetIds: ["PELVIS", "LABEL-2"],
     indications: [concepts.PELVIS, concepts.SACROILLAC_JOINTS, concepts.HIP],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
   lower_extremity: {
     label: concepts.LOWER_EXTREMITY,
@@ -171,7 +218,13 @@ const BODY_PART_CONFIG: Record<BodyPartKey, BodyPartConfig> = {
       concepts.FOOT,
       concepts.TOE,
     ],
-    supportedIn: ["X-Ray", "Ultrasound", "CT", "MRI", "Other"],
+    supportedIn: [
+      concepts.X_RAY,
+      concepts.ULTRASOUND,
+      concepts.CT_SCAN,
+      concepts.MRI,
+      "Other",
+    ],
   },
 };
 
@@ -179,22 +232,22 @@ const IMAGING_TYPE_VISUALS: Record<
   ImagingType,
   { accent: string; filter: string; helperText: string }
 > = {
-  "X-Ray": {
+  [concepts.X_RAY]: {
     accent: "#ae0303",
     filter: "contrast(1.2) brightness(1.05)",
     helperText: "X-Ray mode: broad skeletal coverage.",
   },
-  Ultrasound: {
+  [concepts.ULTRASOUND]: {
     accent: "#ae0303",
     filter: "contrast(1.2) brightness(1.05)",
     helperText: "Ultrasound mode: soft tissue focused regions.",
   },
-  CT: {
+  [concepts.CT_SCAN]: {
     accent: "#ae0303",
     filter: "contrast(1.2) brightness(1.05)",
-    helperText: "CT mode: cross-sectional planning.",
+    helperText: "CT Scan mode: cross-sectional planning.",
   },
-  MRI: {
+  [concepts.MRI]: {
     accent: "#ae0303",
     filter: "contrast(1.2) brightness(1.05)",
     helperText: "MRI mode: high-detail region planning.",
@@ -207,19 +260,24 @@ const IMAGING_TYPE_VISUALS: Record<
 };
 
 const DEPARTMENT_NAME = "AETC";
+const RADIOLOGY_REQUEST_ID_PREFIX = "Radiology request id:";
+const IMAGING_TYPE_PREFIX = "Imaging type:";
 
 const radiologyRequestSchema = Yup.object().shape({
   requestingDrName: Yup.string().required("Requesting doctor is required"),
   department: Yup.string().required("Department is required"),
-  differentialDiagnosis: Yup.string().required(
-    "Differential diagnosis is required"
-  ),
-  clinicalFindings: Yup.string(),
+  differentialDiagnosis: Yup.string(),
+  clinicalFindings: Yup.string()
+    .trim()
+    .required("Clinical findings is required"),
   lmp: Yup.string(),
 });
 
 const SHAPE_SELECTOR =
   "path, polygon, rect, circle, ellipse, line, polyline";
+
+const normalizeString = (value: unknown) =>
+  typeof value === "string" ? value.trim() : "";
 
 const getBodyPartInteractiveElements = (
   svg: SVGSVGElement,
@@ -345,12 +403,17 @@ export const Radiology = () => {
     return sex === "F" || sex === "FEMALE";
   }, [hiddenPatientFields.sex]);
 
+  const diagnosisEncounterList = useMemo(
+    () => (Array.isArray(diagnosisEncounters) ? diagnosisEncounters : []),
+    [diagnosisEncounters]
+  );
+
   const differentialDiagnosis = useMemo(() => {
-    if (!diagnosisEncounters || diagnosisEncounters.length === 0) {
+    if (diagnosisEncounterList.length === 0) {
       return "";
     }
 
-    const encountersInActiveVisit = diagnosisEncounters.filter((encounter: any) => {
+    const encountersInActiveVisit = diagnosisEncounterList.filter((encounter: any) => {
       if (!activeVisit) return true;
       const visitUuid =
         encounter?.visit?.uuid || encounter?.visit_uuid || encounter?.visit;
@@ -360,26 +423,32 @@ export const Radiology = () => {
     const sourceEncounters =
       encountersInActiveVisit.length > 0
         ? encountersInActiveVisit
-        : diagnosisEncounters;
+        : diagnosisEncounterList;
 
     const records: Array<{ value: string; time: string }> = [];
 
     sourceEncounters.forEach((encounter: any) => {
-      (encounter?.obs || []).forEach((observation: any) => {
-        const isDifferential = (observation?.names || []).some(
-          (name: any) => name?.name === concepts.DIFFERENTIAL_DIAGNOSIS
+      const encounterObs = Array.isArray(encounter?.obs) ? encounter.obs : [];
+
+      encounterObs.forEach((observation: any) => {
+        const observationNames = Array.isArray(observation?.names)
+          ? observation.names
+          : [];
+        const isDifferential = observationNames.some(
+          (name: any) =>
+            normalizeString(name?.name) === concepts.DIFFERENTIAL_DIAGNOSIS
         );
 
         if (!isDifferential) return;
 
-        const value = observation?.value_text || observation?.value || "";
+        const rawValue = observation?.value_text ?? observation?.value;
+        const value = normalizeString(rawValue);
         if (!value) return;
 
         records.push({
           value,
-          time:
-            observation?.obs_datetime ||
-            encounter?.encounter_datetime});
+          time: observation?.obs_datetime || encounter?.encounter_datetime,
+        });
       });
     });
 
@@ -387,8 +456,10 @@ export const Radiology = () => {
       (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
     );
 
-    return records[0]?.value || "";
-  }, [diagnosisEncounters, activeVisit]);
+    return normalizeString(records[0]?.value);
+  }, [diagnosisEncounterList, activeVisit]);
+
+  const hasDifferentialDiagnosis = normalizeString(differentialDiagnosis).length > 0;
 
   const requestInitialValues = useMemo<RadiologyFormValues>(
     () => ({
@@ -411,30 +482,13 @@ export const Radiology = () => {
   }, [imagingType]);
 
   useEffect(() => {
-    if (!imagingType) {
-      setSelectedBodyParts([]);
-      setSelectedIndications({});
-      return;
+    setSelectedBodyParts([]);
+    setSelectedIndications({});
+
+    if (imagingType !== "Other") {
+      setOtherImagingType("");
     }
-
-    const supportedSet = new Set<BodyPartKey>(supportedBodyParts);
-
-    setSelectedBodyParts((prev) =>
-      prev.filter((bodyPart) => supportedSet.has(bodyPart))
-    );
-
-    setSelectedIndications((prev) => {
-      const next: SelectedIndicationsState = {};
-
-      (Object.keys(prev) as BodyPartKey[]).forEach((bodyPart) => {
-        if (supportedSet.has(bodyPart)) {
-          next[bodyPart] = prev[bodyPart];
-        }
-      });
-
-      return next;
-    });
-  }, [imagingType, supportedBodyParts]);
+  }, [imagingType]);
 
   const toggleBodyPart = useCallback((bodyPart: BodyPartKey) => {
     const wasSelected = selectedBodyPartsRef.current.includes(bodyPart);
@@ -541,8 +595,33 @@ export const Radiology = () => {
   );
 
   const hasSelectedIndications = selectedIndicationsCount > 0;
+  const hasIncompleteBodyPartSelection = useMemo(
+    () =>
+      selectedBodyParts.some(
+        (bodyPart) => (selectedIndications[bodyPart] || []).length === 0
+      ),
+    [selectedBodyParts, selectedIndications]
+  );
+
+  const navigateToLabResults = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    window.setTimeout(() => {
+      const labResultsHeader = document.getElementById("labResults-header");
+      if (!(labResultsHeader instanceof HTMLElement)) return;
+
+      labResultsHeader.scrollIntoView({ behavior: "smooth", block: "center" });
+      labResultsHeader.click();
+    }, 100);
+  }, []);
 
   const submit = useCallback((values: RadiologyFormValues, actions: any) => {
+    if (!hasDifferentialDiagnosis) {
+      toast.error("Cannot submit: diagnosis not available for this patient.");
+      actions?.setSubmitting?.(false);
+      return;
+    }
+
     if (!imagingType) {
       toast.error("Select an imaging type first.");
       return;
@@ -553,17 +632,32 @@ export const Radiology = () => {
       return;
     }
 
+    if (!selectedBodyParts.length) {
+      toast.error("Select at least one body part.");
+      return;
+    }
+
     if (!hasSelectedIndications) {
       toast.error("Select at least one extra indication.");
       return;
     }
 
-    const differentialDiagnosisValue = differentialDiagnosis.trim();
+    if (hasIncompleteBodyPartSelection) {
+      toast.error(
+        "Each selected body part must have at least one extra indication."
+      );
+      return;
+    }
+
+    const differentialDiagnosisValue =
+      normalizeString(values.differentialDiagnosis) ||
+      normalizeString(differentialDiagnosis);
 
     if (!differentialDiagnosisValue) {
       toast.error(
-        "Differential diagnosis is missing. Please record it before submitting."
+        "Cannot submit: diagnosis not available for this patient."
       );
+      actions?.setSubmitting?.(false);
       return;
     }
 
@@ -573,6 +667,7 @@ export const Radiology = () => {
     }
 
     const dateTime = ServerTime.getServerTimeString();
+    const requestId = `${dateTime}-${Math.random().toString(36).slice(2, 8)}`;
     const imagingTypeValue =
       imagingType === "Other" ? otherImagingType.trim() : imagingType;
 
@@ -583,6 +678,16 @@ export const Radiology = () => {
         )
       )
       .join(", ");
+
+    if (!examinationRequestForValue.trim()) {
+      toast.error("Examination request for is required.");
+      return;
+    }
+
+    if (!values.clinicalFindings?.trim()) {
+      toast.error("Clinical findings is required.");
+      return;
+    }
 
     const observations: Array<{
       concept: string;
@@ -607,7 +712,7 @@ export const Radiology = () => {
       },
       {
         concept: concepts.DIFFERENTIAL_DIAGNOSIS,
-        value: values.differentialDiagnosis.trim(),
+        value: differentialDiagnosisValue,
         obsDatetime: dateTime,
       },
       {
@@ -622,7 +727,12 @@ export const Radiology = () => {
       },
       {
         concept: concepts.DESCRIPTION,
-        value: `Patient context(hidden): ${hiddenPatientFields.firstName} ${hiddenPatientFields.lastName}, DOB ${hiddenPatientFields.dateOfBirth}, Sex ${hiddenPatientFields.sex}`,
+        value: `${RADIOLOGY_REQUEST_ID_PREFIX} ${requestId}`,
+        obsDatetime: dateTime,
+      },
+      {
+        concept: concepts.DESCRIPTION,
+        value: `${IMAGING_TYPE_PREFIX} ${imagingTypeValue}`,
         obsDatetime: dateTime,
       },
     ];
@@ -683,6 +793,7 @@ export const Radiology = () => {
               clinicalFindings: "",
             },
           });
+          navigateToLabResults();
         },
         onError: () => {
           toast.error("Failed to submit radiology investigation plan.");
@@ -693,6 +804,7 @@ export const Radiology = () => {
     imagingType,
     otherImagingType,
     hasSelectedIndications,
+    hasDifferentialDiagnosis,
     differentialDiagnosis,
     isFemalePatient,
     activeVisit,
@@ -704,7 +816,9 @@ export const Radiology = () => {
     hiddenPatientFields.sex,
     selectedBodyParts,
     selectedIndications,
+    hasIncompleteBodyPartSelection,
     submitRadiologyPlan,
+    navigateToLabResults,
   ]);
 
   return (
@@ -740,6 +854,12 @@ export const Radiology = () => {
               onChange={(event) => setOtherImagingType(event.target.value)}
               fullWidth
               sx={{ mt: 2 }}
+              error={!otherImagingType.trim()}
+              helperText={
+                !otherImagingType.trim()
+                  ? "Specify other imaging type is required."
+                  : ""
+              }
               required
             />
           )}
@@ -850,6 +970,7 @@ export const Radiology = () => {
               initialValues={requestInitialValues}
               validationSchema={radiologyRequestSchema}
               enableReinitialize
+              submitButton={hasDifferentialDiagnosis}
               submitButtonText="Submit"
               onSubmit={(values, actions) => submit(values, actions)}
             >
@@ -883,7 +1004,7 @@ export const Radiology = () => {
                   />
                 </Box>
 
-                {differentialDiagnosis.trim() ? (
+                {hasDifferentialDiagnosis ? (
                     <TextInputField
                         id="differentialDiagnosis"
                         name="differentialDiagnosis"
