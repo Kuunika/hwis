@@ -101,6 +101,27 @@ export interface DailyVisitPaginated {
   totalEntries: number;
 }
 
+export interface AetcVisitListRecord {
+  uuid: string;
+  patient_uuid: string;
+  visit_uuid: string;
+  arrival_time: string;
+  latest_encounter_time: string;
+  last_encounter_creator: string;
+  disposition_type?: string;
+  triage_result?: string;
+  given_name: string;
+  family_name: string;
+  gender: string;
+  aetc_visit_number: number;
+  patient_care_area?: string;
+  department?: string;
+  destination?: string;
+  category: string;
+  history?: string | null;
+  visit_closed_date?: string | null;
+}
+
 export interface PaginationModel {
   pageSize: number;
   page: number;

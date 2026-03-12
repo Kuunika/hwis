@@ -1,11 +1,20 @@
 "use client";
 import {
+  GenericDialog,
   MainButton,
   MainPaper,
   MainTypography,
   WrapperBox,
 } from "@/components";
-import { Chip, Paper, Typography } from "@mui/material";
+import {
+  Chip,
+  FormControl,
+  InputLabel,
+  Paper,
+  Select,
+  type SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { getOnePatient } from "@/hooks/patientReg";
 import { getActivePatientDetails, useNavigation, useParameters } from "@/hooks";
 import {
@@ -18,12 +27,17 @@ import PersonIcon from "@mui/icons-material/Person";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState, MouseEvent, useEffect } from "react";
+import { useState, MouseEvent } from "react";
 import { PatientInfoPrintDialog } from "../dialogs";
-import { confirmationDialog } from "@/helpers";
+import { notify } from "@/helpers";
 import { reOpenRecentClosedVisit } from "@/hooks/visit";
 import { getRoles } from "@/helpers/localstorage";
 import { roles } from "@/constants";
+import {
+  getAetcVisitListPatient,
+  moveAetcVisitListPatient,
+} from "@/services/aetcVisitList";
+import { AetcVisitListRecord } from "@/interfaces";
 
 export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const { params } = useParameters();
@@ -35,12 +49,84 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
     setAnchorEl(event.currentTarget);
   };
   const [openPatientSummary, setOpenPatientSummary] = useState(false);
-  const { hasActiveVisit, closedVisitId, openClosedVisit } =
+  const [reactivationDialogOpen, setReactivationDialogOpen] = useState(false);
+  const [stageOptions, setStageOptions] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
+  const [selectedStage, setSelectedStage] = useState("");
+  const [reactivationLoading, setReactivationLoading] = useState(false);
+  const [aetcCategory, setAetcCategory] = useState("");
+  const { hasActiveVisit, closedVisitId } =
     getActivePatientDetails();
   const { mutateAsync } = reOpenRecentClosedVisit(params.id as string);
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const closeReactivationDialog = (force = false) => {
+    if (reactivationLoading && !force) return;
+
+    setReactivationDialogOpen(false);
+    setStageOptions([]);
+    setSelectedStage("");
+    setAetcCategory("");
+  };
+
+  const formatStageLabel = (stage: string) =>
+    stage
+      .split(/[_-]/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
+  const parseRecentStages = (record: AetcVisitListRecord) => {
+    let orderedStages =
+      record.history
+        ?.split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean) || [];
+
+    if (!orderedStages.length && record.history?.includes("->")) {
+      const legacyStages: string[] = [];
+
+      record.history
+        .split("\n")
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+        .forEach((entry) => {
+          const match = entry.match(/:\s*(.*?)\s*->\s*(.*?)\s*$/);
+          if (!match) return;
+
+          const [, fromCategory, toCategory] = match;
+          if (!legacyStages.length) legacyStages.push(fromCategory);
+          legacyStages.push(toCategory);
+        });
+
+      orderedStages = legacyStages;
+    }
+
+    if (
+      record.category &&
+      orderedStages[orderedStages.length - 1] !== record.category
+    ) {
+      orderedStages.push(record.category);
+    }
+
+    if (!orderedStages.length && record.category) {
+      orderedStages.push(record.category);
+    }
+
+    const recentUniqueStages: string[] = [];
+    for (let index = orderedStages.length - 1; index >= 0; index -= 1) {
+      const stage = orderedStages[index];
+      if (!stage || recentUniqueStages.includes(stage)) continue;
+
+      recentUniqueStages.push(stage);
+      if (recentUniqueStages.length === 3) break;
+    }
+
+    return recentUniqueStages;
   };
 
   function getNationalIdIdentifiers(data: any) {
@@ -64,18 +150,73 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
 
   const handleCloseVisitMenu = () => {
     handleClose();
-    confirmationDialog({
-      title: "Visit reactivation",
-      text: "Are you sure you want to reactive the most recent closed visit for this patient?",
-      icon: "warning",
-      confirmButtonText: "Yes",
-      onConfirm: async () => {
-        const response = await mutateAsync(closedVisitId as string);
-        if (response) {
-          openClosedVisit();
+    void (async () => {
+      if (!closedVisitId) {
+        notify("error", "No recently closed visit was found for this patient.");
+        return;
+      }
+
+      try {
+        const { data: aetcVisitList } = await getAetcVisitListPatient(
+          params.id as string,
+          true,
+        );
+        const recentStages = parseRecentStages(aetcVisitList);
+
+        if (!recentStages.length) {
+          notify("error", "No previous stage history was found for this patient.");
+          return;
         }
-      },
-    });
+
+        setStageOptions(
+          recentStages.map((stage) => ({
+            value: stage,
+            label: formatStageLabel(stage),
+          })),
+        );
+        setSelectedStage(recentStages[0]);
+        setAetcCategory(aetcVisitList.category);
+        setReactivationDialogOpen(true);
+      } catch (error) {
+        notify("error", "Failed to reactivate the visit.");
+      }
+    })();
+  };
+
+  const handleStageChange = (event: SelectChangeEvent<string>) => {
+    setSelectedStage(event.target.value);
+  };
+
+  const handleReactivateVisit = async () => {
+    if (!selectedStage || !closedVisitId) {
+      notify("error", "Select a stage to continue.");
+      return;
+    }
+
+    try {
+      setReactivationLoading(true);
+      const response = await mutateAsync(closedVisitId as string);
+
+      if (!response) {
+        notify("error", "Visit reactivation failed.");
+        return;
+      }
+
+      await moveAetcVisitListPatient(params.id as string, {
+        category: selectedStage,
+        from_category: aetcCategory,
+      });
+
+      closeReactivationDialog(true);
+      notify(
+        "success",
+        `Visit reactivated and patient moved to ${formatStageLabel(selectedStage)}.`,
+      );
+    } catch (error) {
+      notify("error", "Failed to reactivate the visit.");
+    } finally {
+      setReactivationLoading(false);
+    }
   };
 
   // =========================
@@ -162,6 +303,80 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
           padding: "1ch",
         }}
       >
+        <GenericDialog
+          open={reactivationDialogOpen}
+          onClose={closeReactivationDialog}
+          title="Reactivate Visit"
+          maxWidth="sm"
+        >
+          <WrapperBox sx={{ pt: 1, pb: 1 }}>
+            <WrapperBox
+              sx={{
+                border: "1px solid #DCE8DD",
+                backgroundColor: "#F7FBF7",
+                borderRadius: "8px",
+                p: 2,
+                mb: 3,
+              }}
+            >
+              <MainTypography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: "#163020",
+                  mb: 0.5,
+                }}
+              >
+                Return patient to workflow
+              </MainTypography>
+              <MainTypography sx={{ fontSize: "14px", color: "#4B6351" }}>
+                Select the stage where this patient should continue. The most recent
+                stage is selected by default.
+              </MainTypography>
+            </WrapperBox>
+
+            <FormControl fullWidth size="small">
+              <InputLabel id="reactivate-visit-stage-label">
+                Stage
+              </InputLabel>
+              <Select
+                labelId="reactivate-visit-stage-label"
+                id="reactivate-visit-stage"
+                value={selectedStage}
+                label="Stage"
+                onChange={handleStageChange}
+              >
+                {stageOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <WrapperBox
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 1,
+                mt: 3,
+              }}
+            >
+              <MainButton
+                title="Cancel"
+                variant="secondary"
+                onClick={closeReactivationDialog}
+                disabled={reactivationLoading}
+              />
+              <MainButton
+                title={reactivationLoading ? "Reactivating..." : "Reactivate Visit"}
+                onClick={handleReactivateVisit}
+                disabled={reactivationLoading || !selectedStage}
+              />
+            </WrapperBox>
+          </WrapperBox>
+        </GenericDialog>
+
         <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
           <Button
             id="basic-button"

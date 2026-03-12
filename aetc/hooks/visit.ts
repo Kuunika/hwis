@@ -38,10 +38,15 @@ export const reOpenRecentClosedVisit = (patientId: string) => {
 
   return useMutation({
     mutationFn: updateVisit,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["patients", patientId, "visits"],
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["patients", patientId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["patient", patientId, "visits"],
+        }),
+      ]);
     },
   });
 };

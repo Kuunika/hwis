@@ -4,8 +4,6 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
   ReactNode,
 } from "react";
 
@@ -32,7 +30,6 @@ export const ActivePatientProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [hasActiveVisit, setHasActiveVisit] = useState<boolean | null>(null);
   const { params } = useParameters();
   const {
     data: patientVisits,
@@ -42,15 +39,12 @@ export const ActivePatientProvider = ({
 
   const { data: patient } = getOnePatient(params?.id as string);
   const activeVisit = patient?.active_visit;
+  const hasActiveVisit = Boolean(activeVisit);
 
   const recentClosedVisit =
     patientVisits && patientVisits.length > 0
       ? patientVisits[patientVisits.length - 1]
       : null;
-
-  useEffect(() => {
-    if (isSuccess) setHasActiveVisit(Boolean(activeVisit));
-  }, [activeVisit, isSuccess]);
 
   const value: PatientContextProps = {
     activeVisit: activeVisit?.uuid,
@@ -64,7 +58,7 @@ export const ActivePatientProvider = ({
     recentVisitCloseDateTime:
       recentClosedVisit?.date_stopped as unknown as string,
     closedVisitId: recentClosedVisit?.uuid,
-    openClosedVisit: () => setHasActiveVisit(true),
+    openClosedVisit: () => undefined,
   };
 
   return (

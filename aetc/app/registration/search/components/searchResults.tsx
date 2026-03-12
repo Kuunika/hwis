@@ -33,6 +33,10 @@ import { useServerTime } from "@/contexts/serverTimeContext";
 import { EditReferralForm } from "@/app/patient/components/editReferral";
 import { OperationSuccess } from "@/components/operationSuccess";
 import {
+  moveAetcVisitListPatient,
+  patchAetcVisitListPatient,
+} from "@/services/aetcVisitList";
+import {
   DisplayFinancing,
   DisplayRelationship,
   DisplaySocialHistory,
@@ -42,6 +46,8 @@ import { PrinterBarcodeButton } from "@/components/barcodePrinterDialogs";
 import { Button, Chip, Typography } from "@mui/material";
 import { AbscondButton } from "@/components/abscondButton";
 import { AuthGuardComp } from "@/helpers/authguardcomponent";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePatientContext } from "@/contexts/activePatientContext";
 
 export const SearchResults = ({
   searchedPatient,
@@ -387,6 +393,8 @@ const ViewPatientDialog = ({
   const [mergeType, setMergeType] = useState(type);
   const { params } = useParameters();
   const { ServerTime } = useServerTime();
+  const queryClient = useQueryClient();
+  const { patient: activePatient } = usePatientContext();
 
   // encounters for the patient registered during the initial registration
   const { data: patientEncounters } = getPatientsEncounters(
@@ -441,12 +449,44 @@ const ViewPatientDialog = ({
     isError: ddeMergeError,
     data: ddeMergedResponse,
   } = merge();
+  const {
+    mutateAsync: patchMergedPatientInVisitList,
+    isPending: patchingMergedPatientInVisitList,
+  } = useMutation({
+    mutationFn: (payload: any) => {
+      const { list_patient_id: listPatientId, ...attributes } = payload;
+
+      return patchAetcVisitListPatient(listPatientId, attributes).then(
+        (response) => response.data,
+      );
+    },
+  });
+  const {
+    mutateAsync: movePatientToTriage,
+    isPending: movingPatientToTriage,
+    isError: moveToTriageError,
+  } = useMutation({
+    mutationFn: (payload: any) => {
+      const { patient_id: patientId, ...attributes } = payload;
+
+      return moveAetcVisitListPatient(patientId, attributes).then(
+        (response) => response.data,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["registration"] });
+      queryClient.invalidateQueries({ queryKey: ["triage"] });
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+    },
+  });
 
   const loading =
     merging ||
+    patchingMergedPatientInVisitList ||
     creatingReferralEncounter ||
     creatingFinancingEncounter ||
-    creatingSocialHistoryEncounter;
+    creatingSocialHistoryEncounter ||
+    movingPatientToTriage;
 
   const [socialHistory, setSocialHistory] = useState<any>({} as Encounter);
   const [financing, setFinancing] = useState<Encounter>({} as Encounter);
@@ -479,13 +519,6 @@ const ViewPatientDialog = ({
     setIsReferred(referred);
   }, [patientEncounters]);
 
-  // close patient visit
-  useEffect(() => {
-    if (referralCreated) {
-      setTransactionSuccess(true);
-    }
-  }, [referralCreated]);
-
   const triggerMerge = async () => {
     const uuid = patient?.uuid;
     const initialUuid = params?.id;
@@ -499,6 +532,17 @@ const ViewPatientDialog = ({
           patient_id: initialUuid,
         },
       ],
+    });
+    const mergedPatientId =
+      mergedResponse?.active_visit?.patient_id || mergedResponse?.patient_id;
+
+    await patchMergedPatientInVisitList({
+      list_patient_id: activePatient?.patient_id,
+      patient_id: mergedPatientId,
+      visit_uuid: mergedResponse?.active_visit?.uuid,
+      given_name: mergedResponse?.given_name,
+      family_name: mergedResponse?.family_name,
+      gender: mergedResponse?.gender,
     });
 
     await createSocialHistoryEncounter({
@@ -538,6 +582,14 @@ const ViewPatientDialog = ({
         obsDatetime: ServerTime.getServerTimeString(),
       })),
     });
+
+    await movePatientToTriage({
+      patient_id: mergedPatientId,
+      category: "triage",
+      from_category: "registration",
+    });
+
+    setTransactionSuccess(true);
   };
 
   const handleContinue = () => {
