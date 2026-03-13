@@ -33,15 +33,20 @@ export const ActivePatientProvider = ({
   const { params } = useParameters();
   const {
     data: patientVisits,
-    isLoading,
-    isSuccess,
+    isLoading: isLoadingVisits,
+    isSuccess: isVisitsSuccess,
   } = getPatientVisitTypes(params?.id as string);
 
-  const { data: patient } = getOnePatient(params?.id as string);
+  const {
+    data: patient,
+    isLoading: isLoadingPatient,
+    isSuccess: isPatientSuccess,
+  } = getOnePatient(params?.id as string);
   const activeVisit = patient?.active_visit;
   const hasActiveVisit = Boolean(activeVisit);
 
   const recentClosedVisit =
+<<<<<<< HEAD
     patientVisits
       ?.filter((visit) => Boolean(visit?.date_stopped))
       .sort(
@@ -49,13 +54,27 @@ export const ActivePatientProvider = ({
           new Date(secondVisit.date_stopped).getTime() -
           new Date(firstVisit.date_stopped).getTime(),
       )?.[0] ?? null;
+=======
+    patientVisits && patientVisits.length > 0
+      ? patientVisits[patientVisits.length - 1]
+      : null;
+
+  useEffect(() => {
+    if (!isVisitsSuccess || !isPatientSuccess) {
+      setHasActiveVisit(null);
+      return;
+    }
+
+    setHasActiveVisit(Boolean(activeVisit));
+  }, [activeVisit, isVisitsSuccess, isPatientSuccess]);
+>>>>>>> main
 
   const value: PatientContextProps = {
     activeVisit: activeVisit?.uuid,
     patientId: params?.id as string,
     activeVisitId: activeVisit?.visit_id as unknown as string,
-    isLoading,
-    isSuccess,
+    isLoading: isLoadingVisits || isLoadingPatient,
+    isSuccess: isVisitsSuccess && isPatientSuccess,
     gender: patient?.gender,
     patient,
     hasActiveVisit,
