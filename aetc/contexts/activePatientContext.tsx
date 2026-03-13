@@ -4,6 +4,7 @@ import { getOnePatient, getPatientVisitTypes } from "@/hooks/patientReg";
 import {
   createContext,
   useContext,
+  useMemo,
   ReactNode,
 } from "react";
 
@@ -42,39 +43,33 @@ export const ActivePatientProvider = ({
     isLoading: isLoadingPatient,
     isSuccess: isPatientSuccess,
   } = getOnePatient(params?.id as string);
+
+  const isSuccess = isVisitsSuccess && isPatientSuccess;
   const activeVisit = patient?.active_visit;
-  const hasActiveVisit = Boolean(activeVisit);
+  const hasActiveVisit = isSuccess ? Boolean(activeVisit) : null;
 
-  const recentClosedVisit =
-<<<<<<< HEAD
-    patientVisits
-      ?.filter((visit) => Boolean(visit?.date_stopped))
-      .sort(
-        (firstVisit, secondVisit) =>
-          new Date(secondVisit.date_stopped).getTime() -
-          new Date(firstVisit.date_stopped).getTime(),
-      )?.[0] ?? null;
-=======
-    patientVisits && patientVisits.length > 0
-      ? patientVisits[patientVisits.length - 1]
-      : null;
-
-  useEffect(() => {
-    if (!isVisitsSuccess || !isPatientSuccess) {
-      setHasActiveVisit(null);
-      return;
+  const recentClosedVisit = useMemo(() => {
+    if (!isVisitsSuccess || !Array.isArray(patientVisits)) {
+      return null;
     }
 
-    setHasActiveVisit(Boolean(activeVisit));
-  }, [activeVisit, isVisitsSuccess, isPatientSuccess]);
->>>>>>> main
+    return (
+      patientVisits
+        .filter((visit) => Boolean(visit?.date_stopped))
+        .sort(
+          (firstVisit, secondVisit) =>
+            new Date(secondVisit.date_stopped).getTime() -
+            new Date(firstVisit.date_stopped).getTime(),
+        )?.[0] ?? null
+    );
+  }, [isVisitsSuccess, patientVisits]);
 
   const value: PatientContextProps = {
     activeVisit: activeVisit?.uuid,
     patientId: params?.id as string,
     activeVisitId: activeVisit?.visit_id as unknown as string,
     isLoading: isLoadingVisits || isLoadingPatient,
-    isSuccess: isVisitsSuccess && isPatientSuccess,
+    isSuccess,
     gender: patient?.gender,
     patient,
     hasActiveVisit,
