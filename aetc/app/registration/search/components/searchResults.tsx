@@ -543,6 +543,7 @@ const ViewPatientDialog = ({
       given_name: mergedResponse?.given_name,
       family_name: mergedResponse?.family_name,
       gender: mergedResponse?.gender,
+      patient_uuid: uuid,
     });
 
     await createSocialHistoryEncounter({

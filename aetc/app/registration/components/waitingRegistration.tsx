@@ -10,7 +10,6 @@ import {
   PatientTableListServer,
 } from "@/components";
 
-
 import { AbscondButton } from "@/components/abscondButton";
 import { useContext, useEffect, useState } from "react";
 
@@ -43,7 +42,7 @@ export const WaitingRegistrationList = () => {
     setSearchText,
     totalPages,
     setOnSwitch,
-    totalEntries
+    totalEntries,
   } = fetchPatientsTablePaginate("registration");
   const [inputText, setInputText] = useState("");
   const debouncedSearch = useDebounce(inputText, 500); // debounce for 500ms
@@ -54,18 +53,14 @@ export const WaitingRegistrationList = () => {
   }, [debouncedSearch]);
 
   const rows = patients
-    ?.sort((p1, p2) => {
-      //@ts-ignore
-      return new Date(p1.arrival_time) - new Date(p2.arrival_time);
-    })
-    .map((p) => ({
+    ?.map((p: any) => ({
       id: p?.patient_uuid || p?.uuid,
       ...p,
       patient_arrival_time: getTime(p.arrival_time),
     }))
     .filter((p) => p.id != deleted);
   const { setPatient, setRegistrationType, setSearchedPatient } = useContext(
-    SearchRegistrationContext
+    SearchRegistrationContext,
   ) as SearchRegistrationContextType;
 
   const columns = [
@@ -205,7 +200,7 @@ export const WaitingRegistrationList = () => {
           page: paginationModel.page,
           per_page: paginationModel.pageSize,
           total_pages: totalPages,
-          totalEntries
+          totalEntries,
         }}
         searchText={inputText}
         setSearchString={setInputText}

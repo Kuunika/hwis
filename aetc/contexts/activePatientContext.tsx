@@ -42,9 +42,13 @@ export const ActivePatientProvider = ({
   const hasActiveVisit = Boolean(activeVisit);
 
   const recentClosedVisit =
-    patientVisits && patientVisits.length > 0
-      ? patientVisits[patientVisits.length - 1]
-      : null;
+    patientVisits
+      ?.filter((visit) => Boolean(visit?.date_stopped))
+      .sort(
+        (firstVisit, secondVisit) =>
+          new Date(secondVisit.date_stopped).getTime() -
+          new Date(firstVisit.date_stopped).getTime(),
+      )?.[0] ?? null;
 
   const value: PatientContextProps = {
     activeVisit: activeVisit?.uuid,

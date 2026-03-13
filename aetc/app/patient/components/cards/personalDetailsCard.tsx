@@ -34,6 +34,7 @@ import { reOpenRecentClosedVisit } from "@/hooks/visit";
 import { getRoles } from "@/helpers/localstorage";
 import { roles } from "@/constants";
 import {
+  createAetcVisitList,
   getAetcVisitListPatient,
   moveAetcVisitListPatient,
 } from "@/services/aetcVisitList";
@@ -56,9 +57,15 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
   const [selectedStage, setSelectedStage] = useState("");
   const [reactivationLoading, setReactivationLoading] = useState(false);
   const [aetcCategory, setAetcCategory] = useState("");
+  const [requiresAetcVisitListCreation, setRequiresAetcVisitListCreation] =
+    useState(false);
   const { hasActiveVisit, closedVisitId } =
     getActivePatientDetails();
   const { mutateAsync } = reOpenRecentClosedVisit(params.id as string);
+  const fallbackReactivationOptions = [
+    { value: "triage", label: "Triage" },
+    { value: "assessment", label: "Assessment" },
+  ];
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -71,6 +78,7 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
     setStageOptions([]);
     setSelectedStage("");
     setAetcCategory("");
+    setRequiresAetcVisitListCreation(false);
   };
 
   const formatStageLabel = (stage: string) =>
@@ -164,7 +172,11 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         const recentStages = parseRecentStages(aetcVisitList);
 
         if (!recentStages.length) {
-          notify("error", "No previous stage history was found for this patient.");
+          setStageOptions(fallbackReactivationOptions);
+          setSelectedStage(fallbackReactivationOptions[0].value);
+          setAetcCategory("");
+          setRequiresAetcVisitListCreation(true);
+          setReactivationDialogOpen(true);
           return;
         }
 
@@ -176,9 +188,14 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         );
         setSelectedStage(recentStages[0]);
         setAetcCategory(aetcVisitList.category);
+        setRequiresAetcVisitListCreation(false);
         setReactivationDialogOpen(true);
       } catch (error) {
-        notify("error", "Failed to reactivate the visit.");
+        setStageOptions(fallbackReactivationOptions);
+        setSelectedStage(fallbackReactivationOptions[0].value);
+        setAetcCategory("");
+        setRequiresAetcVisitListCreation(true);
+        setReactivationDialogOpen(true);
       }
     })();
   };
@@ -202,10 +219,23 @@ export const PersonalDetailsCard = ({ sx }: { sx?: any }) => {
         return;
       }
 
-      await moveAetcVisitListPatient(params.id as string, {
-        category: selectedStage,
-        from_category: aetcCategory,
-      });
+      if (requiresAetcVisitListCreation) {
+        await createAetcVisitList({
+          patient_id: params.id as string,
+          aetc_visit_number: patient?.aetc_visit_number,
+          given_name:
+            patient?.given_name || patient?.person?.names?.[0]?.given_name,
+          family_name:
+            patient?.family_name || patient?.person?.names?.[0]?.family_name,
+          gender: patient?.gender || patient?.person?.gender || "N/A",
+          category: selectedStage,
+        });
+      } else {
+        await moveAetcVisitListPatient(params.id as string, {
+          category: selectedStage,
+          from_category: aetcCategory,
+        });
+      }
 
       closeReactivationDialog(true);
       notify(
